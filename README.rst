@@ -20,16 +20,16 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``sync``:
+``sync``
     Syncronizes the current branch.
 
-``branch <off-branch> <new-branch>``:
+``branch <off-branch> <new-branch>``
     Creates a new branch off of the specified branch.
 
-``publish <branch>``:
+``publish <branch>``
     Publishes specified branch to the remote.
 
-``unpublish``:
+``unpublish``
     Removes specified branch from the remote. Unlike GfM, this won't
     remove the local branch. That's messed up.
 
