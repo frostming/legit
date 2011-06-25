@@ -1,5 +1,5 @@
-Legit: Sexy Git CLI, Inspired by GitHub for Mac™
-================================================
+Legit: Sexy Git CLI, Inspired by GitHub for Mac™.
+=================================================
 
 Note: This is a **work in progress**.
 
