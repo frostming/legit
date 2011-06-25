@@ -20,14 +20,14 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``sync``
-    Syncronizes the current branch.
-
 ``switch <branch>``
     Switches to specified branch. Automatically Un/Stashes any changes.
 
+``sync``
+    Syncronizes the current branch.
+
 ``branch <off-branch> <new-branch>``
-    Creates a new branch off of the specified branch.
+    Creates a new branch off of the specified branch. Swiches to it immediately.
 
 ``publish <branch>``
     Publishes specified branch to the remote.
@@ -44,7 +44,7 @@ The Implementation
 - Install via Static Binaries or Pip
 - Main ``legit`` runner, which will run sub-commands (e.g. ``legit-sync``),
   much like Git.
--
+- Likely send unknown commands back to ``git``, or something.
 
 
 License
