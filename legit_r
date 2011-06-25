@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import legit
+import legit.cli
 
 if __name__ == '__main__':
     legit.cli.main()
