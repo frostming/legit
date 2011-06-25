@@ -13,7 +13,10 @@ from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts
 
-from .core import available_branches, __version__
+from .core import (
+    get_available_branches, get_current_branch,
+     __version__
+)
 
 
 
@@ -47,11 +50,18 @@ def cmd_switch(args):
 
     if not to_branch:
         print 'Available branches:'
-        for branch in available_branches():
-            print ' - {0}'.format(colored.yellow(branch))
+
+        current_branch = get_current_branch()
+
+        for branch in get_available_branches():
+            if current_branch == branch:
+                print ' + {0}'.format(colored.yellow(branch))
+            else:
+                print ' - {0}'.format(colored.yellow(branch))
+
         sys.exit()
 
-    if to_branch not in available_branches():
+    if to_branch not in get_available_branches():
         print 'Branch not found.'
     else:
         print 'stash and dash.'

@@ -16,7 +16,18 @@ def path_to_repo():
     return None
 
 
-def available_branches():
+def get_available_branches():
     """Returns a list of available branches in the repo."""
 
     return ('master', 'develop')
+
+
+def get_current_branch():
+    """Returns the active available branches in the repo."""
+    return 'develop'
+
+
+def sync_repo():
+    """ Git fetch. Auto branch of remotes? pull --rebase, push
+    """
+    pass
