@@ -40,7 +40,14 @@ The Interface
 The Implementation
 ------------------
 
-- Python
-- PyGit2 / Dulwich
+- Python + PyGit2 / Dulwich (Dulwich will likely make installation much simpler)
+- Install via Static Binaries or Pip
 - Main ``legit`` runner, which will run sub-commands (e.g. ``legit-sync``),
   much like Git.
+-
+
+
+License
+-------
+
+If Dulwich is chosen, GPL. We'll see.
