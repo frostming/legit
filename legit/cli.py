@@ -13,7 +13,7 @@ from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts
 
-from .core import __version__
+from .core import available_branches, __version__
 
 
 
@@ -47,6 +47,12 @@ def cmd_switch(args):
 
     if not to_branch:
         print 'Avaiable branches (sorted by commit recency):'
+
+    if to_branch not in available_branches():
+        print 'Branch not found.'
+    else:
+        print 'stash and dash.'
+
 
 
 def display_info():

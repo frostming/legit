@@ -8,3 +8,7 @@ Not much.
 """
 
 __version__ = '0.0.1'
+
+
+def available_branches():
+    return ['master', 'develop']
