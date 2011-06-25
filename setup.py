@@ -36,7 +36,7 @@ setup(
         # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
-        'License :: OSI Approved :: ISC License (ISCL)',
+        # 'License :: OSI Approved :: ISC License (ISCL)',
         'Programming Language :: Python',
         # 'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',

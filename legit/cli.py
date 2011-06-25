@@ -20,16 +20,21 @@ def main():
 
 
 def dispatch():
-    if not len(clint.args):
-        display_info()
 
-    elif clint.args.contains(('-h', '--help')):
+    if clint.args.contains(('-h', '--help')):
         display_info()
         sys.exit(1)
 
     elif clint.args.contains(('-v', '--version')):
         display_version()
         sys.exit(1)
+
+    else:
+        display_info()
+        sys.exit(1)
+
+
+
 
 
 def display_info():
