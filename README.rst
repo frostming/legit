@@ -1,7 +1,7 @@
 Legit: Sexy Git CLI, Inspired by GitHub for Mac™.
 =================================================
 
-Note: This is a **work in progress**. It's not even half workable yet.
+Note: This is a **work in progress**. It's not ready for use yet.
 
 
 The Concept
