@@ -24,7 +24,7 @@ with open('reqs.txt') as f:
 setup(
     name='legit',
     version=__version__,
-    description='GitHub Syncer. Clones or Pulls all GitHub repos.',
+    description='Sexy Git CLI, Inspired by GitHub for Mac.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
     author_email='me@kennethreitz.com',
