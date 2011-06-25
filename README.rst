@@ -20,14 +20,17 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``switch <branch>``
-    Switches to specified branch. Automatically Un/Stashes any changes.
-
 ``sync``
     Syncronizes the current branch.
 
+``switch <branch>``
+    Switches to specified branch. Automatically Un/Stashes any changes.
+
 ``branch <off-branch> <new-branch>``
     Creates a new branch off of the specified branch. Swiches to it immediately.
+
+``merge <branch> <into-branch>``
+    Merges specified branch into the second branch.
 
 ``publish <branch>``
     Publishes specified branch to the remote.
@@ -42,8 +45,6 @@ The Implementation
 
 - Python + PyGit2 / Dulwich (Dulwich will likely make installation much simpler)
 - Install via Static Binaries or Pip
-- Main ``legit`` runner, which will run sub-commands (e.g. ``legit-sync``),
-  much like Git.
 - Likely send unknown commands back to ``git``, or something.
 
 
