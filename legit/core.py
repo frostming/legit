@@ -10,5 +10,13 @@ Not much.
 __version__ = '0.0.1'
 
 
+def path_to_repo():
+    """Returns the path the current repo, if there is one."""
+
+    return None
+
+
 def available_branches():
-    return ['master', 'develop']
+    """Returns a list of available branches in the repo."""
+
+    return ('master', 'develop')

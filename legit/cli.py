@@ -46,7 +46,10 @@ def cmd_switch(args):
     to_branch = args.get(0)
 
     if not to_branch:
-        print 'Avaiable branches (sorted by commit recency):'
+        print 'Available branches:'
+        for branch in available_branches():
+            print ' - {0}'.format(colored.yellow(branch))
+        sys.exit()
 
     if to_branch not in available_branches():
         print 'Branch not found.'
