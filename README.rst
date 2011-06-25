@@ -23,13 +23,16 @@ The Interface
 ``sync``
     Syncronizes the current branch.
 
+``switch <branch>``
+    Switches to specified branch. Automatically Un/Stashes any changes.
+
 ``branch <off-branch> <new-branch>``
     Creates a new branch off of the specified branch.
 
 ``publish <branch>``
     Publishes specified branch to the remote.
 
-``unpublish``
+``unpublish <branch>``
     Removes specified branch from the remote. Unlike GfM, this won't
     remove the local branch. That's messed up.
 
@@ -39,3 +42,5 @@ The Implementation
 
 - Python
 - PyGit2 / Dulwich
+- Main ``legit`` runner, which will run sub-commands (e.g. ``legit-sync``),
+  much like Git.
