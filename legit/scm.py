@@ -17,7 +17,7 @@ from .helpers import find_path_above
 
 
 
-GH_TEMPLATE = 'On {branch}: GitHub: stashing before switching branches.'
+GH_TEMPLATE = 'GitHub: stashing before switching branches.'
 
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
@@ -25,26 +25,22 @@ Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
 def stash_for_switch():
-    return repo.git.execute(
-        ['git', 'stash', 'save',
-        GH_TEMPLATE.format(branch=repo.head.ref.name)]
-    )
+    """Stashes changes from current branch for branch switch."""
 
-    # cmd = list()
-    # cmd.append('stash save 2')
-    # print 'fuck'
-
-    # print cmd
-    # return repo.git.execute()
-    # .format(
-        # GH_TEMPLATE.format(branch=repo.head.ref.name))
-    # )
-    # .format(branch=repo.head.ref.name)
-    pass
+    return repo.git.execute(['git',
+        'stash', 'save',
+        GH_TEMPLATE.format(branch=repo.head.ref.name)])
 
 
 def unstash_for_switch():
-    pass
+    """Unstashes changes from current branch for branch switch."""
+
+    stash_list = repo.git.stash()
+    # TODO: Find stash for branch
+    # TODO: untash
+
+    # return repo.git.execute(['git',
+        # 'stash', 'pop', 'stash@\{{0}\}'.format(stash_index))
 
 
 def checkout_branch(branch):
