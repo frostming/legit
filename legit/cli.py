@@ -72,8 +72,12 @@ def display_available_branches():
 
 def display_info():
 
-    puts('{0} by Kenneth Reitz <me@kennethreitz.com>'.format(colored.yellow('legit')))
-    puts('https://github.com/kennethreitz/legit\n')
+    puts('{0}. {1}\n'.format(
+        colored.red('legit'),
+        colored.black(u'A Kenneth Reitz Project™')
+    ))
+    # puts('https://github.com/kennethreitz/legit\n')
+    # puts('\n')
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
     puts('Commands: {0}.\n'.format(
         eng_join(
