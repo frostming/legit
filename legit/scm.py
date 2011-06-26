@@ -35,7 +35,9 @@ def stash_for_switch():
 def unstash_for_switch():
     """Unstashes changes from current branch for branch switch."""
 
-    stash_list = repo.git.stash()
+    stash_list = repo.git.execute(['git',
+        'stash', 'list'], ouput_stream=True)
+    print stash_list
     # TODO: Find stash for branch
     # TODO: untash
 
