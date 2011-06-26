@@ -63,6 +63,7 @@ def cmd_sync(args):
     fetch()
     stash_for_sync()
     pull()
+    push()
     unstash_for_sync()
 
 
