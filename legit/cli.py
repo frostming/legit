@@ -13,10 +13,8 @@ from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts, columns
 
-from .core import (
-    get_branches,
-     __version__
-)
+from .core import __version__
+from .scm import *
 
 
 def main():

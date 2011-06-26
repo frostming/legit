@@ -12,7 +12,7 @@ import os
 
 
 def find_path_above(*names):
-    """Attempt to locate given file by searching parent dirs."""
+    """Attempt to locate given path by searching parent dirs."""
 
     path = '.'
 
@@ -22,3 +22,4 @@ def find_path_above(*names):
             if os.path.exists(joined):
                 return os.path.abspath(joined)
         path = os.path.join('..', path)
+
