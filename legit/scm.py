@@ -7,12 +7,13 @@ legit.scm
 This module provides the main interface to Git.
 """
 
-
+import os
 from collections import namedtuple
 from operator import attrgetter
 
-
 from git import Repo, Git
+
+from .helpers import find_path_above
 
 
 
@@ -21,6 +22,18 @@ git = Git('/Users/kreitz/repos/public/legit')
 
 
 Branch = namedtuple('Branch', ['name', 'published'])
+
+
+def get_repo():
+    """Returns the current Repo, based on path."""
+
+    bare_path = find_path_above('.git')
+
+    if bare_path:
+        prelapsarian_path = os.path.split(bare_path)[0]
+        return Repo(prelapsarian_path)
+    else:
+        return None
 
 
 def get_branches():
