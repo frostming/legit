@@ -53,8 +53,6 @@ def cmd_switch(args):
         print 'Branch not found.'
         sys.exit(1)
     else:
-        # TODO: Stash
-        # TODO: UnStash
         stash_for_switch()
         checkout_branch(to_branch)
         unstash_for_switch()
