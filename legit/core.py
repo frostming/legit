@@ -24,10 +24,10 @@ def get_available_branches():
 
 def get_current_branch():
     """Returns the active available branches in the repo."""
+
     return 'develop'
 
 
 def sync_repo():
-    """ Git fetch. Auto branch of remotes? pull --rebase, push
-    """
+    """Git fetch. Auto branch of remotes? pull --rebase, push."""
     pass

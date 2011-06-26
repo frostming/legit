@@ -11,14 +11,12 @@ import sys
 
 from clint import args
 from clint.eng import join as eng_join
-from clint.textui import colored, indent, puts
+from clint.textui import colored, indent, puts, columns
 
 from .core import (
     get_available_branches, get_current_branch,
      __version__
 )
-
-
 
 
 def main():
@@ -46,19 +44,11 @@ def main():
 
 
 def cmd_switch(args):
+
     to_branch = args.get(0)
 
     if not to_branch:
-        print 'Available branches:'
-
-        current_branch = get_current_branch()
-
-        for branch in get_available_branches():
-            if current_branch == branch:
-                print ' + {0}'.format(colored.yellow(branch))
-            else:
-                print ' - {0}'.format(colored.yellow(branch))
-
+        display_available_branches()
         sys.exit()
 
     if to_branch not in get_available_branches():
@@ -67,8 +57,27 @@ def cmd_switch(args):
         print 'stash and dash.'
 
 
+def display_available_branches():
+
+    print 'Available branches:'
+
+    current_branch = get_current_branch()
+
+    for branch in get_available_branches():
+
+        marker = '-'
+        if current_branch == branch:
+            marker = '+'
+
+        print(
+            columns([marker, 2], [colored.yellow(branch), 20], ['(published)', 15])
+        )
+
+
+
 
 def display_info():
+
     puts('{0} by Kenneth Reitz <me@kennethreitz.com>'.format(colored.yellow('legit')))
     puts('https://github.com/kennethreitz/legit\n')
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
