@@ -11,6 +11,7 @@ from clint import resources
 from pygit2 import Repository
 
 from .helpers import find_path_above
+from .models import Branch
 
 
 
@@ -35,12 +36,6 @@ def get_available_branches():
     return ('master', 'develop')
 
 
-def get_current_branch():
-    """Returns the active available branches in the repo."""
-
-    return 'develop'
-
-
 def switch_to_branch(branch):
     pass
 
@@ -55,28 +50,40 @@ def get_branches():
 
     repo = get_repo(path_to_repo())
 
-    for branch in repo.listall_references():
-        if branch.startswith('refs/heads/'):
-            branch_name = branch.replace('refs/heads/', '')
-            branches['local'].append(branch_name)
-        elif branch.startswith('refs/remotes/'):
-            branch_name = branch.replace('refs/remotes/', '')
-            branches['remote'].append(branch_name)
+    branches = map(Branch.new_from_ref, repo.listall_references())
+
+    kosher = []
+
+    for branch in branches:
+        if branch.name not in [d.name for d in kosher]:
+            kosher.append(branch)
         else:
-            # print branch
-            pass
+            print branch
 
-    current_branch = repo.lookup_reference('HEAD').resolve().name
-    current_branch = current_branch.replace('refs/heads/', '')
+    return kosher
 
-    branches['current'] = current_branch
+    # for branch in repo.listall_references():
+    #     if branch.startswith('refs/heads/'):
+    #         branch_name = branch.replace('refs/heads/', '')
+    #         branches['local'].append(branch_name)
+    #     elif branch.startswith('refs/remotes/'):
+    #         branch_name = branch.replace('refs/remotes/', '')
+    #         branches['remote'].append(branch_name)
+    #     else:
+    #         # print branch
+    #         pass
+
+    # current_branch = repo.lookup_reference('HEAD').resolve().name
+    # current_branch = current_branch.replace('refs/heads/', '')
+
+    # branches['current'] = current_branch
 
     return branches
 
 
 
 
-print get_branches()
+# print get_branches()
 # print
 # print dir(repo)
 

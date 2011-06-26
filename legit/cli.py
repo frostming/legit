@@ -14,7 +14,7 @@ from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts, columns
 
 from .core import (
-    get_available_branches, get_current_branch,
+    get_branches,
      __version__
 )
 
@@ -51,7 +51,7 @@ def cmd_switch(args):
         display_available_branches()
         sys.exit()
 
-    if to_branch not in get_available_branches():
+    if to_branch not in get_branches():
         print 'Branch not found.'
     else:
         print 'stash and dash.'
@@ -61,17 +61,13 @@ def display_available_branches():
 
     print 'Available branches:'
 
-    current_branch = get_current_branch()
+    branches = get_branches()
 
-    for branch in get_available_branches():
+    # print branches
+    for branch in branches:
 
-        marker = '-'
-        if current_branch == branch:
-            marker = '+'
 
-        print(
-            columns([marker, 2], [colored.yellow(branch), 20], ['(published)', 15])
-        )
+        print '- {0}'.format(branch.name)
 
 
 
