@@ -39,12 +39,11 @@ def unstash_for_switch():
         'stash', 'list'])
     for stash in stash_list.splitlines():
         if ('GitHub' in stash) and (repo.head.ref.name in stash):
-            print stash[7]
-    # TODO: Find stash for branch
-    # TODO: untash
+            stash_index = stash[7]
 
-    # return repo.git.execute(['git',
-        # 'stash', 'pop', 'stash@\{{0}\}'.format(stash_index))
+    if stash_index:
+        return repo.git.execute(['git',
+            'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
 
 def checkout_branch(branch):
