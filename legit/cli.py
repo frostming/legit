@@ -58,6 +58,14 @@ def cmd_switch(args):
         unstash_for_switch()
 
 
+def cmd_sync(args):
+
+    fetch()
+    stash_for_sync()
+    pull()
+    unstash_for_sync()
+
+
 def display_available_branches():
 
     branches = get_branches()
@@ -105,7 +113,7 @@ def display_version():
 
 cmd_map = dict(
     switch=cmd_switch,
-    sync=cmd_switch,
+    sync=cmd_sync,
     branch=cmd_switch,
     publish=cmd_switch,
     unpublish=cmd_switch
