@@ -1,1 +1,2 @@
 clint==0.2.4
+-e git://github.com/libgit2/pygit2.git#egg=pygit2
