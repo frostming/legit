@@ -18,6 +18,7 @@ from .helpers import find_path_above
 
 
 GH_TEMPLATE = 'GitHub: stashing before switching branches.'
+LEGIT_TEMPLATE = 'Legit: stashing before syncing.'
 
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
@@ -44,12 +45,41 @@ def unstash_for_switch():
         if ('GitHub' in stash) and (repo.head.ref.name in stash):
             stash_index = stash[7]
 
+    if stash_index is not None:
+        return repo.git.execute(['git',
+            'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
+
+def stash_for_sync():
+    return repo.git.execute(['git',
+        'stash', 'save',
+        LEGIT_TEMPLATE.format(branch=repo.head.ref.name)])
+
+
+def unstash_for_sync():
+    """Unstashes changes from current branch for branch sync."""
+
+    stash_list = repo.git.execute(['git',
+        'stash', 'list'])
+
+    stash_index = None
+
+    for stash in stash_list.splitlines():
+        if ('Legit' in stash) and (repo.head.ref.name in stash):
+            stash_index = stash[7]
 
     if stash_index is not None:
         return repo.git.execute(['git',
             'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
+def fetch():
+    return repo.remotes[0].fetch()
+
+def pull():
+    return repo.remotes[0].pull()
+
+def push():
+    return repo.remotes[0].push()
 
 def checkout_branch(branch):
     """Checks out given branch."""
@@ -71,6 +101,7 @@ def get_repo(git=False):
     else:
         return None
 
+# fuck
 
 def get_branches(local=True, remote=True):
     """Returns a list of local and remote branches."""
@@ -101,10 +132,6 @@ def get_branch_names(local=True, remote=True):
     branches = get_branches(local=local, remote=remote)
 
     return [b.name for b in branches]
-
-
-def set_branch():
-    pass
 
 
 def fetch():
