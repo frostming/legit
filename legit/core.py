@@ -7,6 +7,11 @@ legit.core
 Not much.
 """
 
+from clint import resources
+resources.init('kennethreitz', 'legit')
+resources.user.write('config.ini', "we'll get there.")
+
+
 __version__ = '0.0.1'
 
 
