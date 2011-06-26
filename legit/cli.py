@@ -57,15 +57,25 @@ def cmd_switch(args):
 
 def display_available_branches():
 
-    print 'Available branches:'
+    # print 'Available branches:'
 
     branches = get_branches()
 
-    # print branches
+    branch_col = len(max([b.name for b in branches], key=len)) + 1
+
+    print repo.head.ref
+
     for branch in branches:
 
+        marker = '*' if True else ' '
+        pub = '(published)' if branch.is_published else '(unpublished)'
 
-        print '- {0}'.format(branch.name)
+        print columns(
+            [colored.red(marker), 2],
+            [colored.yellow(branch.name), branch_col],
+            [colored.black(pub), 14]
+        )
+
 
 
 
