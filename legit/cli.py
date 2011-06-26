@@ -49,10 +49,13 @@ def cmd_switch(args):
         display_available_branches()
         sys.exit()
 
-    if to_branch not in get_branches():
+    if to_branch not in get_branch_names():
         print 'Branch not found.'
+        sys.exit(1)
     else:
-        print 'stash and dash.'
+        # TODO: Stash
+        # TODO: UnStash
+        repo.heads[to_branch].checkout()
 
 
 def display_available_branches():
@@ -63,11 +66,9 @@ def display_available_branches():
 
     branch_col = len(max([b.name for b in branches], key=len)) + 1
 
-    print repo.head.ref
-
     for branch in branches:
 
-        marker = '*' if True else ' '
+        marker = '*' if (branch.name == repo.head.ref.name) else ' '
         pub = '(published)' if branch.is_published else '(unpublished)'
 
         print columns(
@@ -75,7 +76,6 @@ def display_available_branches():
             [colored.yellow(branch.name), branch_col],
             [colored.black(pub), 14]
         )
-
 
 
 
