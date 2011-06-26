@@ -55,7 +55,7 @@ def cmd_switch(args):
     else:
         # TODO: Stash
         # TODO: UnStash
-        # stash_for_switch()
+        stash_for_switch()
         checkout_branch(to_branch)
         unstash_for_switch()
 
