@@ -4,32 +4,29 @@
 legit.core
 ~~~~~~~~~~
 
-Not much.
+This module provides the basic functionality of legit.
 """
-import os
 
 from clint import resources
+from pygit2 import Repository
+
+from .helpers import find_path_above
+
 
 
 __version__ = '0.0.1'
+__author__ = 'Kenneth Reitz'
+__license__ = 'TBD'
 
-def find_above(*names):
-    """Attempt to locate given file by searching parent dirs."""
 
-    path = '.'
-
-    while os.path.split(os.path.abspath(path))[1]:
-        for name in names:
-            joined = os.path.join(path, name)
-            if os.path.exists(joined):
-                return os.path.abspath(joined)
-        path = os.path.join('..', path)
+def get_repo(path_to_repo):
+    return Repository(path_to_repo)
 
 
 def path_to_repo():
     """Returns the path the current repo, if there is one."""
 
-    return find_above('.git')
+    return find_path_above('.git')
 
 
 def get_available_branches():
@@ -44,12 +41,45 @@ def get_current_branch():
     return 'develop'
 
 
+def switch_to_branch(branch):
+    pass
+
+
 def sync_repo():
     """Git fetch. Auto branch of remotes? pull --rebase, push."""
     pass
 
 
-print path_to_repo()
+def get_branches():
+    branches = dict(local=list(), remote=list(), current=None)
+
+    repo = get_repo(path_to_repo())
+
+    for branch in repo.listall_references():
+        if branch.startswith('refs/heads/'):
+            branch_name = branch.replace('refs/heads/', '')
+            branches['local'].append(branch_name)
+        elif branch.startswith('refs/remotes/'):
+            branch_name = branch.replace('refs/remotes/', '')
+            branches['remote'].append(branch_name)
+        else:
+            # print branch
+            pass
+
+    current_branch = repo.lookup_reference('HEAD').resolve().name
+    current_branch = current_branch.replace('refs/heads/', '')
+
+    branches['current'] = current_branch
+
+    return branches
+
+
+
+
+print get_branches()
+# print
+# print dir(repo)
+
 # Init Resources
 
 resources.init('kennethreitz', 'legit')
