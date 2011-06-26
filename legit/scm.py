@@ -75,11 +75,19 @@ def unstash_for_sync():
 def fetch():
     return repo.remotes[0].fetch()
 
-def pull():
-    return repo.remotes[0].pull()
+def pull(branch=None):
+    if branch is None:
+        return repo.remotes[0].pull()
+    else:
+        return repo.git.execute(['git', 'pull', repo.remotes[0].name, branch])
 
-def push():
-    return repo.remotes[0].push()
+
+def push(branch=None):
+    if branch is None:
+        return repo.remotes[0].push()
+    else:
+        return repo.git.execute(['git', 'push', repo.remotes[0].name, branch])
+
 
 def checkout_branch(branch):
     """Checks out given branch."""

@@ -60,12 +60,21 @@ def cmd_switch(args):
 
 def cmd_sync(args):
 
+    branch = repo.head.ref.name
+
     fetch()
     stash_for_sync()
-    pull()
-    push()
+    pull(branch)
+    push(branch)
     unstash_for_sync()
 
+
+
+    # print colored.yellow(fetch())
+    # print colored.yellow(stash_for_sync())
+    # print colored.yellow(pull())
+    # print colored.yellow(push())
+    # print colored.yellow(unstash_for_sync())
 
 def display_available_branches():
 
