@@ -37,11 +37,16 @@ def unstash_for_switch():
 
     stash_list = repo.git.execute(['git',
         'stash', 'list'])
+
+    stash_index = None
+
     for stash in stash_list.splitlines():
         if ('GitHub' in stash) and (repo.head.ref.name in stash):
             stash_index = stash[7]
 
-    if stash_index:
+
+
+    if stash_index is not None:
         return repo.git.execute(['git',
             'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
