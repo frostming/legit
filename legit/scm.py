@@ -16,45 +16,53 @@ from git import Repo, Git
 from .helpers import find_path_above
 
 
-
-repo = Repo('/Users/kreitz/repos/public/legit')
-git = Git('/Users/kreitz/repos/public/legit')
+Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
-Branch = namedtuple('Branch', ['name', 'published'])
-
-
-def get_repo():
+def get_repo(git=False):
     """Returns the current Repo, based on path."""
 
     bare_path = find_path_above('.git')
 
     if bare_path:
         prelapsarian_path = os.path.split(bare_path)[0]
-        return Repo(prelapsarian_path)
+        if git:
+            return Git(prelapsarian_path)
+        else:
+            return Repo(prelapsarian_path)
     else:
         return None
 
 
-def get_branches():
+def get_branches(local=True, remote=True):
     """Returns a list of local and remote branches."""
 
     branches = []
 
-    # Remote refs.
-    for b in repo.remotes[0].refs:
-        name = '/'.join(b.name.split('/')[1:])
+    if local:
 
-        branches.append(Branch(name, True))
+        # Remote refs.
+        for b in repo.remotes[0].refs:
+            name = '/'.join(b.name.split('/')[1:])
 
-    # Local refs.
-    for b in [h.name for h in repo.heads]:
+            branches.append(Branch(name, True))
 
-        if b not in [br.name for br in branches]:
-            branches.append(Branch(b, False))
+    if remote:
+
+        # Local refs.
+        for b in [h.name for h in repo.heads]:
+
+            if b not in [br.name for br in branches] or not local:
+                branches.append(Branch(b, False))
 
 
     return sorted(branches, key=attrgetter('name'))
+
+
+def get_branch_names(local=True, remote=True):
+    branches = get_branches(local=local, remote=remote)
+
+    return [b.name for b in branches]
 
 
 def set_branch():
@@ -63,3 +71,6 @@ def set_branch():
 
 def fetch():
     pass
+
+
+repo = get_repo()
