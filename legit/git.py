@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pygit2 import Repository
+from git import Repo
 
 
 def get_branches():
