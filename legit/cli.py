@@ -55,12 +55,12 @@ def cmd_switch(args):
     else:
         # TODO: Stash
         # TODO: UnStash
-        repo.heads[to_branch].checkout()
+        stash_for_switch()
+        checkout_branch(to_branch)
+        stash_for_switch()
 
 
 def display_available_branches():
-
-    # print 'Available branches:'
 
     branches = get_branches()
 

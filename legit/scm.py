@@ -16,7 +16,41 @@ from git import Repo, Git
 from .helpers import find_path_above
 
 
+
+GH_TEMPLATE = 'On {branch}: GitHub: stashing before switching branches.'
+
+
 Branch = namedtuple('Branch', ['name', 'is_published'])
+
+
+
+def stash_for_switch():
+    return repo.git.execute(
+        ['git', 'stash', 'save',
+        GH_TEMPLATE.format(branch=repo.head.ref.name)]
+    )
+
+    # cmd = list()
+    # cmd.append('stash save 2')
+    # print 'fuck'
+
+    # print cmd
+    # return repo.git.execute()
+    # .format(
+        # GH_TEMPLATE.format(branch=repo.head.ref.name))
+    # )
+    # .format(branch=repo.head.ref.name)
+    pass
+
+
+def unstash_for_switch():
+    pass
+
+
+def checkout_branch(branch):
+    """Checks out given branch."""
+
+    return repo.heads[branch].checkout()
 
 
 def get_repo(git=False):
