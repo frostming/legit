@@ -18,14 +18,20 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
+``branches``
+    Get a nice pretty list of available branches.
+
 ``sync``
     Syncronizes the current branch.
+    Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
 
 ``switch <branch>``
-    Switches to specified branch. Automatically Un/Stashes any changes.
+    Switches to specified branch.
+    Automatically stashes and unstashes any changes.
 
 ``sprout <off-branch> <new-branch>``
-    Creates a new branch off of the specified branch. Swiches to it immediately.
+    Creates a new branch off of the specified branch.
+    Swiches to it immediately.
 
 ``graft <branch> <into-branch>``
     Merges specified branch into the second branch, and removes it.
@@ -36,7 +42,6 @@ The Interface
 
 ``unpublish <branch>``
     Removes specified branch from the remote.
-    Unlike GfM, this won't remove the local branch. That's messed up.
 
 ``add`` & ``commit`` are also available, but you should just use ``git`` for those.
 
