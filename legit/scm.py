@@ -118,6 +118,13 @@ def graft_branch(branch):
     else:
         return 'There was a problem merging, so the branch was not deleted.'
 
+def unpublish_branch(branch):
+    """Unpublishes given branch."""
+
+    return repo.git.execute(['git',
+        'push', repo.remotes[0].name, ':{0}'.format(branch)
+    ])
+
 
 
 def get_repo(git=False):

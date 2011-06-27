@@ -167,6 +167,21 @@ def cmd_graft(args):
 
 
 
+def cmd_unpublish(args):
+
+    branch = args.get(0)
+
+    branch_names = get_branch_names(local=False)
+
+    if branch not in branch_names:
+        print "{0} is not published. Use a branch that is.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    status_log(unpublish_branch, 'Unpublishing {0}.'.format(
+        colored.yellow(branch)), branch)
+
+
 
 # -----
 # Views
@@ -219,6 +234,6 @@ cmd_map = dict(
     sync=cmd_sync,
     sprout=cmd_sprout,
     graft=cmd_graft,
-    publish=cmd_switch,
-    unpublish=cmd_switch
+    # publish=cmd_publish,
+    unpublish=cmd_unpublish
 )
