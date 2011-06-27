@@ -9,9 +9,9 @@ This module provides the basic functionality of legit.
 
 # from clint import resources
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __author__ = 'Kenneth Reitz'
-__license__ = 'TBD'
+__license__ = 'BSD'
 
 
 # resources.init('kennethreitz', 'legit')
