@@ -81,7 +81,8 @@ def cmd_switch(args):
         if repo.is_dirty():
             status_log(stash_it, 'Saving local changes.')
 
-        status_log(checkout_branch, 'Switching to {0}.'.format(to_branch), to_branch)
+        status_log(checkout_branch, 'Switching to {0}.'.format(
+            colored.yellow(to_branch)), to_branch)
 
         if unstash_index():
             status_log(unstash_it, 'Restoring local changes.')
@@ -112,16 +113,25 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
-    # chcek args ok
+    branch_names = get_branch_names()
+
+    if off_branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(off_branch))
+        sys.exit(1)
+
+    if new_branch in branch_names:
+        print "{0} already exists. Use a unique name.".format(
+            colored.yellow(off_branch))
+        sys.exit(1)
+
 
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
     status_log(sprout_branch, 'Branching {0} to {1}.'.format(
-        off_branch, new_branch), off_branch, new_branch)
-
-    # confirm local branch exists
-    # confirm branch name isn't taken or published
+        colored.yellow(off_branch), colored.yellow(new_branch)),
+        off_branch, new_branch)
 
 
 # -----
