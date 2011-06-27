@@ -24,10 +24,12 @@ from .scm import *
 def main():
     """Primary Legit command dispatch."""
 
-    if args.get(0) in cmd_map:
-
+    if (args.get(0) in cmd_map) or (args.get(0) in short_map):
         arg = args.get(0)
         args.remove(arg)
+
+        if arg in short_map:
+            arg = short_map.get(arg)
 
         cmd_map.get(arg).__call__(args)
         sys.exit()
@@ -303,4 +305,16 @@ cmd_map = dict(
     add=cmd_add,
     commit=cmd_commit,
     branches=cmd_branches
+)
+
+short_map = dict(
+    sw='switch',
+    sy='sync',
+    sp='sprout',
+    gr='graft',
+    pub='publish',
+    unp='unpublish',
+    a='add',
+    c='commit',
+    br='branches'
 )
