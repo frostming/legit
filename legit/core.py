@@ -13,7 +13,7 @@ from clint import resources
 
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 __author__ = 'Kenneth Reitz'
 __license__ = 'TBD'
 

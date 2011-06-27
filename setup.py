@@ -4,8 +4,6 @@
 import os
 import sys
 
-from legit.core import __version__
-
 try:
     from setuptools import setup
 except ImportError:
@@ -23,7 +21,7 @@ with open('reqs.txt') as f:
 
 setup(
     name='legit',
-    version=__version__,
+    version='0.0.3',
     description='Sexy Git CLI, Inspired by GitHub for Mac.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',

@@ -233,7 +233,10 @@ def cmd_commit(args):
 
 
 def cmd_branches(args):
+    """d"""
     display_available_branches()
+
+
 
 # -----
 # Views
