@@ -41,13 +41,14 @@ def unstash_index(sync=False):
     for stash in stash_list.splitlines():
 
         verb = 'syncing' if sync else 'switching'
+        branch = repo.head.ref.name
 
         if (
             (('Legit' in stash) and
-                (repo.head.ref.name in stash) and
+                ('On {0}:'.format(branch) in stash) and
                 (verb in stash))
             or (('GitHub' in stash) and
-                (repo.head.ref.name in stash) and
+                ('On {0}:'.format(branch) in stash) and
                 (verb in stash))
         ):
             return stash[7]
