@@ -224,6 +224,21 @@ def cmd_add(args):
 
     status_log(repo.git.execute, '', commands)
 
+
+def cmd_commit(args):
+    commands = ['git', 'commit']
+    commands.extend(args._args)
+
+    status_log(repo.git.execute, '', commands)
+
+
+def cmd_status(args):
+    commands = ['git', 'status']
+    commands.extend(args._args)
+
+    status_log(repo.git.execute, '', commands)
+
+
 # -----
 # Views
 # -----
@@ -287,5 +302,7 @@ cmd_map = dict(
     graft=cmd_graft,
     publish=cmd_publish,
     unpublish=cmd_unpublish,
-    add=cmd_add
+    add=cmd_add,
+    commit=cmd_commit,
+    status=cmd_status
 )
