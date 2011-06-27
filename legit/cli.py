@@ -40,6 +40,19 @@ def main():
         sys.exit(1)
 
 
+def status_log(func, message, *args, **kwargs):
+
+    print message
+    log = func(*args, **kwargs)
+
+    if log:
+        out = []
+
+        for line in log.split('\n'):
+            if not line.startswith('#'):
+                out.append(line)
+        print colored.black('\n'.join(out))
+
 
 def cmd_switch(args):
 
@@ -53,38 +66,28 @@ def cmd_switch(args):
         print 'Branch not found.'
         sys.exit(1)
     else:
-        stash_for_switch()
-        checkout_branch(to_branch)
-        unstash_for_switch()
+        if repo.is_dirty:
+            status_log(stash_for_switch, 'Saving local changes.')
+
+        status_log(checkout_branch, 'Switching branch.', to_branch)
+        status_log(unstash_for_switch, 'Restoring local changes.')
 
 
 def cmd_sync(args):
 
     branch = repo.head.ref.name
 
-    print 'Fetching changes.'
-    fetch_out = fetch()
-    if fetch_out:
-        print colored.black(fetch_out)
+    status_log(fetch, 'Fetching changes.')
 
-    print 'Saving local changes.'
-    stash_out = stash_for_sync()
-    if stash_out:
-        print colored.black(stash_out)
+    status_log(stash_for_sync, 'Saving local changes.')
 
-    print 'Pulling commits from the server.'
-    pull_out = pull(branch)
-    print colored.black(pull_out)
+    status_log(pull, 'Pulling commits from the server.', branch=branch)
 
     # TODO: check if branch is published.
-    print 'Pushing commits to the server.'
-    push_out = push(branch)
-    print colored.black(push_out)
+    status_log(push, 'Pushing commits to the server.', branch=branch)
 
-    print 'Restoring local changes.'
-    unstash_out = unstash_for_sync()
-    if unstash_out:
-        print colored.black(unstash_out)
+    status_log(unstash_for_sync, 'Restoring local changes.')
+
 
 
 def display_available_branches():
