@@ -162,7 +162,8 @@ def cmd_graft(args):
 
     cmd_switch(switch_args)
 
-    status_log(graft_branch, 'Grafting {0} into {1}.', branch)
+    status_log(graft_branch, 'Grafting {0} into {1}.'.format(
+        colored.yellow(branch), colored.yellow(into_branch)), branch)
 
 
 
