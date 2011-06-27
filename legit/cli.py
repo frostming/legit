@@ -120,6 +120,10 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
+    if new_branch is None:
+        new_branch = off_branch
+        off_branch = repo.head.ref.name
+
     if not off_branch:
         display_available_branches()
         sys.exit()
@@ -133,7 +137,7 @@ def cmd_sprout(args):
 
     if new_branch in branch_names:
         print "{0} already exists. Use a unique name.".format(
-            colored.yellow(off_branch))
+            colored.yellow(new_branch))
         sys.exit(1)
 
 

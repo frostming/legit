@@ -53,7 +53,6 @@ def unstash_index(sync=False):
         ):
             return stash[7]
 
-
 def unstash_it(sync=False):
     """Unstashes changes from current branch for branch sync."""
 
