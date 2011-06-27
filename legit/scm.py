@@ -101,6 +101,25 @@ def sprout_branch(off_branch, branch):
     return repo.git.execute(['git', 'checkout', off_branch, '-b', branch])
 
 
+def graft_branch(branch):
+    """Merges branch into current branch, and deletes it."""
+
+    log = []
+
+    stat, out, err = repo.git.execute(
+        ['git', 'merge', '--no-ff', branch], with_extended_output=True)
+
+    log.append(out)
+
+    if stat is 0:
+        out = repo.git.execute(['git', 'branch', '-D', branch])
+        log.append(out)
+        return '\n'.join(log)
+    else:
+        return 'There was a problem merging, so the branch was not deleted.'
+
+
+
 def get_repo(git=False):
     """Returns the current Repo, based on path."""
 

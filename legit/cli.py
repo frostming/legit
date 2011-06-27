@@ -134,6 +134,38 @@ def cmd_sprout(args):
         off_branch, new_branch)
 
 
+def cmd_graft(args):
+
+    branch = args.get(0)
+    into_branch = args.get(1)
+
+    branch_names = get_branch_names()
+    remote_branch_names = get_branch_names(local=False)
+
+    if branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    if branch in remote_branch_names:
+        print "{0} is published. To graft it, unpublish it first.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    if into_branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(into_branch))
+        sys.exit(1)
+
+    switch_args = args.copy
+    switch_args._args = [into_branch]
+
+    cmd_switch(switch_args)
+
+    status_log(graft_branch, 'Grafting {0} into {1}.', branch)
+
+
+
 # -----
 # Views
 # -----
@@ -184,7 +216,7 @@ cmd_map = dict(
     switch=cmd_switch,
     sync=cmd_sync,
     sprout=cmd_sprout,
-    graft=cmd_switch,
+    graft=cmd_graft,
     publish=cmd_switch,
     unpublish=cmd_switch
 )
