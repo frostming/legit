@@ -4,21 +4,19 @@
 legit.core
 ~~~~~~~~~~
 
-Not much.
+This module provides the basic functionality of legit.
 """
 
 from clint import resources
-resources.init('kennethreitz', 'legit')
-resources.user.write('config.ini', "we'll get there.")
+
+
+
 
 
 __version__ = '0.0.1'
+__author__ = 'Kenneth Reitz'
+__license__ = 'TBD'
 
-
-def path_to_repo():
-    """Returns the path the current repo, if there is one."""
-
-    return None
 
 
 def get_available_branches():
@@ -27,12 +25,21 @@ def get_available_branches():
     return ('master', 'develop')
 
 
-def get_current_branch():
-    """Returns the active available branches in the repo."""
-
-    return 'develop'
+def switch_to_branch(branch):
+    pass
 
 
 def sync_repo():
     """Git fetch. Auto branch of remotes? pull --rebase, push."""
     pass
+
+
+
+# print get_branches()
+# print
+# print dir(repo)
+
+# Init Resources
+
+resources.init('kennethreitz', 'legit')
+resources.user.write('config.ini', "we'll get there.")

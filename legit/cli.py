@@ -13,11 +13,13 @@ from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts, columns
 
-from .core import (
-    get_available_branches, get_current_branch,
-     __version__
-)
+from .core import __version__
+from .scm import *
 
+
+# --------
+# Dispatch
+# --------
 
 def main():
 
@@ -42,6 +44,27 @@ def main():
         sys.exit(1)
 
 
+# -------
+# Helpers
+# -------
+
+def status_log(func, message, *args, **kwargs):
+
+    print message
+    log = func(*args, **kwargs)
+
+    if log:
+        out = []
+
+        for line in log.split('\n'):
+            if not line.startswith('#'):
+                out.append(line)
+        print colored.black('\n'.join(out))
+
+
+# --------
+# Commands
+# --------
 
 def cmd_switch(args):
 
@@ -51,35 +74,145 @@ def cmd_switch(args):
         display_available_branches()
         sys.exit()
 
-    if to_branch not in get_available_branches():
+    if to_branch not in get_branch_names():
         print 'Branch not found.'
+        sys.exit(1)
     else:
-        print 'stash and dash.'
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.')
 
+        status_log(checkout_branch, 'Switching to {0}.'.format(
+            colored.yellow(to_branch)), to_branch)
+
+        if unstash_index():
+            status_log(unstash_it, 'Restoring local changes.')
+
+
+def cmd_sync(args):
+
+    branch = repo.head.ref.name
+
+    if branch in get_branch_names(local=False):
+
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.', sync=True)
+
+        status_log(smart_pull, 'Pulling commits from the server.')
+
+        status_log(push, 'Pushing commits to the server.')
+
+        if unstash_index(sync=True):
+            status_log(unstash_it, 'Restoring local changes.', sync=True)
+    else:
+        print 'This branch has not been published yet.'
+        sys.exit(1)
+
+
+def cmd_sprout(args):
+
+    off_branch = args.get(0)
+    new_branch = args.get(1)
+
+    branch_names = get_branch_names()
+
+    if off_branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(off_branch))
+        sys.exit(1)
+
+    if new_branch in branch_names:
+        print "{0} already exists. Use a unique name.".format(
+            colored.yellow(off_branch))
+        sys.exit(1)
+
+
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.')
+
+    status_log(sprout_branch, 'Branching {0} to {1}.'.format(
+        colored.yellow(off_branch), colored.yellow(new_branch)),
+        off_branch, new_branch)
+
+
+def cmd_graft(args):
+
+    branch = args.get(0)
+    into_branch = args.get(1)
+
+    branch_names = get_branch_names()
+    remote_branch_names = get_branch_names(local=False)
+
+    if branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    if branch in remote_branch_names:
+        print "{0} is published. To graft it, unpublish it first.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    if into_branch not in branch_names:
+        print "{0} doesn't exist. Use a branch that does.".format(
+            colored.yellow(into_branch))
+        sys.exit(1)
+
+    switch_args = args.copy
+    switch_args._args = [into_branch]
+
+    cmd_switch(switch_args)
+
+    status_log(graft_branch, 'Grafting {0} into {1}.'.format(
+        colored.yellow(branch), colored.yellow(into_branch)), branch)
+
+
+
+def cmd_unpublish(args):
+
+    branch = args.get(0)
+
+    branch_names = get_branch_names(local=False)
+
+    if branch not in branch_names:
+        print "{0} is not published. Use a branch that is.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    status_log(unpublish_branch, 'Unpublishing {0}.'.format(
+        colored.yellow(branch)), branch)
+
+
+
+# -----
+# Views
+# -----
 
 def display_available_branches():
 
-    print 'Available branches:'
+    branches = get_branches()
 
-    current_branch = get_current_branch()
+    branch_col = len(max([b.name for b in branches], key=len)) + 1
 
-    for branch in get_available_branches():
+    for branch in branches:
 
-        marker = '-'
-        if current_branch == branch:
-            marker = '+'
+        marker = '*' if (branch.name == repo.head.ref.name) else ' '
+        pub = '(published)' if branch.is_published else '(unpublished)'
 
-        print(
-            columns([marker, 2], [colored.yellow(branch), 20], ['(published)', 15])
+        print columns(
+            [colored.red(marker), 2],
+            [colored.yellow(branch.name), branch_col],
+            [colored.black(pub), 14]
         )
-
-
 
 
 def display_info():
 
-    puts('{0} by Kenneth Reitz <me@kennethreitz.com>'.format(colored.yellow('legit')))
-    puts('https://github.com/kennethreitz/legit\n')
+    puts('{0}. {1}\n'.format(
+        colored.red('legit'),
+        colored.black(u'A Kenneth Reitz Project™')
+    ))
+    # puts('https://github.com/kennethreitz/legit\n')
+    # puts('\n')
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
     puts('Commands: {0}.\n'.format(
         eng_join(
@@ -96,11 +229,11 @@ def display_version():
 
 
 
-
 cmd_map = dict(
     switch=cmd_switch,
-    sync=cmd_switch,
-    branch=cmd_switch,
-    publish=cmd_switch,
-    unpublish=cmd_switch
+    sync=cmd_sync,
+    sprout=cmd_sprout,
+    graft=cmd_graft,
+    # publish=cmd_publish,
+    unpublish=cmd_unpublish
 )
