@@ -94,7 +94,7 @@ def push(branch=None):
 def checkout_branch(branch):
     """Checks out given branch."""
 
-    return repo.heads[branch].checkout()
+    return repo.git.execute(['git', 'checkout', branch])
 
 
 def get_repo(git=False):
