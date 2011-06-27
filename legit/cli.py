@@ -17,6 +17,10 @@ from .core import __version__
 from .scm import *
 
 
+# --------
+# Dispatch
+# --------
+
 def main():
 
     if args.get(0) in cmd_map:
@@ -40,6 +44,10 @@ def main():
         sys.exit(1)
 
 
+# -------
+# Helpers
+# -------
+
 def status_log(func, message, *args, **kwargs):
 
     print message
@@ -53,6 +61,10 @@ def status_log(func, message, *args, **kwargs):
                 out.append(line)
         print colored.black('\n'.join(out))
 
+
+# --------
+# Commands
+# --------
 
 def cmd_switch(args):
 
@@ -95,6 +107,9 @@ def cmd_sync(args):
         sys.exit(1)
 
 
+# -----
+# Views
+# -----
 
 def display_available_branches():
 
@@ -112,8 +127,6 @@ def display_available_branches():
             [colored.yellow(branch.name), branch_col],
             [colored.black(pub), 14]
         )
-
-
 
 
 def display_info():
