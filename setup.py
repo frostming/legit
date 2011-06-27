@@ -21,7 +21,7 @@ with open('reqs.txt') as f:
 
 setup(
     name='legit',
-    version='0.0.3',
+    version='0.0.4',
     description='Sexy Git CLI, Inspired by GitHub for Mac.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
@@ -34,7 +34,7 @@ setup(
         # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
-        # 'License :: OSI Approved :: ISC License (ISCL)',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         # 'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
