@@ -249,6 +249,6 @@ cmd_map = dict(
     sync=cmd_sync,
     sprout=cmd_sprout,
     graft=cmd_graft,
-    # publish=cmd_publish,
+    publish=cmd_publish,
     unpublish=cmd_unpublish
 )
