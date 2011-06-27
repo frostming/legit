@@ -8,6 +8,7 @@ This module provides the main interface to Git.
 """
 
 import os
+import sys
 from collections import namedtuple
 from operator import attrgetter
 
@@ -133,17 +134,14 @@ def publish_branch(branch):
         'push', repo.remotes[0].name, branch])
 
 
-def get_repo(git=False):
+def get_repo():
     """Returns the current Repo, based on path."""
 
     bare_path = find_path_above('.git')
 
     if bare_path:
         prelapsarian_path = os.path.split(bare_path)[0]
-        if git:
-            return Git(prelapsarian_path)
-        else:
-            return Repo(prelapsarian_path)
+        return Repo(prelapsarian_path)
     else:
         return None
 
@@ -183,3 +181,7 @@ def get_branch_names(local=True, remote=True):
 
 
 repo = get_repo()
+
+if repo is None:
+    print 'Not a git repository.'
+    sys.exit(128)
