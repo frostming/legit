@@ -69,7 +69,7 @@ def cmd_switch(args):
         if repo.is_dirty:
             status_log(stash_for_switch, 'Saving local changes.')
 
-        status_log(checkout_branch, 'Switching branch.', to_branch)
+        status_log(checkout_branch, 'Switching to {0}.'.format(to_branch), to_branch)
         status_log(unstash_for_switch, 'Restoring local changes.')
 
 
