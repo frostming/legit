@@ -166,6 +166,21 @@ def cmd_graft(args):
         colored.yellow(branch), colored.yellow(into_branch)), branch)
 
 
+def cmd_publish(args):
+
+    branch = args.get(0)
+
+    branch_names = get_branch_names(local=False)
+
+    if branch in branch_names:
+        print "{0} is already published. Use a branch that isn't.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    status_log(publish_branch, 'Publishing {0}.'.format(
+        colored.yellow(branch)), branch)
+
+
 
 def cmd_unpublish(args):
 
@@ -174,7 +189,7 @@ def cmd_unpublish(args):
     branch_names = get_branch_names(local=False)
 
     if branch not in branch_names:
-        print "{0} is not published. Use a branch that is.".format(
+        print "{0} isn't published. Use a branch that is.".format(
             colored.yellow(branch))
         sys.exit(1)
 
