@@ -55,5 +55,8 @@ Installing Legit is easy with pip::
 
     $ pip install legit
 
+You'll then have the wonderful ``legit`` command available. Run it within
+a repository.
+
 Binaries will be available soon.
 
