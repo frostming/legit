@@ -62,19 +62,26 @@ def cmd_sync(args):
 
     branch = repo.head.ref.name
 
-    fetch()
+    print 'Fetching changes.'
+    fetch_out = fetch()
+    if fetch_out:
+        print colored.black(fetch_out)
+
+    print 'Saving local changes.'
     stash_for_sync()
-    pull(branch)
-    push(branch)
+
+    print 'Pulling commits from the server.'
+    pull_out = pull(branch)
+    print colored.black(pull_out)
+
+    # TODO: check if branch is published.
+    print 'Pushing commits to the server.'
+    push_out = push(branch)
+    print colored.black(push_out)
+
+    print 'Restoring local changes.'
     unstash_for_sync()
 
-
-
-    # print colored.yellow(fetch())
-    # print colored.yellow(stash_for_sync())
-    # print colored.yellow(pull())
-    # print colored.yellow(push())
-    # print colored.yellow(unstash_for_sync())
 
 def display_available_branches():
 
