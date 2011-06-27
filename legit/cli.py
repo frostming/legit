@@ -302,8 +302,8 @@ cmd_map = dict(
     graft=cmd_graft,
     publish=cmd_publish,
     unpublish=cmd_unpublish,
-    add=cmd_add,
-    commit=cmd_commit,
+    # add=cmd_add,
+    # commit=cmd_commit,
     branches=cmd_branches
 )
 
@@ -314,7 +314,7 @@ short_map = dict(
     gr='graft',
     pub='publish',
     unp='unpublish',
-    a='add',
-    c='commit',
+    # a='add',
+    # c='commit',
     br='branches'
 )
