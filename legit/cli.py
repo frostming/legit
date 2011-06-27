@@ -222,7 +222,7 @@ def cmd_add(args):
     commands = ['git', 'add']
     commands.extend(args._args)
 
-    status_log(repo.git.execute, 'git-add:', commands)
+    status_log(repo.git.execute, '', commands)
 
 # -----
 # Views
