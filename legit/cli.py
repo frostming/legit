@@ -113,6 +113,10 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
+    if not off_branch:
+        display_available_branches()
+        sys.exit()
+
     branch_names = get_branch_names()
 
     if off_branch not in branch_names:
@@ -138,6 +142,10 @@ def cmd_graft(args):
 
     branch = args.get(0)
     into_branch = args.get(1)
+
+    if not branch:
+        display_available_branches()
+        sys.exit()
 
     branch_names = get_branch_names()
     remote_branch_names = get_branch_names(local=False)
@@ -170,6 +178,10 @@ def cmd_publish(args):
 
     branch = args.get(0)
 
+    if not branch:
+        display_available_branches()
+        sys.exit()
+
     branch_names = get_branch_names(local=False)
 
     if branch in branch_names:
@@ -185,6 +197,10 @@ def cmd_publish(args):
 def cmd_unpublish(args):
 
     branch = args.get(0)
+
+    if not branch:
+        display_available_branches()
+        sys.exit()
 
     branch_names = get_branch_names(local=False)
 
