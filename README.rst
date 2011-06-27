@@ -21,9 +21,10 @@ The Interface
 ``branches``
     Get a nice pretty list of available branches.
 
-``sync``
-    Syncronizes the current branch.
+``sync [<branch>]``
+    Syncronizes the given branch. Defaults to current branch.
     Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
+    You can only sync published branches.
 
 ``switch <branch>``
     Switches to specified branch.

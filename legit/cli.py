@@ -66,6 +66,15 @@ def status_log(func, message, *args, **kwargs):
         print colored.black('\n'.join(out))
 
 
+def switch_to(branch):
+    """Runs the cmd_switch command with given branch arg."""
+
+    switch_args = args.copy
+    switch_args._args = [branch]
+
+    return cmd_switch(switch_args)
+
+
 # --------
 # Commands
 # --------
@@ -96,21 +105,41 @@ def cmd_switch(args):
 def cmd_sync(args):
     """Legit Sync command."""
 
-    branch = repo.head.ref.name
+    if args.get(0):
+        # Optional branch specifier.
+        if args.get(0) in get_branch_names():
+            branch = args.get(0)
+            is_external = True
+            original_branch = repo.head.ref.name
+        else:
+            print "{0} doesn't exist. Use a branch that does.".format(
+                colored.yellow(args.get(0)))
+            sys.exit(1)
+    else:
+        # Sync current branch.
+        branch = repo.head.ref.name
+        is_external = False
 
     if branch in get_branch_names(local=False):
+
+        if is_external:
+            switch_to(branch)
 
         if repo.is_dirty():
             status_log(stash_it, 'Saving local changes.', sync=True)
 
         status_log(smart_pull, 'Pulling commits from the server.')
-
         status_log(push, 'Pushing commits to the server.', branch)
 
         if unstash_index(sync=True):
             status_log(unstash_it, 'Restoring local changes.', sync=True)
+
+        if is_external:
+            switch_to(original_branch)
+
     else:
-        print 'This branch has not been published yet.'
+        print '{0} has not been published yet.'.format(
+            colored.yellow(branch))
         sys.exit(1)
 
 
@@ -176,10 +205,8 @@ def cmd_graft(args):
             colored.yellow(into_branch))
         sys.exit(1)
 
-    switch_args = args.copy
-    switch_args._args = [into_branch]
-
-    cmd_switch(switch_args)
+    # Go to new branch.
+    switch_to(into_branch)
 
     status_log(graft_branch, 'Grafting {0} into {1}.'.format(
         colored.yellow(branch), colored.yellow(into_branch)), branch)
@@ -258,11 +285,12 @@ def display_available_branches():
     for branch in branches:
 
         marker = '*' if (branch.name == repo.head.ref.name) else ' '
+        color = colored.green if (branch.name == repo.head.ref.name) else colored.yellow
         pub = '(published)' if branch.is_published else '(unpublished)'
 
         print columns(
             [colored.red(marker), 2],
-            [colored.yellow(branch.name), branch_col],
+            [color(branch.name), branch_col],
             [colored.black(pub), 14]
         )
 

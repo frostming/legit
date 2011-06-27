@@ -9,7 +9,7 @@ This module provides the basic functionality of legit.
 
 # from clint import resources
 
-__version__ = '0.0.8'
+__version__ = '0.0.9'
 __author__ = 'Kenneth Reitz'
 __license__ = 'BSD'
 
