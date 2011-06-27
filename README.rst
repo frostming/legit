@@ -29,7 +29,7 @@ The Interface
     Switches to specified branch.
     Automatically stashes and unstashes any changes.
 
-``sprout <off-branch> <new-branch>``
+``sprout [<branch>] <new-branch>``
     Creates a new branch off of the specified branch.
     Swiches to it immediately.
 
