@@ -22,6 +22,7 @@ from .scm import *
 # --------
 
 def main():
+    """Primary Legit command dispatch."""
 
     if args.get(0) in cmd_map:
 
@@ -32,7 +33,7 @@ def main():
         sys.exit()
 
     elif args.contains(('-h', '--help')):
-        display_info()
+        display_help()
         sys.exit(1)
 
     elif args.contains(('-v', '--version')):
@@ -49,6 +50,7 @@ def main():
 # -------
 
 def status_log(func, message, *args, **kwargs):
+    """Executes a callable with a header message."""
 
     print message
     log = func(*args, **kwargs)
@@ -67,6 +69,7 @@ def status_log(func, message, *args, **kwargs):
 # --------
 
 def cmd_switch(args):
+    """Legit Switch command."""
 
     to_branch = args.get(0)
 
@@ -89,6 +92,7 @@ def cmd_switch(args):
 
 
 def cmd_sync(args):
+    """Legit Sync command."""
 
     branch = repo.head.ref.name
 
@@ -109,6 +113,7 @@ def cmd_sync(args):
 
 
 def cmd_sprout(args):
+    """Legit Sprout command."""
 
     off_branch = args.get(0)
     new_branch = args.get(1)
@@ -213,12 +218,18 @@ def cmd_unpublish(args):
         colored.yellow(branch)), branch)
 
 
+def cmd_add(args):
+    commands = ['git', 'add']
+    commands.extend(args._args)
+
+    status_log(repo.git.execute, 'git-add:', commands)
 
 # -----
 # Views
 # -----
 
 def display_available_branches():
+    """Displays available branches."""
 
     branches = get_branches()
 
@@ -237,6 +248,7 @@ def display_available_branches():
 
 
 def display_info():
+    """Displays Legit informatics."""
 
     puts('{0}. {1}\n'.format(
         colored.red('legit'),
@@ -252,7 +264,15 @@ def display_info():
     ))
 
 
+def display_help():
+    """Displays Legit help."""
+
+    display_info()
+
+
 def display_version():
+    """Displays Legit version/release."""
+
     puts('{0} v{1}'.format(
         colored.yellow('legit'),
         __version__
@@ -266,5 +286,6 @@ cmd_map = dict(
     sprout=cmd_sprout,
     graft=cmd_graft,
     publish=cmd_publish,
-    unpublish=cmd_unpublish
+    unpublish=cmd_unpublish,
+    add=cmd_add
 )
