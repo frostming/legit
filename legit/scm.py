@@ -76,23 +76,21 @@ def unstash_for_sync():
 def fetch():
     return repo.git.execute(['git', 'fetch', repo.remotes[0].name])
 
+
 def smart_pull():
     'git log --merges origin/master..master'
 
-    local_merges = repo.git.execute(['git',
-        'log', '--merges', '{0}/{1}..{1}'.format(
-            repo.remotes[0].name, repo.head.ref.name
-        )
-    ])
+    remote = repo.remotes[0].name
+    branch = repo.head.ref.name
 
-    print local_merges
+    fetch()
 
+    merges = repo.git.execute(['git',
+        'log', '--merges', '{0}/{1}..{1}'.format(remote, branch)])
 
-def pull(branch=None):
-    if branch is None:
-        return repo.git.execute(['git', 'pull', '--rebase'])
-    else:
-        return repo.git.execute(['git', 'pull', '--rebase', repo.remotes[0].name, branch])
+    verb = 'merge' if len(merges.split('commit')) else 'rebase'
+
+    return repo.git.execute(['git', verb, '{0}/{1}'.format(remote, branch)])
 
 
 def push(branch=None):
