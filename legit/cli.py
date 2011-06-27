@@ -140,7 +140,6 @@ def display_version():
 
 
 
-
 cmd_map = dict(
     switch=cmd_switch,
     sync=cmd_sync,
