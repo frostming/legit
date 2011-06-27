@@ -15,58 +15,47 @@ from git import Repo, Git
 
 from .helpers import find_path_above
 
-
-
-GH_TEMPLATE = 'GitHub: stashing before switching branches.'
-LEGIT_TEMPLATE = 'Legit: stashing before syncing.'
+LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
 
-def stash_for_switch():
-    """Stashes changes from current branch for branch switch."""
+def stash_it(sync=False):
+
+    msg = 'syncing banch' if sync else 'switching branches'
 
     return repo.git.execute(['git',
         'stash', 'save',
-        GH_TEMPLATE.format(branch=repo.head.ref.name)])
+        LEGIT_TEMPLATE.format(msg)])
 
 
-def unstash_for_switch():
-    """Unstashes changes from current branch for branch switch."""
+def unstash_index(sync=False):
+    """Returns an unstash index if one is available."""
 
     stash_list = repo.git.execute(['git',
         'stash', 'list'])
 
-    stash_index = None
-
     for stash in stash_list.splitlines():
-        if ('GitHub' in stash) and (repo.head.ref.name in stash):
-            stash_index = stash[7]
 
-    if stash_index is not None:
-        return repo.git.execute(['git',
-            'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
+        verb = 'syncing' if sync else 'switching'
+
+        if (
+            (('Legit' in stash) and
+                (repo.head.ref.name in stash) and
+                (verb in stash))
+            or (('GitHub' in stash) and
+                (repo.head.ref.name in stash) and
+                (verb in stash))
+        ):
+            return stash[7]
 
 
-def stash_for_sync():
-    return repo.git.execute(['git',
-        'stash', 'save',
-        LEGIT_TEMPLATE.format(branch=repo.head.ref.name)])
-
-
-def unstash_for_sync():
+def unstash_it(sync=False):
     """Unstashes changes from current branch for branch sync."""
 
-    stash_list = repo.git.execute(['git',
-        'stash', 'list'])
-
-    stash_index = None
-
-    for stash in stash_list.splitlines():
-        if ('Legit' in stash) and (repo.head.ref.name in stash):
-            stash_index = stash[7]
+    stash_index = unstash_index(sync=sync)
 
     if stash_index is not None:
         return repo.git.execute(['git',

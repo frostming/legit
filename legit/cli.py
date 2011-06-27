@@ -66,25 +66,31 @@ def cmd_switch(args):
         print 'Branch not found.'
         sys.exit(1)
     else:
-        if repo.is_dirty:
-            status_log(stash_for_switch, 'Saving local changes.')
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.')
 
         status_log(checkout_branch, 'Switching to {0}.'.format(to_branch), to_branch)
-        status_log(unstash_for_switch, 'Restoring local changes.')
+
+        if unstash_index():
+            status_log(unstash_it, 'Restoring local changes.')
 
 
 def cmd_sync(args):
 
     branch = repo.head.ref.name
 
-    status_log(stash_for_sync, 'Saving local changes.')
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.', sync=True)
 
     status_log(smart_pull, 'Pulling commits from the server.')
 
-    # TODO: check if branch is published.
-    status_log(push, 'Pushing commits to the server.')
+    if branch in get_branch_names(local=False):
+        status_log(push, 'Pushing commits to the server.')
+    else:
+        print 'This branch has not been published yet.'
 
-    status_log(unstash_for_sync, 'Restoring local changes.')
+    if unstash_index(sync=True):
+        status_log(unstash_it, 'Restoring local changes.', sync=True)
 
 
 
