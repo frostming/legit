@@ -107,6 +107,14 @@ def cmd_sync(args):
         sys.exit(1)
 
 
+def cmd_sprout(args):
+
+    off_branch = args.get(0)
+    new_branch = args.get(1)
+
+
+
+
 # -----
 # Views
 # -----
@@ -156,7 +164,7 @@ def display_version():
 cmd_map = dict(
     switch=cmd_switch,
     sync=cmd_sync,
-    sprout=cmd_switch,
+    sprout=cmd_sprout,
     graft=cmd_switch,
     publish=cmd_switch,
     unpublish=cmd_switch

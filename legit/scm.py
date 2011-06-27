@@ -95,6 +95,12 @@ def checkout_branch(branch):
     return repo.git.execute(['git', 'checkout', branch])
 
 
+def graft_branch(off_branch, branch):
+    """Checks out given branch."""
+
+    return repo.git.execute(['git', 'checkout', branch])
+
+
 def get_repo(git=False):
     """Returns the current Repo, based on path."""
 
