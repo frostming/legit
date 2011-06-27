@@ -77,8 +77,6 @@ def cmd_sync(args):
 
     branch = repo.head.ref.name
 
-    status_log(fetch, 'Fetching changes.')
-
     status_log(stash_for_sync, 'Saving local changes.')
 
     status_log(smart_pull, 'Pulling commits from the server.')
