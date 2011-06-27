@@ -184,3 +184,7 @@ repo = get_repo()
 if repo is None:
     print 'Not a git repository.'
     sys.exit(128)
+
+if not repo.remotes:
+    print 'No git remotes configured. Please add one.'
+    sys.exit(128)
