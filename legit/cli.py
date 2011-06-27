@@ -112,7 +112,16 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
+    # chcek args ok
 
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.')
+
+    status_log(sprout_branch, 'Branching {0} to {1}.'.format(
+        off_branch, new_branch), off_branch, new_branch)
+
+    # confirm local branch exists
+    # confirm branch name isn't taken or published
 
 
 # -----
