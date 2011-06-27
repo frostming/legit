@@ -232,12 +232,8 @@ def cmd_commit(args):
     status_log(repo.git.execute, '', commands)
 
 
-def cmd_status(args):
-    commands = ['git', 'status']
-    commands.extend(args._args)
-
-    status_log(repo.git.execute, '', commands)
-
+def cmd_branches(args):
+    display_available_branches()
 
 # -----
 # Views
@@ -303,5 +299,5 @@ cmd_map = dict(
     unpublish=cmd_unpublish,
     add=cmd_add,
     commit=cmd_commit,
-    status=cmd_status
+    branches=cmd_branches
 )
