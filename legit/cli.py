@@ -68,7 +68,9 @@ def cmd_sync(args):
         print colored.black(fetch_out)
 
     print 'Saving local changes.'
-    stash_for_sync()
+    stash_out = stash_for_sync()
+    if stash_out:
+        print colored.black(stash_out)
 
     print 'Pulling commits from the server.'
     pull_out = pull(branch)
@@ -80,7 +82,9 @@ def cmd_sync(args):
     print colored.black(push_out)
 
     print 'Restoring local changes.'
-    unstash_for_sync()
+    unstash_out = unstash_for_sync()
+    if unstash_out:
+        print colored.black(unstash_out)
 
 
 def display_available_branches():
