@@ -49,6 +49,8 @@ The Interface
 The Installation
 ----------------
 
+Warning: don't use this for anything mission critical. It's still new.
+
 Installing Legit is easy with pip::
 
     $ pip install legit
