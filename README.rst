@@ -1,8 +1,6 @@
 Legit: Sexy Git CLI, Inspired by GitHub for Mac™.
 =================================================
 
-Note: This is a **work in progress**. It's not ready for use yet.
-
 
 The Concept
 -----------
@@ -40,17 +38,21 @@ The Interface
     Removes specified branch from the remote.
     Unlike GfM, this won't remove the local branch. That's messed up.
 
-
-The Implementation
-------------------
-
-- Python + PyGit2 / Dulwich (Dulwich will likely make installation much simpler)
-- Install via Static Binaries or Pip
-- Likely send unknown commands back to ``git``, or something.
+``add`` & ``commit`` are also available, but you should just use ``git`` for those.
 
 
-License
--------
+The Installation
+----------------
+
+Installing Legit is easy with pip::
+
+    $ pip install legit
+
+Binaries will be available soon.
+
+
+The License
+-----------
 
 BSD. ::
 
