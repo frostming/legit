@@ -114,9 +114,10 @@ def get_repo(git=False):
 def get_branches(local=True, remote=True):
     """Returns a list of local and remote branches."""
 
+    # print local
     branches = []
 
-    if local:
+    if remote:
 
         # Remote refs.
         for b in repo.remotes[0].refs:
@@ -124,12 +125,12 @@ def get_branches(local=True, remote=True):
 
             branches.append(Branch(name, True))
 
-    if remote:
+    if local:
 
         # Local refs.
         for b in [h.name for h in repo.heads]:
 
-            if b not in [br.name for br in branches] or not local:
+            if b not in [br.name for br in branches] or not remote:
                 branches.append(Branch(b, False))
 
 
@@ -141,9 +142,6 @@ def get_branch_names(local=True, remote=True):
 
     return [b.name for b in branches]
 
-
-def fetch():
-    pass
 
 
 repo = get_repo()

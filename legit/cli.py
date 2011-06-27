@@ -79,18 +79,20 @@ def cmd_sync(args):
 
     branch = repo.head.ref.name
 
-    if repo.is_dirty():
-        status_log(stash_it, 'Saving local changes.', sync=True)
-
-    status_log(smart_pull, 'Pulling commits from the server.')
-
     if branch in get_branch_names(local=False):
+
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.', sync=True)
+
+        status_log(smart_pull, 'Pulling commits from the server.')
+
         status_log(push, 'Pushing commits to the server.')
+
+        if unstash_index(sync=True):
+            status_log(unstash_it, 'Restoring local changes.', sync=True)
     else:
         print 'This branch has not been published yet.'
-
-    if unstash_index(sync=True):
-        status_log(unstash_it, 'Restoring local changes.', sync=True)
+        sys.exit(1)
 
 
 
@@ -142,7 +144,8 @@ def display_version():
 cmd_map = dict(
     switch=cmd_switch,
     sync=cmd_sync,
-    branch=cmd_switch,
+    sprout=cmd_switch,
+    graft=cmd_switch,
     publish=cmd_switch,
     unpublish=cmd_switch
 )
