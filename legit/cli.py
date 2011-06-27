@@ -269,8 +269,7 @@ def display_info():
         colored.red('legit'),
         colored.black(u'A Kenneth Reitz Project™')
     ))
-    # puts('https://github.com/kennethreitz/legit\n')
-    # puts('\n')
+
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
     puts('Commands: {0}.\n'.format(
         eng_join(

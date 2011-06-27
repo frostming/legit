@@ -145,7 +145,6 @@ def get_repo():
     else:
         return None
 
-# fuck
 
 def get_branches(local=True, remote=True):
     """Returns a list of local and remote branches."""
