@@ -99,7 +99,7 @@ def cmd_sync(args):
 
         status_log(smart_pull, 'Pulling commits from the server.')
 
-        status_log(push, 'Pushing commits to the server.')
+        status_log(push, 'Pushing commits to the server.', branch)
 
         if unstash_index(sync=True):
             status_log(unstash_it, 'Restoring local changes.', sync=True)
