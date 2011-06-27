@@ -81,10 +81,10 @@ def cmd_sync(args):
 
     status_log(stash_for_sync, 'Saving local changes.')
 
-    status_log(pull, 'Pulling commits from the server.', branch=branch)
+    status_log(smart_pull, 'Pulling commits from the server.')
 
     # TODO: check if branch is published.
-    status_log(push, 'Pushing commits to the server.', branch=branch)
+    status_log(push, 'Pushing commits to the server.')
 
     status_log(unstash_for_sync, 'Restoring local changes.')
 
