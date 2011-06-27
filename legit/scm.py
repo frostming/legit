@@ -72,19 +72,21 @@ def unstash_for_sync():
         return repo.git.execute(['git',
             'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
+
 def fetch():
     return repo.remotes[0].fetch()
 
+
 def pull(branch=None):
     if branch is None:
-        return repo.remotes[0].pull()
+        return repo.git.execute(['git', 'pull'])
     else:
         return repo.git.execute(['git', 'pull', repo.remotes[0].name, branch])
 
 
 def push(branch=None):
     if branch is None:
-        return repo.remotes[0].push()
+        return repo.git.execute(['git', 'push'])
     else:
         return repo.git.execute(['git', 'push', repo.remotes[0].name, branch])
 
