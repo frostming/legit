@@ -62,3 +62,11 @@ a repository.
 
 Binaries will be available soon.
 
+
+Caveats
+-------
+
+- All remote operations are carried out by the first remote found.
+- If a ``stash pop`` merge fails, Legit stops. I'd like to add checking
+ for a merge failure, and undo the command with friendly error reporting.
+- Pip install is cumbersome to people unfamiliar with Python. Package. (Py2App + PyInstaller)
