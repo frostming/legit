@@ -28,6 +28,7 @@ The Interface
 
 ``switch <branch>``
     Switches to specified branch.
+    Defaults to current branch.
     Automatically stashes and unstashes any changes.
 
 ``sprout [<branch>] <new-branch>``
