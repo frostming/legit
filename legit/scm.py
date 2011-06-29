@@ -83,6 +83,12 @@ def smart_pull():
     return repo.git.execute(['git', verb, '{0}/{1}'.format(remote, branch)])
 
 
+def rebase(branch):
+    """Rebases onto the given branch."""
+
+    return repo.git.execute(['git', 'rebase', branch])
+
+
 def push(branch=None):
     if branch is None:
         return repo.git.execute(['git', 'push'])

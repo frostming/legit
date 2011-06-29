@@ -79,6 +79,28 @@ def switch_to(branch):
 # Commands
 # --------
 
+def cmd_rebase(args):
+    """Legit Rebase command."""
+
+    onto_branch = args.get(0)
+
+    if not onto_branch:
+        display_available_branches()
+        sys.exit()
+
+    if onto_branch not in get_branch_names():
+        print 'Branch not found.'
+        sys.exit(1)
+    else:
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.')
+
+        status_log(rebase, 'Rebasing onto {0}.'.format(
+            colored.yellow(onto_branch)), onto_branch)
+
+        if unstash_index():
+            status_log(unstash_it, 'Restoring local changes.')
+
 def cmd_switch(args):
     """Legit Switch command."""
 
@@ -328,6 +350,7 @@ def display_version():
 
 
 cmd_map = dict(
+    rebase=cmd_rebase,
     switch=cmd_switch,
     sync=cmd_sync,
     sprout=cmd_sprout,
