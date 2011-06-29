@@ -45,6 +45,10 @@ The Interface
 ``unpublish <branch>``
     Removes specified branch from the remote.
 
+``rebase <branch>``
+    Rebase onto the specified branch.
+    Automatically stashes and unstashes any changes.
+
 ``add`` & ``commit`` are also available, but you should just use ``git`` for those.
 
 
