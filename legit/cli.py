@@ -63,7 +63,7 @@ def status_log(func, message, *args, **kwargs):
         for line in log.split('\n'):
             if not line.startswith('#'):
                 out.append(line)
-        print colored.black('\n'.join(out))
+        print '\n'.join(out)
 
 
 def switch_to(branch):
@@ -291,7 +291,7 @@ def display_available_branches():
         print columns(
             [colored.red(marker), 2],
             [color(branch.name), branch_col],
-            [colored.black(pub), 14]
+            [pub, 14]
         )
 
 
@@ -300,7 +300,7 @@ def display_info():
 
     puts('{0}. {1}\n'.format(
         colored.red('legit'),
-        colored.black(u'A Kenneth Reitz Project™')
+        'A Kenneth Reitz Project™'
     ))
 
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
