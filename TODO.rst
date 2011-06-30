@@ -1,0 +1,5 @@
+- configuration 'legit.ini'
+- git transparency
+- smart_pull => smart_merge
+- git-legit.org
+- documentation

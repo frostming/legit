@@ -15,9 +15,12 @@ from operator import attrgetter
 from git import Repo, Git
 
 from .helpers import find_path_above
+from .settings import settings
+
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
+git = 'git'
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
@@ -27,7 +30,7 @@ def stash_it(sync=False):
 
     msg = 'syncing banch' if sync else 'switching branches'
 
-    return repo.git.execute(['git',
+    return repo.git.execute([git,
         'stash', 'save',
         LEGIT_TEMPLATE.format(msg)])
 
@@ -35,7 +38,7 @@ def stash_it(sync=False):
 def unstash_index(sync=False):
     """Returns an unstash index if one is available."""
 
-    stash_list = repo.git.execute(['git',
+    stash_list = repo.git.execute([git,
         'stash', 'list'])
 
     for stash in stash_list.splitlines():
@@ -59,12 +62,12 @@ def unstash_it(sync=False):
     stash_index = unstash_index(sync=sync)
 
     if stash_index is not None:
-        return repo.git.execute(['git',
+        return repo.git.execute([git,
             'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
 
 
 def fetch():
-    return repo.git.execute(['git', 'fetch', repo.remotes[0].name])
+    return repo.git.execute([git, 'fetch', repo.remotes[0].name])
 
 
 def smart_pull():
@@ -75,31 +78,31 @@ def smart_pull():
 
     fetch()
 
-    merges = repo.git.execute(['git',
+    merges = repo.git.execute([git,
         'log', '--merges', '{0}/{1}..{1}'.format(remote, branch)])
 
     verb = 'merge' if len(merges.split('commit')) else 'rebase'
 
-    return repo.git.execute(['git', verb, '{0}/{1}'.format(remote, branch)])
+    return repo.git.execute([git, verb, '{0}/{1}'.format(remote, branch)])
 
 
 def push(branch=None):
     if branch is None:
-        return repo.git.execute(['git', 'push'])
+        return repo.git.execute([git, 'push'])
     else:
-        return repo.git.execute(['git', 'push', repo.remotes[0].name, branch])
+        return repo.git.execute([git, 'push', repo.remotes[0].name, branch])
 
 
 def checkout_branch(branch):
     """Checks out given branch."""
 
-    return repo.git.execute(['git', 'checkout', branch])
+    return repo.git.execute([git, 'checkout', branch])
 
 
 def sprout_branch(off_branch, branch):
     """Checks out given branch."""
 
-    return repo.git.execute(['git', 'checkout', off_branch, '-b', branch])
+    return repo.git.execute([git, 'checkout', off_branch, '-b', branch])
 
 
 def graft_branch(branch):
@@ -108,12 +111,12 @@ def graft_branch(branch):
     log = []
 
     stat, out, err = repo.git.execute(
-        ['git', 'merge', '--no-ff', branch], with_extended_output=True)
+        [git, 'merge', '--no-ff', branch], with_extended_output=True)
 
     log.append(out)
 
     if stat is 0:
-        out = repo.git.execute(['git', 'branch', '-D', branch])
+        out = repo.git.execute([git, 'branch', '-D', branch])
         log.append(out)
         return '\n'.join(log)
     else:
@@ -123,14 +126,14 @@ def graft_branch(branch):
 def unpublish_branch(branch):
     """Unpublishes given branch."""
 
-    return repo.git.execute(['git',
+    return repo.git.execute([git,
         'push', repo.remotes[0].name, ':{0}'.format(branch)])
 
 
 def publish_branch(branch):
     """Publishes given branch."""
 
-    return repo.git.execute(['git',
+    return repo.git.execute([git,
         'push', repo.remotes[0].name, branch])
 
 

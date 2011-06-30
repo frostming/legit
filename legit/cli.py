@@ -8,14 +8,24 @@ This module povides the CLI interface to legit.
 """
 
 import sys
+from time import sleep
 
+import clint.resources
 from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, indent, puts, columns
 
 from .core import __version__
+from .settings import settings
+from .helpers import is_lin, is_osx, is_win
 from .scm import *
 
+
+def black(s):
+    if settings.allow_black_foreground:
+        return colored.black(s)
+    else:
+        return s.encode('utf-8')
 
 # --------
 # Dispatch
@@ -43,8 +53,17 @@ def main():
         sys.exit(1)
 
     else:
-        display_info()
-        sys.exit(1)
+        if settings.git_transparency:
+            # Send everything to git
+            git_args = list(sys.argv)
+            if settings.git_transparency is True:
+                settings.git_transparency = 'git'
+
+            git_args[0] = settings.git_transparency
+            os.system(' '.join(git_args))
+        else:
+            display_info()
+            sys.exit(1)
 
 
 # -------
@@ -63,7 +82,7 @@ def status_log(func, message, *args, **kwargs):
         for line in log.split('\n'):
             if not line.startswith('#'):
                 out.append(line)
-        print colored.black('\n'.join(out))
+        print black('\n'.join(out))
 
 
 def switch_to(branch):
@@ -270,6 +289,36 @@ def cmd_branches(args):
     display_available_branches()
 
 
+def cmd_settings(args):
+    """Legit settings."""
+
+    path = clint.resources.user.open('config.ini').name
+
+
+    print 'Legit Settings:\n'
+
+    for (option, _, description) in settings.config_defaults:
+        print columns([colored.yellow(option), 25], [description, None])
+
+
+    print '\nSee {0} for more details.'.format(settings.config_url)
+
+    sleep(0.35)
+
+    if is_osx:
+        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'open'
+        os.system("{0} '{1}'".format(editor, path))
+    elif is_linux:
+        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
+        os.system("{0} '{1}'".format(editor, path))
+    elif is_windows:
+        os.system("'{0}'".format(path))
+    else:
+        print "Edit '{0}' to manage Legit settings.\n".format(path)
+
+    sys.exit()
+
+
 
 # -----
 # Views
@@ -291,7 +340,7 @@ def display_available_branches():
         print columns(
             [colored.red(marker), 2],
             [color(branch.name), branch_col],
-            [colored.black(pub), 14]
+            [black(pub), 14]
         )
 
 
@@ -300,7 +349,7 @@ def display_info():
 
     puts('{0}. {1}\n'.format(
         colored.red('legit'),
-        colored.black(u'A Kenneth Reitz Project™')
+        black(u'A Kenneth Reitz Project™')
     ))
 
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
@@ -336,7 +385,8 @@ cmd_map = dict(
     unpublish=cmd_unpublish,
     # add=cmd_add,
     # commit=cmd_commit,
-    branches=cmd_branches
+    branches=cmd_branches,
+    settings=cmd_settings
 )
 
 short_map = dict(

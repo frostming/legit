@@ -9,6 +9,13 @@ Various Python helpers.
 
 
 import os
+import platform
+
+_platform = platform.system().lower()
+
+is_osx = (_platform == 'darwin')
+is_win = (_platform == 'windows')
+is_lin = (_platform == 'linux')
 
 
 def find_path_above(*names):
@@ -22,4 +29,5 @@ def find_path_above(*names):
             if os.path.exists(joined):
                 return os.path.abspath(joined)
         path = os.path.join('..', path)
+
 
