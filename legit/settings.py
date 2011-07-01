@@ -67,8 +67,11 @@ settings.config_defaults = (
         'Send unknown commands to Git? Defaults to False.'),
 
     ('disable_colors', False,
-        'Y U NO FUN? Defaults to False.'))
+        'Y U NO FUN? Defaults to False.'),
+
+    ('last_update_check', None,
+        'Date of the last update check.'))
 
 
 settings.config_url = 'http://git-legit.org/config'
-settings.update_url = ''
+settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
