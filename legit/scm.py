@@ -25,9 +25,19 @@ git = 'git'
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
+def repo_check():
+    if repo is None:
+        print 'Not a git repository.'
+        sys.exit(128)
+
+    # TODO: no remote fail
+    if not repo.remotes:
+        print 'No git remotes configured. Please add one.'
+        sys.exit(128)
+
 
 def stash_it(sync=False):
-
+    repo_check()
     msg = 'syncing banch' if sync else 'switching branches'
 
     return repo.git.execute([git,
@@ -37,6 +47,8 @@ def stash_it(sync=False):
 
 def unstash_index(sync=False):
     """Returns an unstash index if one is available."""
+
+    repo_check()
 
     stash_list = repo.git.execute([git,
         'stash', 'list'])
@@ -59,6 +71,8 @@ def unstash_index(sync=False):
 def unstash_it(sync=False):
     """Unstashes changes from current branch for branch sync."""
 
+    repo_check()
+
     stash_index = unstash_index(sync=sync)
 
     if stash_index is not None:
@@ -67,11 +81,16 @@ def unstash_it(sync=False):
 
 
 def fetch():
+
+    repo_check()
+
     return repo.git.execute([git, 'fetch', repo.remotes[0].name])
 
 
 def smart_pull():
     'git log --merges origin/master..master'
+
+    repo_check()
 
     remote = repo.remotes[0].name
     branch = repo.head.ref.name
@@ -87,6 +106,10 @@ def smart_pull():
 
 
 def push(branch=None):
+
+    repo_check()
+
+
     if branch is None:
         return repo.git.execute([git, 'push'])
     else:
@@ -96,17 +119,23 @@ def push(branch=None):
 def checkout_branch(branch):
     """Checks out given branch."""
 
+    repo_check()
+
     return repo.git.execute([git, 'checkout', branch])
 
 
 def sprout_branch(off_branch, branch):
     """Checks out given branch."""
 
+    repo_check()
+
     return repo.git.execute([git, 'checkout', off_branch, '-b', branch])
 
 
 def graft_branch(branch):
     """Merges branch into current branch, and deletes it."""
+
+    repo_check()
 
     log = []
 
@@ -126,12 +155,16 @@ def graft_branch(branch):
 def unpublish_branch(branch):
     """Unpublishes given branch."""
 
+    repo_check()
+
     return repo.git.execute([git,
         'push', repo.remotes[0].name, ':{0}'.format(branch)])
 
 
 def publish_branch(branch):
     """Publishes given branch."""
+
+    repo_check()
 
     return repo.git.execute([git,
         'push', repo.remotes[0].name, branch])
@@ -151,6 +184,8 @@ def get_repo():
 
 def get_branches(local=True, remote=True):
     """Returns a list of local and remote branches."""
+
+    repo_check()
 
     # print local
     branches = []
@@ -176,6 +211,9 @@ def get_branches(local=True, remote=True):
 
 
 def get_branch_names(local=True, remote=True):
+
+    repo_check()
+
     branches = get_branches(local=local, remote=remote)
 
     return [b.name for b in branches]
@@ -183,11 +221,3 @@ def get_branch_names(local=True, remote=True):
 
 
 repo = get_repo()
-
-if repo is None:
-    print 'Not a git repository.'
-    sys.exit(128)
-
-if not repo.remotes:
-    print 'No git remotes configured. Please add one.'
-    sys.exit(128)
