@@ -100,7 +100,7 @@ def smart_pull():
     return smart_merge('{0}/{1}'.format(remote, branch))
 
 
-def smart_merge(branch):
+def smart_merge(branch, allow_rebase=True):
 
     repo_check()
 
@@ -109,7 +109,10 @@ def smart_merge(branch):
     merges = repo.git.execute([git,
         'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
-    verb = 'merge' if len(merges.split('commit')) else 'rebase'
+    if allow_rebase:
+        verb = 'merge' if len(merges.split('commit')) else 'rebase'
+    else:
+        verb = 'merge'
 
     return repo.git.execute([git, verb, branch])
 

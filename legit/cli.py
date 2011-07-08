@@ -307,20 +307,22 @@ def cmd_harvest(args):
 
     if from_branch not in branch_names:
         print "{0} isn't an available branch. Use a branch that is.".format(
-            colored.yellow(to_branch))
+            colored.yellow(from_branch))
         sys.exit(1)
 
     if is_external:
         switch_to(to_branch)
-    else:
+
+    if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
-        colored.yellow(from_branch)), from_branch)
+        colored.yellow(from_branch)), from_branc, allow_rebase=False)
 
     if is_external:
         switch_to(original_branch)
-    else:
+
+    if unstash_index():
         status_log(unstash_it, 'Restoring local changes.')
 
 
