@@ -14,7 +14,7 @@ from time import sleep
 import clint.resources
 from clint import args
 from clint.eng import join as eng_join
-from clint.textui import colored, indent, puts, columns
+from clint.textui import colored, puts, columns
 
 from .core import __version__
 from .settings import settings
@@ -326,7 +326,7 @@ def cmd_harvest(args):
         status_log(unstash_it, 'Restoring local changes.')
 
 
-
+#
 
 def cmd_branches(args):
     """Displays available branches."""
@@ -353,7 +353,7 @@ def cmd_settings(args):
     if is_osx:
         editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'open'
         os.system("{0} '{1}'".format(editor, path))
-    elif is_linux:
+    elif is_lin:
         editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
         os.system("{0} '{1}'".format(editor, path))
     elif is_windows:
