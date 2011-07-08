@@ -125,7 +125,11 @@ def cmd_switch(args):
 
 
 def cmd_sync(args):
-    """Legit Sync command."""
+    """Stashes unstaged changes, Fetches remote data, Performs smart
+    pull+merge, Pushes local commits up, and Unstashes changes.
+
+    Defaults to current branch.
+    """
 
     if args.get(0):
         # Optional branch specifier.
@@ -166,7 +170,9 @@ def cmd_sync(args):
 
 
 def cmd_sprout(args):
-    """Legit Sprout command."""
+    """Creates a new branch of given name from given branch.
+    Defaults to current branch.
+    """
 
     off_branch = args.get(0)
     new_branch = args.get(1)
@@ -201,6 +207,7 @@ def cmd_sprout(args):
 
 
 def cmd_graft(args):
+    """Merges an unpublished branch the given branch, then deletes it."""
 
     branch = args.get(0)
     into_branch = args.get(1)
@@ -235,6 +242,7 @@ def cmd_graft(args):
 
 
 def cmd_publish(args):
+    """Pushes an unpublished branch to a remote repository."""
 
     branch = args.get(0)
 
@@ -255,6 +263,7 @@ def cmd_publish(args):
 
 
 def cmd_unpublish(args):
+    """Removes a published branch from the remote repository."""
 
     branch = args.get(0)
 
@@ -288,12 +297,12 @@ def cmd_commit(args):
 
 
 def cmd_branches(args):
-    """d"""
+    """Displays available branches."""
     display_available_branches()
 
 
 def cmd_settings(args):
-    """Legit settings."""
+    """Opens legit settings in editor."""
 
     path = clint.resources.user.open('config.ini').name
 
