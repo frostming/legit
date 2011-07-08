@@ -209,7 +209,7 @@ def cmd_sprout(args):
 
 
 def cmd_graft(args):
-    """Merges an unpublished branch the given branch, then deletes it."""
+    """Merges an unpublished branch into the given branch, then deletes it."""
 
     branch = args.get(0)
     into_branch = args.get(1)
@@ -286,18 +286,45 @@ def cmd_unpublish(args):
         colored.yellow(branch)), branch)
 
 
-def cmd_add(args):
-    commands = ['git', 'add']
-    commands.extend(args._args)
+def cmd_harvest(args):
+    """Syncs a branch with given branch. Defaults to current."""
 
-    status_log(repo.git.execute, '', commands)
+    from_branch = args.get(0)
+    to_branch = args.get(1)
+
+    if not from_branch:
+        print 'Please specify a branch to harvest commits from:'
+        display_available_branches()
+        sys.exit()
+
+    if to_branch:
+        original_branch = repo.head.ref.name
+        is_external = True
+    else:
+        is_external = False
 
 
-def cmd_commit(args):
-    commands = ['git', 'commit']
-    commands.extend(args._args)
+    branch_names = get_branch_names(local=False)
 
-    status_log(repo.git.execute, '', commands)
+    if from_branch not in branch_names:
+        print "{0} isn't an available branch. Use a branch that is.".format(
+            colored.yellow(branch))
+        sys.exit(1)
+
+    if is_external:
+        switch_to(to_branch)
+    else:
+        stash_it()
+
+    status_log(smart_merge, 'Grafting commits from {0}.'.format(
+        colored.yellow(from_branch)), from_branch)
+
+    if is_external:
+        switch_to(original_branch)
+    else:
+        unstash_is()
+
+
 
 
 def cmd_branches(args):
@@ -397,6 +424,7 @@ cmd_map = dict(
     sync=cmd_sync,
     sprout=cmd_sprout,
     graft=cmd_graft,
+    harvest=cmd_harvest,
     publish=cmd_publish,
     unpublish=cmd_unpublish,
     branches=cmd_branches,

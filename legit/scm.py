@@ -97,18 +97,26 @@ def smart_pull():
 
     fetch()
 
+    return smart_merge('{0}/{1}'.format(remote, branch))
+
+
+def smart_merge(branch):
+
+    repo_check()
+
+    from_branch = repo.head.ref.name
+
     merges = repo.git.execute([git,
-        'log', '--merges', '{0}/{1}..{1}'.format(remote, branch)])
+        'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
     verb = 'merge' if len(merges.split('commit')) else 'rebase'
 
-    return repo.git.execute([git, verb, '{0}/{1}'.format(remote, branch)])
+    return repo.git.execute([git, verb, branch])
 
 
 def push(branch=None):
 
     repo_check()
-
 
     if branch is None:
         return repo.git.execute([git, 'push'])
