@@ -204,7 +204,8 @@ def get_branches(local=True, remote=True):
         for b in repo.remotes[0].refs:
             name = '/'.join(b.name.split('/')[1:])
 
-            branches.append(Branch(name, True))
+            if name not in settings.forbidden_branches:
+                branches.append(Branch(name, True))
 
     if local:
 
@@ -212,7 +213,8 @@ def get_branches(local=True, remote=True):
         for b in [h.name for h in repo.heads]:
 
             if b not in [br.name for br in branches] or not remote:
-                branches.append(Branch(b, False))
+                if b not in settings.forbidden_branches:
+                    branches.append(Branch(b, False))
 
 
     return sorted(branches, key=attrgetter('name'))
