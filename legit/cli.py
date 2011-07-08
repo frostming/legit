@@ -8,6 +8,7 @@ This module povides the CLI interface to legit.
 """
 
 import sys
+from subprocess import call
 from time import sleep
 
 import clint.resources
@@ -60,7 +61,9 @@ def main():
                 settings.git_transparency = 'git'
 
             git_args[0] = settings.git_transparency
-            os.system(' '.join(git_args))
+
+            sys.exit(call(' '.join(git_args), shell=True))
+
         else:
             display_info()
             sys.exit(1)
