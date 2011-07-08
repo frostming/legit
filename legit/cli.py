@@ -304,11 +304,11 @@ def cmd_harvest(args):
         is_external = False
 
 
-    branch_names = get_branch_names(local=False)
+    branch_names = get_branch_names(local=True, remote=False)
 
     if from_branch not in branch_names:
         print "{0} isn't an available branch. Use a branch that is.".format(
-            colored.yellow(branch))
+            colored.yellow(to_branch))
         sys.exit(1)
 
     if is_external:
@@ -322,7 +322,7 @@ def cmd_harvest(args):
     if is_external:
         switch_to(original_branch)
     else:
-        unstash_is()
+        unstash_it()
 
 
 
