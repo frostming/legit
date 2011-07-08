@@ -303,7 +303,6 @@ def cmd_harvest(args):
     else:
         is_external = False
 
-
     branch_names = get_branch_names(local=True, remote=False)
 
     if from_branch not in branch_names:
@@ -314,7 +313,7 @@ def cmd_harvest(args):
     if is_external:
         switch_to(to_branch)
     else:
-        stash_it()
+        status_log(stash_it, 'Saving local changes.')
 
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
         colored.yellow(from_branch)), from_branch)
@@ -322,13 +321,14 @@ def cmd_harvest(args):
     if is_external:
         switch_to(original_branch)
     else:
-        unstash_it()
+        status_log(unstash_it, 'Restoring local changes.')
 
 
 
 
 def cmd_branches(args):
     """Displays available branches."""
+
     display_available_branches()
 
 
