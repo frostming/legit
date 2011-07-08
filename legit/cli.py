@@ -107,6 +107,7 @@ def cmd_switch(args):
     to_branch = args.get(0)
 
     if not to_branch:
+        print 'Please specify a branch to switch to:'
         display_available_branches()
         sys.exit()
 
@@ -182,6 +183,7 @@ def cmd_sprout(args):
         off_branch = repo.head.ref.name
 
     if not off_branch:
+        print 'Please specify branch to sprout:'
         display_available_branches()
         sys.exit()
 
@@ -213,6 +215,7 @@ def cmd_graft(args):
     into_branch = args.get(1)
 
     if not branch:
+        print 'Please specify a branch to graft:'
         display_available_branches()
         sys.exit()
 
@@ -268,6 +271,7 @@ def cmd_unpublish(args):
     branch = args.get(0)
 
     if not branch:
+        print 'Please specify a branch to unpublish:'
         display_available_branches()
         sys.exit()
 
@@ -406,5 +410,8 @@ short_map = dict(
     gr='graft',
     pub='publish',
     unp='unpublish',
-    br='branches'
+    br='branches',
+    ha='harvest',
+    hv='harvest',
+    har='harvest'
 )
