@@ -13,6 +13,7 @@ from collections import namedtuple
 from operator import attrgetter
 
 from git import Repo, Git
+from git.exc import GitCommandError
 
 from .helpers import find_path_above
 from .settings import settings
@@ -25,6 +26,21 @@ git = 'git'
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
+class Aborted(object):
+
+    def __init__(self):
+        self.message = None
+        self.log = None
+
+
+def abort(message, log=None):
+
+    a = Aborted()
+    a.message = message
+    a.log = log
+
+    settings.abort_handler(a)
+
 def repo_check():
     if repo is None:
         print 'Not a git repository.'
@@ -34,6 +50,9 @@ def repo_check():
     if not repo.remotes:
         print 'No git remotes configured. Please add one.'
         sys.exit(128)
+
+    # TODO: You're in a merge state.
+
 
 
 def stash_it(sync=False):
@@ -114,7 +133,12 @@ def smart_merge(branch, allow_rebase=True):
     else:
         verb = 'merge'
 
-    return repo.git.execute([git, verb, branch])
+    try:
+        return repo.git.execute([git, verb, branch])
+    except GitCommandError, why:
+        log = repo.git.execute([git,'merge', '--abort'])
+        abort('Merge failed. Reverting.', log=why)
+
 
 
 def push(branch=None):
@@ -150,17 +174,17 @@ def graft_branch(branch):
 
     log = []
 
-    stat, out, err = repo.git.execute(
-        [git, 'merge', '--no-ff', branch], with_extended_output=True)
+    try:
+        msg = repo.git.execute([git, 'merge', '--no-ff', branch])
+        log.append(msg)
+    except GitCommandError, why:
+        log = repo.git.execute([git,'merge', '--abort'])
+        abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
 
+
+    out = repo.git.execute([git, 'branch', '-D', branch])
     log.append(out)
-
-    if stat is 0:
-        out = repo.git.execute([git, 'branch', '-D', branch])
-        log.append(out)
-        return '\n'.join(log)
-    else:
-        return 'There was a problem merging, so the branch was not deleted.'
+    return '\n'.join(log)
 
 
 def unpublish_branch(branch):

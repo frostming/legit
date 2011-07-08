@@ -219,8 +219,11 @@ def cmd_graft(args):
         display_available_branches()
         sys.exit()
 
-    branch_names = get_branch_names()
-    remote_branch_names = get_branch_names(local=False)
+    if not into_branch:
+        into_branch = repo.head.ref.name
+
+    branch_names = get_branch_names(local=True, remote=False)
+    remote_branch_names = get_branch_names(local=False, remote=True)
 
     if branch not in branch_names:
         print "{0} doesn't exist. Use a branch that does.".format(
@@ -317,7 +320,7 @@ def cmd_harvest(args):
         status_log(stash_it, 'Saving local changes.')
 
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
-        colored.yellow(from_branch)), from_branc, allow_rebase=False)
+        colored.yellow(from_branch)), from_branch, allow_rebase=False)
 
     if is_external:
         switch_to(original_branch)
@@ -414,11 +417,21 @@ def display_help():
 def display_version():
     """Displays Legit version/release."""
 
+
     puts('{0} v{1}'.format(
         colored.yellow('legit'),
         __version__
     ))
 
+
+def handle_abort(aborted):
+    print colored.red('Error:'), aborted.message
+    print black(aborted.log)
+    print 'Unfortunately, there was a merge conflict. It has to be merged manually.'
+    sys.exit(1)
+
+
+settings.abort_handler = handle_abort
 
 
 cmd_map = dict(
