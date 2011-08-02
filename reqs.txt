@@ -1,5 +1,4 @@
 clint==0.2.4
--e git+git@github.com:kennethreitz/smmap.git@fix/1#egg=smmap
 gitpython
 
 requests
