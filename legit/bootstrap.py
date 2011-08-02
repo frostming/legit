@@ -45,21 +45,6 @@ if not config.has_section('legit'):
 
 modified = False
 
-# Updates?
-
-# r = requests.get(settings.update_url)
-# parsed = omnijson.loads(r.content)
-
-# new_version = map(int, parsed.pop()['name'][1:].split('.'))
-# if (0, 0, 0) < tuple(new_version):
-#     print 'A new version ({0}) is available.'.format(
-#         colored.yellow(
-#             'v' + '.'.join(map(str, new_version))
-#         )
-#     )
-
-
-
 # Set defaults if they are missing.
 # Add everything to settings object.
 for (k, v, _) in settings.config_defaults:
