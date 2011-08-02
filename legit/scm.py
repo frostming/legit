@@ -41,13 +41,13 @@ def abort(message, log=None):
 
     settings.abort_handler(a)
 
-def repo_check():
+def repo_check(require_remote=False):
     if repo is None:
         print 'Not a git repository.'
         sys.exit(128)
 
     # TODO: no remote fail
-    if not repo.remotes:
+    if not repo.remotes and require_remote:
         print 'No git remotes configured. Please add one.'
         sys.exit(128)
 
@@ -228,11 +228,15 @@ def get_branches(local=True, remote=True):
     if remote:
 
         # Remote refs.
-        for b in repo.remotes[0].refs:
-            name = '/'.join(b.name.split('/')[1:])
+        try:
+            for b in repo.remotes[0].refs:
+                name = '/'.join(b.name.split('/')[1:])
 
-            if name not in settings.forbidden_branches:
-                branches.append(Branch(name, True))
+                if name not in settings.forbidden_branches:
+                    branches.append(Branch(name, True))
+        except IndexError:
+            pass
+
 
     if local:
 
