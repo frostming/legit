@@ -1,0 +1,48 @@
+_legit()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="branches graft publish sprout switch sync unpublish"
+
+    case "${prev}" in
+        sync)
+            local running=$(for x in `git branch`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        switch)
+            local running=$(for x in `git branch`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        sprout)
+            local running=$(for x in `git branch`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        graft)
+            local running=$(for x in `git branch`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        publish)
+            local running=$(for x in `git branch`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        unpublish)
+            local running=$(for x in `git ls-remote 2>/dev/null | grep refs/heads | awk '{ print $2 }' | sed -e 's/refs\/heads\///g'`; do echo ${x} ; done )
+            COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
+            return 0
+            ;;
+        *)
+        ;;
+    esac
+
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    return 0
+}
+
+complete -F _legit legit
