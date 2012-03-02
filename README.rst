@@ -1,5 +1,5 @@
-Legit: Sexy Git CLI, Inspired by GitHub for Mac™.
-=================================================
+Legit: Git for Humans, Inspired by GitHub for Mac™.
+===================================================
 
 
 The Concept
