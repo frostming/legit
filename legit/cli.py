@@ -367,10 +367,47 @@ def cmd_settings(args):
     sys.exit()
 
 
+def cmd_help(args):
+    """Display help for individual commands."""
+    command = args.get(0)
+    help(command)
 
 # -----
 # Views
 # -----
+
+def help(command):
+    if command == None:
+        command = 'help'
+
+    help_info = dict()
+    help_info['branches'] = 'branches\n\nGet a nice pretty list of ' \
+                            'branches.'
+    help_info['graft'] = 'graft <branch> <into-branch>\n\nMerges ' \
+                         'specified branch into the second branch,' \
+                         ' and removes it. You can only graft unpublished ' \
+                         'branches.'
+    help_info['harvest'] = None
+    help_info['help'] = 'help <command>\n\n' \
+                        'Display help for legit command.'
+    help_info['publish'] = 'publish <branch>\n\n' \
+                           'Publishes specified branch to the remote.'
+    help_info['unpublish'] = 'unpublish <branch>' \
+                             'Removes specified branch from the remote.'
+    help_info['settings'] = None
+    help_info['sprout'] = 'sprout [<branch>] <new-branch>\n\n' \
+                          'Creates a new branch off of the specified branch.' \
+                          'Defaults to current branch. Swiches to it immediately.'
+    help_info['switch'] = 'switch <branch>\n\n' \
+                          'Switches to specified branch. Automatically stashes and unstashes any changes.'
+
+    help_info['sync'] = 'sync [<branch>]\n\n' \
+                        'Syncronizes the given branch.' \
+                        'Defaults to current branch.' \
+                        'Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.'
+    help_info['unpublish'] = 'unpublish <branch>\n\n' \
+                             'Removes specified branch from the remote.'
+    print help_info[command]
 
 def display_available_branches():
     """Displays available branches."""
@@ -443,7 +480,8 @@ cmd_map = dict(
     publish=cmd_publish,
     unpublish=cmd_unpublish,
     branches=cmd_branches,
-    settings=cmd_settings
+    settings=cmd_settings,
+    help=cmd_help
 )
 
 short_map = dict(
@@ -456,5 +494,6 @@ short_map = dict(
     br='branches',
     ha='harvest',
     hv='harvest',
-    har='harvest'
+    har='harvest',
+    h='help'
 )
