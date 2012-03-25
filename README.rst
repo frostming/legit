@@ -37,9 +37,12 @@ The Interface
     Creates a new branch off of the specified branch.
     Swiches to it immediately.
 
+``harvest [<branch>] <new-branch>``
+    Creates a new branch off of the specified branch.
+    Swiches to it immediately.
+
 ``graft <branch> <into-branch>``
-    Merges specified branch into the second branch, and removes it.
-    You can only graft unpublished branches.
+    Auto-Merge/Rebase of specified branch into the second branch.
 
 ``publish <branch>``
     Publishes specified branch to the remote.
@@ -47,7 +50,8 @@ The Interface
 ``unpublish <branch>``
     Removes specified branch from the remote.
 
-``add`` & ``commit`` are also available, but you should just use ``git`` for those.
+``install``
+    Installs legit git aliases.
 
 
 The Installation
@@ -62,7 +66,9 @@ Installing Legit is easy with pip::
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
-Binaries will be available soon.
+To install the git aliases, run the following command::
+
+    $ legit install
 
 
 Caveats
