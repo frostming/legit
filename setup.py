@@ -51,7 +51,7 @@ if sys.argv[-1] == 'build':
 settings.update(
     name=APP_NAME,
     version=VERSION,
-    description='Sexy Git CLI, Inspired by GitHub for Mac.',
+    description='Git for Humanss.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
     author_email='me@kennethreitz.com',
