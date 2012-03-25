@@ -12,7 +12,7 @@ except ImportError:
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 
 # Grab requirments.
