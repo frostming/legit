@@ -39,12 +39,12 @@ The Interface
     Creates a new branch off of the specified branch.
     Swiches to it immediately.
 
-``harvest [<branch>] <new-branch>``
-    Creates a new branch off of the specified branch.
-    Swiches to it immediately.
+``harvest [<branch>] <into-branch>``
+    Auto-Merge/Rebase of specified branch changes into the second branch.
 
 ``graft <branch> <into-branch>``
     Auto-Merge/Rebase of specified branch into the second branch.
+    Immediately removes specified branch. You can only graft unpublished branches.
 
 ``publish <branch>``
     Publishes specified branch to the remote.
