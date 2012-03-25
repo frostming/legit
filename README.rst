@@ -59,6 +59,12 @@ The Interface
 The Installation
 ----------------
 
+First install ``pip`` with [Distribute](http://packages.python.org/distribute/) unless you already have ``pip`` (a tool for installing and managing Python packages)::
+
+    $ sudo curl -O http://python-distribute.org/distribute_setup.py
+    $ sudo python distribute_setup.py
+    $ sudo easy_install pip
+
 Installing Legit is easy with pip::
 
     $ pip install legit
@@ -76,4 +82,3 @@ Caveats
 
 - All remote operations are carried out by the first remote found.
 - If a ``stash pop`` merge fails, Legit stops. I'd like to add checking for a merge failure, and undo the command with friendly error reporting.
-- Pip install is cumbersome to people unfamiliar with Python. Package. (Py2App + PyInstaller)
