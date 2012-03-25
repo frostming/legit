@@ -12,8 +12,6 @@ import ConfigParser
 
 
 import clint.textui.colored
-import requests
-import omnijson
 from clint import resources
 from clint.textui import colored
 

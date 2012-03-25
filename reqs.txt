@@ -1,5 +1,2 @@
-clint==0.2.4
-gitpython
-
-requests
-omnijson
+clint>=0.2.4
+gitpython>=0.3.0
