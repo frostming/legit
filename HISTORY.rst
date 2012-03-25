@@ -10,6 +10,7 @@ History
     * Disable Colors Option
 * Update Available Alerts (via GitHub)
 * New Havest command
+* New Install command
 
 
 0.0.9 (?)
