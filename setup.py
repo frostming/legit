@@ -51,7 +51,7 @@ if sys.argv[-1] == 'build':
 settings.update(
     name=APP_NAME,
     version=VERSION,
-    description='Git for Humanss.',
+    description='Git for Humans.',
     long_description=open('README.rst').read(),
     author='Kenneth Reitz',
     author_email='me@kennethreitz.com',
