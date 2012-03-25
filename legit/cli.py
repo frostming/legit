@@ -367,6 +367,29 @@ def cmd_settings(args):
     sys.exit()
 
 
+def cmd_install(args):
+    """Installs legit git aliases."""
+
+    aliases = {
+        'branches': '\'!legit branches\'',
+        'graft': '\'!legit graft "$@"\'',
+        'harvest': '\'!legit harvest "$@"\'',
+        'publish': '\'!legit publish "$@"\'',
+        'unpublish': '\'!legit unpublish "$@"\'',
+        'sprout': '\'!legit sprout "$@"\'',
+        'sync': '\'!legit sync "$@"\'',
+        'switch': '\'!legit switch "$@"\'',
+    }
+
+    print 'The following git aliases have been installed:\n'
+
+    for (ak, av) in aliases.items():
+        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, av))
+        print columns(['', 1], [colored.yellow('git ' + ak), 14], [av, None])
+
+    sys.exit()
+
+
 def cmd_help(args):
     """Display help for individual commands."""
     command = args.get(0)
@@ -481,7 +504,8 @@ cmd_map = dict(
     unpublish=cmd_unpublish,
     branches=cmd_branches,
     settings=cmd_settings,
-    help=cmd_help
+    help=cmd_help,
+    install=cmd_install
 )
 
 short_map = dict(
