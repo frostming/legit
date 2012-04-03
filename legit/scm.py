@@ -11,9 +11,10 @@ import os
 import sys
 import subprocess
 from collections import namedtuple
+from exceptions import ValueError
 from operator import attrgetter
 
-from git import Repo, Git
+from git import Repo
 from git.exc import GitCommandError
 
 from .settings import settings
@@ -103,7 +104,7 @@ def fetch():
 
     repo_check()
 
-    return repo.git.execute([git, 'fetch', repo.remotes[0].name])
+    return repo.git.execute([git, 'fetch', remote.name])
 
 
 def smart_pull():
@@ -111,12 +112,11 @@ def smart_pull():
 
     repo_check()
 
-    remote = repo.remotes[0].name
     branch = repo.head.ref.name
 
     fetch()
 
-    return smart_merge('{0}/{1}'.format(remote, branch))
+    return smart_merge('{0}/{1}'.format(remote.name, branch))
 
 
 def smart_merge(branch, allow_rebase=True):
@@ -148,7 +148,7 @@ def push(branch=None):
     if branch is None:
         return repo.git.execute([git, 'push'])
     else:
-        return repo.git.execute([git, 'push', repo.remotes[0].name, branch])
+        return repo.git.execute([git, 'push', remote.name, branch])
 
 
 def checkout_branch(branch):
@@ -193,7 +193,7 @@ def unpublish_branch(branch):
     repo_check()
 
     return repo.git.execute([git,
-        'push', repo.remotes[0].name, ':{0}'.format(branch)])
+        'push', remote.name, ':{0}'.format(branch)])
 
 
 def publish_branch(branch):
@@ -202,7 +202,7 @@ def publish_branch(branch):
     repo_check()
 
     return repo.git.execute([git,
-        'push', repo.remotes[0].name, branch])
+        'push', remote.name, branch])
 
 
 def get_repo():
@@ -218,7 +218,26 @@ def get_repo():
         return None
 
 
-def get_branches(local=True, remote=True):
+def get_remote():
+    reader = repo.config_reader()
+
+    # If there is no legit section return the default remote.
+    if not reader.has_section('legit'):
+        return repo.remotes[0]
+
+    # If there is no remote option in the legit section return the default.
+    if not any('legit' in s and 'remote' in s for s in reader.sections()):
+        return repo.remotes[0]
+
+    remote_name = reader.get('legit', 'remote')
+    if not remote_name in [r.name for r in repo.remotes]:
+        raise ValueError('Remote "{0}" does not exist! Please update your git '
+                         'configuration.'.format(remote_name))
+
+    return repo.remote(remote_name)
+
+
+def get_branches(local=True, remote_branches=True):
     """Returns a list of local and remote branches."""
 
     repo_check()
@@ -226,11 +245,11 @@ def get_branches(local=True, remote=True):
     # print local
     branches = []
 
-    if remote:
+    if remote_branches:
 
         # Remote refs.
         try:
-            for b in repo.remotes[0].refs:
+            for b in remote.refs:
                 name = '/'.join(b.name.split('/')[1:])
 
                 if name not in settings.forbidden_branches:
@@ -238,13 +257,12 @@ def get_branches(local=True, remote=True):
         except IndexError:
             pass
 
-
     if local:
 
         # Local refs.
         for b in [h.name for h in repo.heads]:
 
-            if b not in [br.name for br in branches] or not remote:
+            if b not in [br.name for br in branches] or not remote_branches:
                 if b not in settings.forbidden_branches:
                     branches.append(Branch(b, False))
 
@@ -252,14 +270,14 @@ def get_branches(local=True, remote=True):
     return sorted(branches, key=attrgetter('name'))
 
 
-def get_branch_names(local=True, remote=True):
+def get_branch_names(local=True, remote_branches=True):
 
     repo_check()
 
-    branches = get_branches(local=local, remote=remote)
+    branches = get_branches(local=local, remote_branches=remote_branches)
 
     return [b.name for b in branches]
 
 
-
 repo = get_repo()
+remote = get_remote()
