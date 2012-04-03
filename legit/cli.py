@@ -222,8 +222,8 @@ def cmd_graft(args):
     if not into_branch:
         into_branch = repo.head.ref.name
 
-    branch_names = get_branch_names(local=True, remote=False)
-    remote_branch_names = get_branch_names(local=False, remote=True)
+    branch_names = get_branch_names(local=True, remote_branches=False)
+    remote_branch_names = get_branch_names(local=False, remote_branches=True)
 
     if branch not in branch_names:
         print "{0} doesn't exist. Use a branch that does.".format(
@@ -306,7 +306,7 @@ def cmd_harvest(args):
     else:
         is_external = False
 
-    branch_names = get_branch_names(local=True, remote=False)
+    branch_names = get_branch_names(local=True, remote_branches=False)
 
     if from_branch not in branch_names:
         print "{0} isn't an available branch. Use a branch that is.".format(
