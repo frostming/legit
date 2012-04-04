@@ -7,6 +7,7 @@ legit.cli
 This module povides the CLI interface to legit.
 """
 
+import os
 import sys
 from subprocess import call
 from time import sleep
@@ -58,7 +59,7 @@ def main():
             # Send everything to git
             git_args = list(sys.argv)
             if settings.git_transparency is True:
-                settings.git_transparency = 'git'
+                settings.git_transparency = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
 
             git_args[0] = settings.git_transparency
 

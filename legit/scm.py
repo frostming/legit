@@ -22,7 +22,7 @@ from .settings import settings
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
-git = 'git'
+git = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
