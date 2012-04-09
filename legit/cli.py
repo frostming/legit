@@ -441,8 +441,13 @@ def display_available_branches():
 
     for branch in branches:
 
-        marker = '*' if (branch.name == repo.head.ref.name) else ' '
-        color = colored.green if (branch.name == repo.head.ref.name) else colored.yellow
+        try:
+            branch_is_selected = (branch.name == repo.head.ref.name)
+        except TypeError:
+            branch_is_selected = False
+
+        marker = '*' if branch_is_selected else ' '
+        color = colored.green if branch_is_selected else colored.yellow
         pub = '(published)' if branch.is_published else '(unpublished)'
 
         print columns(
