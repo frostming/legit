@@ -7,6 +7,7 @@ legit.cli
 This module povides the CLI interface to legit.
 """
 
+import os
 import sys
 from subprocess import call
 from time import sleep
@@ -58,7 +59,7 @@ def main():
             # Send everything to git
             git_args = list(sys.argv)
             if settings.git_transparency is True:
-                settings.git_transparency = 'git'
+                settings.git_transparency = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
 
             git_args[0] = settings.git_transparency
 
@@ -96,6 +97,20 @@ def switch_to(branch):
 
     return cmd_switch(switch_args)
 
+def fuzzy_match_branch(branch):
+    if not branch: return False
+    
+    all_branches = get_branch_names()
+    if branch in all_branches:
+        return branch
+        
+    def branch_fuzzy_match(b): return b.startswith(branch)
+    possible_branches = filter(branch_fuzzy_match, all_branches)
+    
+    if len(possible_branches) == 1:
+        return possible_branches[0]
+    
+    return False
 
 # --------
 # Commands
@@ -105,24 +120,21 @@ def cmd_switch(args):
     """Legit Switch command."""
 
     to_branch = args.get(0)
+    to_branch = fuzzy_match_branch(to_branch)
 
     if not to_branch:
         print 'Please specify a branch to switch to:'
         display_available_branches()
         sys.exit()
+    
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.')
 
-    if to_branch not in get_branch_names():
-        print 'Branch not found.'
-        sys.exit(1)
-    else:
-        if repo.is_dirty():
-            status_log(stash_it, 'Saving local changes.')
+    status_log(checkout_branch, 'Switching to {0}.'.format(
+        colored.yellow(to_branch)), to_branch)
 
-        status_log(checkout_branch, 'Switching to {0}.'.format(
-            colored.yellow(to_branch)), to_branch)
-
-        if unstash_index():
-            status_log(unstash_it, 'Restoring local changes.')
+    if unstash_index():
+        status_log(unstash_it, 'Restoring local changes.')
 
 
 def cmd_sync(args):
@@ -134,8 +146,8 @@ def cmd_sync(args):
 
     if args.get(0):
         # Optional branch specifier.
-        if args.get(0) in get_branch_names():
-            branch = args.get(0)
+        branch = fuzzy_match_branch(args.get(0))
+        if branch:
             is_external = True
             original_branch = repo.head.ref.name
         else:
@@ -181,6 +193,8 @@ def cmd_sprout(args):
     if new_branch is None:
         new_branch = off_branch
         off_branch = repo.head.ref.name
+    else:
+        off_branch = fuzzy_match_branch(off_branch)
 
     if not off_branch:
         print 'Please specify branch to sprout:'
@@ -211,7 +225,7 @@ def cmd_sprout(args):
 def cmd_graft(args):
     """Merges an unpublished branch into the given branch, then deletes it."""
 
-    branch = args.get(0)
+    branch = fuzzy_match_branch(args.get(0))
     into_branch = args.get(1)
 
     if not branch:
@@ -221,6 +235,8 @@ def cmd_graft(args):
 
     if not into_branch:
         into_branch = repo.head.ref.name
+    else:
+        into_branch = fuzzy_match_branch(into_branch)
 
     branch_names = get_branch_names(local=True, remote_branches=False)
     remote_branch_names = get_branch_names(local=False, remote_branches=True)
@@ -250,7 +266,7 @@ def cmd_graft(args):
 def cmd_publish(args):
     """Pushes an unpublished branch to a remote repository."""
 
-    branch = args.get(0)
+    branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
         display_available_branches()
@@ -271,7 +287,7 @@ def cmd_publish(args):
 def cmd_unpublish(args):
     """Removes a published branch from the remote repository."""
 
-    branch = args.get(0)
+    branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
         print 'Please specify a branch to unpublish:'
@@ -292,8 +308,8 @@ def cmd_unpublish(args):
 def cmd_harvest(args):
     """Syncs a branch with given branch. Defaults to current."""
 
-    from_branch = args.get(0)
-    to_branch = args.get(1)
+    from_branch = fuzzy_match_branch(args.get(0))
+    to_branch = fuzzy_match_branch(args.get(1))
 
     if not from_branch:
         print 'Please specify a branch to harvest commits from:'
