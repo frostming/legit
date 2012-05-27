@@ -436,7 +436,7 @@ def help(command):
     help_info['settings'] = None
     help_info['sprout'] = 'sprout [<branch>] <new-branch>\n\n' \
                           'Creates a new branch off of the specified branch.' \
-                          'Defaults to current branch. Swiches to it immediately.'
+                          'Defaults to current branch. Switches to it immediately.'
     help_info['switch'] = 'switch <branch>\n\n' \
                           'Switches to specified branch. Automatically stashes and unstashes any changes.'
 
