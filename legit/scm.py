@@ -219,6 +219,9 @@ def get_repo():
 
 
 def get_remote():
+    
+    repo_check()
+
     reader = repo.config_reader()
 
     # If there is no legit section return the default remote.
