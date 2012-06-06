@@ -507,7 +507,7 @@ def display_version():
 
 def handle_abort(aborted):
     print colored.red('Error:'), aborted.message
-    print black(aborted.log)
+    print black(str(aborted.log))
     print 'Unfortunately, there was a merge conflict. It has to be merged manually.'
     sys.exit(1)
 
