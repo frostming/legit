@@ -273,8 +273,9 @@ def cmd_publish(args):
     branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
+        branch = repo.head.ref.name
         display_available_branches()
-        sys.exit()
+        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch))
 
     branch_names = get_branch_names(local=False)
 
