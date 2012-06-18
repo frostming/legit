@@ -36,14 +36,12 @@ def black(s):
 def main():
     """Primary Legit command dispatch."""
 
-    if (args.get(0) in cmd_map) or (args.get(0) in short_map):
+    command = Command.lookup(args.get(0))
+    if command:
         arg = args.get(0)
         args.remove(arg)
 
-        if arg in short_map:
-            arg = short_map.get(arg)
-
-        cmd_map.get(arg).__call__(args)
+        command.__call__(args)
         sys.exit()
 
     elif args.contains(('-h', '--help')):
@@ -66,8 +64,14 @@ def main():
             sys.exit(call(' '.join(git_args), shell=True))
 
         else:
+            show_error(colored.red('Unknown command {0}'.format(args.get(0))))
             display_info()
             sys.exit(1)
+
+
+def show_error(msg):
+    sys.stdout.flush()
+    sys.stderr.write(msg + '\n')
 
 
 # -------
@@ -419,34 +423,12 @@ def help(command):
     if command == None:
         command = 'help'
 
-    help_info = dict()
-    help_info['branches'] = 'branches\n\nGet a nice pretty list of ' \
-                            'branches.'
-    help_info['graft'] = 'graft <branch> <into-branch>\n\nMerges ' \
-                         'specified branch into the second branch,' \
-                         ' and removes it. You can only graft unpublished ' \
-                         'branches.'
-    help_info['harvest'] = None
-    help_info['help'] = 'help <command>\n\n' \
-                        'Display help for legit command.'
-    help_info['publish'] = 'publish <branch>\n\n' \
-                           'Publishes specified branch to the remote.'
-    help_info['unpublish'] = 'unpublish <branch>' \
-                             'Removes specified branch from the remote.'
-    help_info['settings'] = None
-    help_info['sprout'] = 'sprout [<branch>] <new-branch>\n\n' \
-                          'Creates a new branch off of the specified branch.' \
-                          'Defaults to current branch. Switches to it immediately.'
-    help_info['switch'] = 'switch <branch>\n\n' \
-                          'Switches to specified branch. Automatically stashes and unstashes any changes.'
+    cmd = Command.lookup(command)
+    usage = cmd.usage or ''
+    help = cmd.help or ''
+    help_text = '%s\n\n%s' % (usage, help)
+    print help_text
 
-    help_info['sync'] = 'sync [<branch>]\n\n' \
-                        'Syncronizes the given branch.' \
-                        'Defaults to current branch.' \
-                        'Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.'
-    help_info['unpublish'] = 'unpublish <branch>\n\n' \
-                             'Removes specified branch from the remote.'
-    print help_info[command]
 
 def display_available_branches():
     """Displays available branches."""
@@ -482,11 +464,20 @@ def display_info():
     ))
 
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
-    puts('Commands: {0}.\n'.format(
-        eng_join(
-            [str(colored.green(c)) for c in sorted(cmd_map.keys())]
-        )
-    ))
+    puts('Commands:\n')
+    for command in Command.all_commands():
+        usage = command.usage or command.name
+        help = command.help or ''
+        puts('{0:40} {1}'.format(
+                colored.green(usage),
+                first_sentence(help)))
+
+
+def first_sentence(s):
+    pos = s.find('. ')
+    if pos < 0:
+        pos = len(s) - 1
+    return s[:pos + 1]
 
 
 def display_help():
@@ -515,30 +506,122 @@ def handle_abort(aborted):
 settings.abort_handler = handle_abort
 
 
-cmd_map = dict(
-    switch=cmd_switch,
-    sync=cmd_sync,
-    sprout=cmd_sprout,
-    graft=cmd_graft,
-    harvest=cmd_harvest,
-    publish=cmd_publish,
-    unpublish=cmd_unpublish,
-    branches=cmd_branches,
-    settings=cmd_settings,
-    help=cmd_help,
-    install=cmd_install
-)
+class Command(object):
+    COMMANDS = {}
+    SHORT_MAP = {}
 
-short_map = dict(
-    sw='switch',
-    sy='sync',
-    sp='sprout',
-    gr='graft',
-    pub='publish',
-    unp='unpublish',
-    br='branches',
-    ha='harvest',
-    hv='harvest',
-    har='harvest',
-    h='help'
-)
+    @classmethod
+    def register(klass, command):
+        klass.COMMANDS[command.name] = command
+        if command.short:
+            for short in command.short:
+                klass.SHORT_MAP[short] = command
+
+    @classmethod
+    def lookup(klass, name):
+        if name in klass.SHORT_MAP:
+            return klass.SHORT_MAP[name]
+        if name in klass.COMMANDS:
+            return klass.COMMANDS[name]
+        else:
+            return None
+
+    @classmethod
+    def all_commands(klass):
+        return sorted(klass.COMMANDS.values(),
+                      key=lambda cmd: cmd.name)
+
+    def __init__(self, name=None, short=None, fn=None, usage=None, help=None):
+        self.name = name
+        self.short = short
+        self.fn = fn
+        self.usage = usage
+        self.help = help
+
+    def __call__(self, *args, **kw_args):
+        return self.fn(*args, **kw_args)
+
+
+def def_cmd(name=None, short=None, fn=None, usage=None, help=None):
+    command = Command(name=name, short=short, fn=fn, usage=usage, help=help)
+    Command.register(command)
+
+
+def_cmd(
+    name='branches',
+    fn=cmd_branches,
+    usage='branches',
+    help='Get a nice pretty list of branches.')
+
+def_cmd(
+    name='graft',
+    short=['gr'],
+    fn=cmd_graft,
+    usage='graft <branch> <into-branch>',
+    help=('Merges specified branch into the second branch, and removes it. '
+          'You can only graft unpublished branches.'))
+
+def_cmd(
+    name='harvest',
+    short=['ha', 'hv', 'har'],
+    usage='harvest [<branch>] <into-branch>',
+    help=('Auto-Merge/Rebase of specified branch changes into the second '
+          'branch.'),
+    fn=cmd_harvest)
+
+def_cmd(
+    name='help',
+    short=['h'],
+    fn=cmd_help,
+    usage='help <command>',
+    help='Display help for legit command.')
+
+def_cmd(
+    name='install',
+    fn=cmd_install,
+    usage='install',
+    help='Installs legit git aliases.')
+
+def_cmd(
+    name='publish',
+    short=['pub'],
+    fn=cmd_publish,
+    usage='publish <branch>',
+    help='Publishes specified branch to the remote.')
+
+def_cmd(
+    name='settings',
+    fn=cmd_settings,
+    usage='settings',
+    help='Opens legit settings in a text editor.')
+
+def_cmd(
+    name='sprout',
+    short=['sp'],
+    fn=cmd_sprout,
+    usage='sprout [<branch>] <new-branch>',
+    help=('Creates a new branch off of the specified branch. Defaults to '
+          'current branch. Switches to it immediately.'))
+
+def_cmd(
+    name='switch',
+    short=['sw'],
+    fn=cmd_switch,
+    usage='switch <branch>',
+    help=('Switches to specified branch. Automatically stashes and unstashes '
+          'any changes.'))
+
+def_cmd(
+    name='sync',
+    short=['sy'],
+    fn=cmd_sync,
+    usage='sync <branch>',
+    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
+          'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+
+def_cmd(
+    name='unpublish',
+    short=['unp'],
+    fn=cmd_unpublish,
+    usage='unpublish <branch>',
+    help='Removes specified branch from the remote.')
