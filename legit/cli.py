@@ -275,7 +275,7 @@ def cmd_publish(args):
     if not branch:
         branch = repo.head.ref.name
         display_available_branches()
-        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch))
+        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0) or ''),colored.yellow(branch))
 
     branch_names = get_branch_names(local=False)
 
@@ -405,7 +405,8 @@ def cmd_install(args):
     print 'The following git aliases have been installed:\n'
 
     for (ak, av) in aliases.items():
-        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, av))
+        vv = av.replace('"', '""').replace("'", '^"') if is_win else av
+        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, vv))
         print columns(['', 1], [colored.yellow('git ' + ak), 14], [av, None])
 
     sys.exit()
