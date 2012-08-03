@@ -381,7 +381,7 @@ def cmd_settings(args):
         editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
         os.system("{0} '{1}'".format(editor, path))
     elif is_win:
-        os.system("'{0}'".format(path))
+        os.system("\"{0}\"".format(path))
     else:
         print "Edit '{0}' to manage Legit settings.\n".format(path)
 
