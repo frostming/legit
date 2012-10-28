@@ -97,7 +97,7 @@ def unstash_it(sync=False):
 
     if stash_index is not None:
         return repo.git.execute([git,
-            'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
+            'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
 
 def fetch():
