@@ -58,7 +58,7 @@ def repo_check(require_remote=False):
 
 def stash_it(sync=False):
     repo_check()
-    msg = 'syncing banch' if sync else 'switching branches'
+    msg = 'syncing branch' if sync else 'switching branches'
 
     return repo.git.execute([git,
         'stash', 'save',
