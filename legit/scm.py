@@ -219,8 +219,8 @@ def get_repo():
 
 
 def get_remote():
-    
-    repo_check()
+
+    repo_check(require_remote=True)
 
     reader = repo.config_reader()
 
@@ -257,7 +257,7 @@ def get_branches(local=True, remote_branches=True):
 
                 if name not in settings.forbidden_branches:
                     branches.append(Branch(name, True))
-        except IndexError:
+        except (IndexError, AssertionError):
             pass
 
     if local:
