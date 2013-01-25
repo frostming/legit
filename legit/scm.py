@@ -58,7 +58,7 @@ def repo_check(require_remote=False):
 
 def stash_it(sync=False):
     repo_check()
-    msg = 'syncing banch' if sync else 'switching branches'
+    msg = 'syncing branch' if sync else 'switching branches'
 
     return repo.git.execute([git,
         'stash', 'save',
@@ -97,7 +97,7 @@ def unstash_it(sync=False):
 
     if stash_index is not None:
         return repo.git.execute([git,
-            'stash', 'pop', 'stash@{{0}}'.format(stash_index)])
+            'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
 
 def fetch():
@@ -219,8 +219,8 @@ def get_repo():
 
 
 def get_remote():
-    
-    repo_check()
+
+    repo_check(require_remote=True)
 
     reader = repo.config_reader()
 
@@ -257,7 +257,7 @@ def get_branches(local=True, remote_branches=True):
 
                 if name not in settings.forbidden_branches:
                     branches.append(Branch(name, True))
-        except IndexError:
+        except (IndexError, AssertionError):
             pass
 
     if local:

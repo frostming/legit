@@ -35,7 +35,7 @@ The Interface
     Defaults to current branch.
     Automatically stashes and unstashes any changes.
 
-``sprout [<branch>] <new-branch>``
+``sprout <branch> <new-branch>``
     Creates a new branch off of the specified branch.
     Swiches to it immediately.
 

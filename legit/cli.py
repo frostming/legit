@@ -440,6 +440,10 @@ def display_available_branches():
 
     branches = get_branches()
 
+    if not branches:
+        print colored.red('No branches available')
+        return
+
     branch_col = len(max([b.name for b in branches], key=len)) + 1
 
     for branch in branches:
