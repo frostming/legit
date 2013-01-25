@@ -13,7 +13,10 @@ from subprocess import call
 from time import sleep
 
 import clint.resources
-from clint import args
+try:
+    from clint import arguments
+except:
+    from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns
 
