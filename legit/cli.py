@@ -15,6 +15,7 @@ from time import sleep
 import clint.resources
 try:
     from clint import arguments
+    args = arguments.Args()
 except:
     from clint import args
 from clint.eng import join as eng_join
