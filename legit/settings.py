@@ -8,6 +8,7 @@ This module provides the Legit settings feature set.
 
 """
 
+from .helpers import is_win
 
 class Settings(object):
     _singleton = {}
@@ -66,7 +67,7 @@ settings.config_defaults = (
     ('git_transparency', False,
         'Send unknown commands to Git? Defaults to False.'),
 
-    ('disable_colors', False,
+    ('disable_colors', is_win,
         'Y U NO FUN? Defaults to False.'),
 
     ('last_update_check', None,

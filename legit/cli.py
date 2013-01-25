@@ -13,7 +13,11 @@ from subprocess import call
 from time import sleep
 
 import clint.resources
-from clint import args
+try:
+    from clint import arguments
+    args = arguments.Args()
+except:
+    from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns
 
@@ -275,7 +279,7 @@ def cmd_publish(args):
     if not branch:
         branch = repo.head.ref.name
         display_available_branches()
-        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch))
+        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0) or ''),colored.yellow(branch))
 
     branch_names = get_branch_names(local=False)
 
@@ -381,7 +385,7 @@ def cmd_settings(args):
         editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
         os.system("{0} '{1}'".format(editor, path))
     elif is_win:
-        os.system("'{0}'".format(path))
+        os.system("\"{0}\"".format(path))
     else:
         print "Edit '{0}' to manage Legit settings.\n".format(path)
 
@@ -405,7 +409,8 @@ def cmd_install(args):
     print 'The following git aliases have been installed:\n'
 
     for (ak, av) in aliases.items():
-        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, av))
+        vv = av.replace('"', '""').replace("'", '^"') if is_win else av
+        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, vv))
         print columns(['', 1], [colored.yellow('git ' + ak), 14], [av, None])
 
     sys.exit()
