@@ -129,7 +129,7 @@ def smart_merge(branch, allow_rebase=True):
         'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
     if allow_rebase:
-        verb = 'merge' if len(merges.split('commit')) else 'rebase'
+        verb = 'merge' if merges.count('commit') else 'rebase'
     else:
         verb = 'merge'
 
