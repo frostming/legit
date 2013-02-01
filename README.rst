@@ -74,6 +74,6 @@ To install the git aliases, run the following command::
 Caveats
 -------
 
-- All remote operations are carried out by the remote identified in `$ git config legit.remote remotename`
-- If a ``stash pop`` merge fails, Legit stops. I'd like to add checking for a merge failure, and undo the command with friendly error reporting.
-- Pip install is cumbersome to people unfamiliar with Python. Package. (Py2App + PyInstaller)
+- All remote operations are carried out by the remote identified in ``$ git config legit.remote remotename``
+- If a ``stash pop`` merge fails, Legit stops. I'd like to add checking for a failed merge, and undo the command with friendly error reporting.
+- ``pip install`` is cumbersome to people unfamiliar with Python. Package. (Py2App + PyInstaller)
