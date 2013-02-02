@@ -4,7 +4,7 @@
 legit.cli
 ~~~~~~~~~
 
-This module povides the CLI interface to legit.
+This module provides the CLI interface to legit.
 """
 
 import os
