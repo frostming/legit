@@ -9,7 +9,7 @@ History
     * Black Foreground Option
     * Disable Colors Option
 * Update Available Alerts (via GitHub)
-* New Havest command
+* New Harvest command
 * New Install command
 
 
