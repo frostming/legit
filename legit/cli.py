@@ -393,13 +393,13 @@ def cmd_install(args):
 
     aliases = {
         'branches': '\'!legit branches\'',
-        'graft': '\'!legit graft "$@"\'',
-        'harvest': '\'!legit harvest "$@"\'',
-        'publish': '\'!legit publish "$@"\'',
-        'unpublish': '\'!legit unpublish "$@"\'',
-        'sprout': '\'!legit sprout "$@"\'',
-        'sync': '\'!legit sync "$@"\'',
-        'switch': '\'!legit switch "$@"\'',
+        'graft': '\'!legit graft\'',
+        'harvest': '\'!legit harvest\'',
+        'publish': '\'!legit publish\'',
+        'unpublish': '\'!legit unpublish\'',
+        'sprout': '\'!legit sprout\'',
+        'sync': '\'!legit sync\'',
+        'switch': '\'!legit switch\'',
     }
 
     print 'The following git aliases have been installed:\n'
