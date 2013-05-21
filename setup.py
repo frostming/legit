@@ -15,7 +15,7 @@ APP_SCRIPT = './legit_r'
 VERSION = '0.1.1'
 
 
-# Grab requirments.
+# Grab requirements.
 with open('reqs.txt') as f:
     required = f.readlines()
 
