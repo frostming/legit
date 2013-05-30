@@ -71,6 +71,18 @@ To install the git aliases, run the following command::
     $ legit install
 
 
+The Configuration
+----------------
+
+There are just a few configuration settings (i.e. terminal colors), which
+are configured using ```clint.resources```.  Check these paths for the
+```legit``` settings file.
+
+    # OSX: '/Users/appuser/Library/Application Support/AppName/config.ini'
+    # Windows: 'C:\\Users\\appuser\\AppData\\Local\\Company\\AppName\\config.ini'
+    # Linux: '/home/appuser/.config/appname/config.ini'
+
+
 Caveats
 -------
 
