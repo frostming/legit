@@ -204,7 +204,7 @@ def publish_branch(branch):
     repo_check()
 
     return repo.git.execute([git,
-        'push', remote.name, branch])
+        'push', '-u', remote.name, branch])
 
 
 def get_repo():
