@@ -407,6 +407,7 @@ def cmd_install(args):
 
     for (ak, av) in aliases.items():
         os.system('git config --global --replace-all alias.{0} {1}'.format(ak, av))
+        os.system('git config --file /etc/gitshrc --replace-all alias.{0} {1}'.format(ak, av))
         print columns(['', 1], [colored.yellow('git ' + ak), 14], [av, None])
 
     sys.exit()
