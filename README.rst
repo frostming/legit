@@ -69,6 +69,8 @@ a repository.
 To install the git aliases, run the following command::
 
     $ legit install
+    
+The installation process will also configure `git-sh <https://github.com/rtomayko/git-sh>`_ globally.
 
 
 Caveats
