@@ -392,22 +392,23 @@ def cmd_settings(args):
 def cmd_install(args):
     """Installs legit git aliases."""
 
-    aliases = {
-        'branches': '\'!legit branches\'',
-        'graft': '\'!legit graft "$@"\'',
-        'harvest': '\'!legit harvest "$@"\'',
-        'publish': '\'!legit publish "$@"\'',
-        'unpublish': '\'!legit unpublish "$@"\'',
-        'sprout': '\'!legit sprout "$@"\'',
-        'sync': '\'!legit sync "$@"\'',
-        'switch': '\'!legit switch "$@"\'',
-    }
+    aliases = [
+        'branches',
+        'graft',
+        'harvest',
+        'publish',
+        'unpublish',
+        'sprout',
+        'sync',
+        'switch',
+    ]
 
     print 'The following git aliases have been installed:\n'
 
-    for (ak, av) in aliases.items():
-        os.system('git config --global --replace-all alias.{0} {1}'.format(ak, av))
-        print columns(['', 1], [colored.yellow('git ' + ak), 14], [av, None])
+    for alias in aliases:
+        cmd = '!legit ' + alias
+        os.system('git config --global --replace-all alias.{0} \'{1}\''.format(alias, cmd))
+        print columns(['', 1], [colored.yellow('git ' + alias), 14], [cmd, None])
 
     sys.exit()
 
