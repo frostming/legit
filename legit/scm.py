@@ -61,7 +61,7 @@ def stash_it(sync=False):
     msg = 'syncing branch' if sync else 'switching branches'
 
     return repo.git.execute([git,
-        'stash', 'save',
+        'stash', 'save', '--include-untracked',
         LEGIT_TEMPLATE.format(msg)])
 
 
