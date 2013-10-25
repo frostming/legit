@@ -14,7 +14,6 @@ from time import sleep
 
 import clint.resources
 from clint import args
-from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns
 
 from .core import __version__
@@ -32,6 +31,7 @@ def black(s):
 # --------
 # Dispatch
 # --------
+
 
 def main():
     """Primary Legit command dispatch."""
@@ -57,7 +57,8 @@ def main():
             # Send everything to git
             git_args = list(sys.argv)
             if settings.git_transparency is True:
-                settings.git_transparency = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
+                settings.git_transparency = os.environ.get(
+                    "GIT_PYTHON_GIT_EXECUTABLE", 'git')
 
             git_args[0] = settings.git_transparency
 
@@ -101,24 +102,28 @@ def switch_to(branch):
 
     return cmd_switch(switch_args)
 
+
 def fuzzy_match_branch(branch):
-    if not branch: return False
-    
+    if not branch:
+        return False
+
     all_branches = get_branch_names()
     if branch in all_branches:
         return branch
-        
-    def branch_fuzzy_match(b): return b.startswith(branch)
+
+    def branch_fuzzy_match(b):
+        return b.startswith(branch)
     possible_branches = filter(branch_fuzzy_match, all_branches)
-    
+
     if len(possible_branches) == 1:
         return possible_branches[0]
-    
+
     return False
 
 # --------
 # Commands
 # --------
+
 
 def cmd_switch(args):
     """Legit Switch command."""
@@ -131,7 +136,7 @@ def cmd_switch(args):
         print 'Please specify a branch to switch to:'
         display_available_branches()
         sys.exit()
-    
+
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
@@ -218,7 +223,6 @@ def cmd_sprout(args):
             colored.yellow(new_branch))
         sys.exit(1)
 
-
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
@@ -276,7 +280,7 @@ def cmd_publish(args):
     if not branch:
         branch = repo.head.ref.name
         display_available_branches()
-        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch))
+        print "Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)), colored.yellow(branch))
 
     branch_names = get_branch_names(local=False)
 
@@ -287,7 +291,6 @@ def cmd_publish(args):
 
     status_log(publish_branch, 'Publishing {0}.'.format(
         colored.yellow(branch)), branch)
-
 
 
 def cmd_unpublish(args):
@@ -364,12 +367,10 @@ def cmd_settings(args):
 
     path = clint.resources.user.open('config.ini').name
 
-
     print 'Legit Settings:\n'
 
     for (option, _, description) in settings.config_defaults:
         print columns([colored.yellow(option), 25], [description, None])
-
 
     print '\nSee {0} for more details.'.format(settings.config_url)
 
@@ -407,7 +408,8 @@ def cmd_install(args):
 
     for alias in aliases:
         cmd = '!legit ' + alias
-        os.system('git config --global --replace-all alias.{0} \'{1}\''.format(alias, cmd))
+        os.system(
+            'git config --global --replace-all alias.{0} \'{1}\''.format(alias, cmd))
         print columns(['', 1], [colored.yellow('git ' + alias), 14], [cmd, None])
 
     sys.exit()
@@ -422,8 +424,9 @@ def cmd_help(args):
 # Views
 # -----
 
+
 def help(command):
-    if command == None:
+    if command is None:
         command = 'help'
 
     cmd = Command.lookup(command)
@@ -476,8 +479,8 @@ def display_info():
         usage = command.usage or command.name
         help = command.help or ''
         puts('{0:40} {1}'.format(
-                colored.green(usage),
-                first_sentence(help)))
+            colored.green(usage),
+            first_sentence(help)))
 
 
 def first_sentence(s):
@@ -495,7 +498,6 @@ def display_help():
 
 def display_version():
     """Displays Legit version/release."""
-
 
     puts('{0} v{1}'.format(
         colored.yellow('legit'),

@@ -13,12 +13,9 @@ import ConfigParser
 
 import clint.textui.colored
 from clint import resources
-from clint.textui import colored
-
 
 
 from .settings import settings
-
 
 
 resources.init('kennethreitz', 'legit')
@@ -33,7 +30,6 @@ except IOError:
 # Load existing configuration.
 config = ConfigParser.ConfigParser()
 config.readfp(config_file)
-
 
 
 # Pouplate if needed.
