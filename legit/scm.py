@@ -42,6 +42,7 @@ def abort(message, log=None):
 
     settings.abort_handler(a)
 
+
 def repo_check(require_remote=False):
     if repo is None:
         print 'Not a git repository.'
@@ -55,14 +56,13 @@ def repo_check(require_remote=False):
     # TODO: You're in a merge state.
 
 
-
 def stash_it(sync=False):
     repo_check()
     msg = 'syncing branch' if sync else 'switching branches'
 
     return repo.git.execute([git,
-        'stash', 'save',
-        LEGIT_TEMPLATE.format(msg)])
+                             'stash', 'save',
+                             LEGIT_TEMPLATE.format(msg)])
 
 
 def unstash_index(sync=False, branch=None):
@@ -71,7 +71,7 @@ def unstash_index(sync=False, branch=None):
     repo_check()
 
     stash_list = repo.git.execute([git,
-        'stash', 'list', '--date=default'])
+                                   'stash', 'list', '--date=default'])
 
     if branch is None:
         branch = repo.head.ref.name
@@ -90,6 +90,7 @@ def unstash_index(sync=False, branch=None):
         ):
             return stash[7]
 
+
 def unstash_it(sync=False, branch=None):
     """Unstashes changes from current branch for branch sync."""
 
@@ -99,7 +100,7 @@ def unstash_it(sync=False, branch=None):
 
     if stash_index is not None:
         return repo.git.execute([git,
-            'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
+                                 'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
 
 def fetch():
@@ -128,7 +129,7 @@ def smart_merge(branch, allow_rebase=True):
     from_branch = repo.head.ref.name
 
     merges = repo.git.execute([git,
-        'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
+                               'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
     if allow_rebase:
         verb = 'merge' if merges.count('commit') else 'rebase'
@@ -137,10 +138,9 @@ def smart_merge(branch, allow_rebase=True):
 
     try:
         return repo.git.execute([git, verb, branch])
-    except GitCommandError, why:
-        log = repo.git.execute([git,'merge', '--abort'])
+    except GitCommandError as why:
+        repo.git.execute([git, 'merge', '--abort'])
         abort('Merge failed. Reverting.', log=why)
-
 
 
 def push(branch=None):
@@ -179,10 +179,9 @@ def graft_branch(branch):
     try:
         msg = repo.git.execute([git, 'merge', '--no-ff', branch])
         log.append(msg)
-    except GitCommandError, why:
-        log = repo.git.execute([git,'merge', '--abort'])
+    except GitCommandError as why:
+        log = repo.git.execute([git, 'merge', '--abort'])
         abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
-
 
     out = repo.git.execute([git, 'branch', '-D', branch])
     log.append(out)
@@ -195,7 +194,7 @@ def unpublish_branch(branch):
     repo_check()
 
     return repo.git.execute([git,
-        'push', remote.name, ':{0}'.format(branch)])
+                             'push', remote.name, ':{0}'.format(branch)])
 
 
 def publish_branch(branch):
@@ -204,15 +203,15 @@ def publish_branch(branch):
     repo_check()
 
     return repo.git.execute([git,
-        'push', remote.name, branch])
+                             'push', remote.name, branch])
 
 
 def get_repo():
     """Returns the current Repo, based on path."""
 
     work_path = subprocess.Popen([git, 'rev-parse', '--show-toplevel'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE).communicate()[0].rstrip('\n')
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE).communicate()[0].rstrip('\n')
 
     if work_path:
         return Repo(work_path)
@@ -270,7 +269,6 @@ def get_branches(local=True, remote_branches=True):
             if b not in [br.name for br in branches] or not remote_branches:
                 if b not in settings.forbidden_branches:
                     branches.append(Branch(b, False))
-
 
     return sorted(branches, key=attrgetter('name'))
 

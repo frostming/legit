@@ -20,7 +20,6 @@ class Settings(object):
 
         self.__dict__ = self._singleton
 
-
     def __call__(self, *args, **kwargs):
         # new instance of class to call
         r = self.__class__()
@@ -34,17 +33,14 @@ class Settings(object):
 
         return r
 
-
     def __enter__(self):
         pass
-
 
     def __exit__(self, *args):
 
         # restore cached copy
         self.__dict__.update(self.__cache.copy())
         del self.__cache
-
 
     def __getattribute__(self, key):
         if key in object.__getattribute__(self, '__attrs__'):
@@ -75,4 +71,4 @@ settings.config_defaults = (
 
 settings.config_url = 'http://git-legit.org/config'
 settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
-settings.forbidden_branches = ['HEAD',]
+settings.forbidden_branches = ['HEAD', ]
