@@ -20,7 +20,10 @@ from clint.textui import colored, puts, columns
 from .core import __version__
 from .settings import settings
 from .helpers import is_lin, is_osx, is_win
-from .scm import *
+from .scm import (get_branch_names, repo, stash_it, sprout_branch, smart_pull,
+                  checkout_branch, push, unstash_index, unstash_it,
+                  graft_branch, publish_branch, unpublish_branch, smart_merge,
+                  get_branches)
 
 
 def black(s):
@@ -103,17 +106,17 @@ def switch_to(branch):
 
 def fuzzy_match_branch(branch):
     if not branch: return False
-    
+
     all_branches = get_branch_names()
     if branch in all_branches:
         return branch
-        
+
     def branch_fuzzy_match(b): return b.startswith(branch)
     possible_branches = filter(branch_fuzzy_match, all_branches)
-    
+
     if len(possible_branches) == 1:
         return possible_branches[0]
-    
+
     return False
 
 # --------
@@ -131,7 +134,7 @@ def cmd_switch(args):
         print 'Please specify a branch to switch to:'
         display_available_branches()
         sys.exit()
-    
+
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
