@@ -13,9 +13,13 @@ from subprocess import call
 from time import sleep
 
 import clint.resources
-from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns
+try:
+    from clint import args
+except ImportError:
+    from clint import Args
+    args = Args()
 
 from .core import __version__
 from .settings import settings
@@ -103,17 +107,17 @@ def switch_to(branch):
 
 def fuzzy_match_branch(branch):
     if not branch: return False
-    
+
     all_branches = get_branch_names()
     if branch in all_branches:
         return branch
-        
+
     def branch_fuzzy_match(b): return b.startswith(branch)
     possible_branches = filter(branch_fuzzy_match, all_branches)
-    
+
     if len(possible_branches) == 1:
         return possible_branches[0]
-    
+
     return False
 
 # --------
@@ -131,7 +135,7 @@ def cmd_switch(args):
         print 'Please specify a branch to switch to:'
         display_available_branches()
         sys.exit()
-    
+
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
 
