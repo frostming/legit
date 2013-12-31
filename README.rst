@@ -59,7 +59,11 @@ The Interface
 The Installation
 ----------------
 
-Installing Legit is easy with pip::
+The easiest way to install legit is through homebrew::
+
+    $ brew install legit
+
+You can also install it with pip::
 
     $ pip install legit
 
