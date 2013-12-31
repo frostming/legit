@@ -20,7 +20,10 @@ from clint.textui import colored, puts, columns
 from .core import __version__
 from .settings import settings
 from .helpers import is_lin, is_osx, is_win
-from .scm import *
+from .scm import (get_branch_names, repo, stash_it, sprout_branch, smart_pull,
+                  checkout_branch, push, unstash_index, unstash_it,
+                  graft_branch, publish_branch, unpublish_branch, smart_merge,
+                  get_branches)
 
 args = Args()
 
