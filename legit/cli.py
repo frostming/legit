@@ -408,7 +408,7 @@ def cmd_install(args):
 
     for alias in aliases:
         cmd = '!legit ' + alias
-        os.system('git config --global --replace-all alias.{0} \'{1}\''.format(alias, cmd))
+        os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
         print columns(['', 1], [colored.yellow('git ' + alias), 14], [cmd, None])
 
     sys.exit()
