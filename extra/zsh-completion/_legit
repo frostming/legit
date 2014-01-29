@@ -64,7 +64,7 @@ _legit ()
                                 (harvest)
                                         _arguments \
                                                 '1:from-branch:__git_branch_names' \
-                                                '2:to-branch:__get_branch_names'
+                                                '2:to-branch:__git_branch_names'
                                 ;;
                         esac
         esac
