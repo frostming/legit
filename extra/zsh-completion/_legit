@@ -94,3 +94,5 @@ __git_command_successful () {
   return 0
 }
 # }}}
+
+_legit
