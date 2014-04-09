@@ -71,7 +71,7 @@ def unstash_index(sync=False, branch=None):
     repo_check()
 
     stash_list = repo.git.execute([git,
-        'stash', 'list', '--date=default'])
+        'stash', 'list'])
 
     if branch is None:
         branch = repo.head.ref.name
