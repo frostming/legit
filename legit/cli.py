@@ -169,8 +169,8 @@ def cmd_resync(args):
     switch_to(original_branch)
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
         colored.yellow(upstream)), upstream, allow_rebase=False)
-    if unstash_index():
-        status_log(unstash_it, 'Restoring local changes.')
+    if unstash_index(sync=True):
+        status_log(unstash_it, 'Restoring local changes.', sync=True)
     status_log(smart_pull, 'Pulling commits from the server.')
     status_log(push, 'Pushing commits to the server.', original_branch)
 
