@@ -36,7 +36,7 @@ config.readfp(config_file)
 
 
 
-# Pouplate if needed.
+# Populate if needed.
 if not config.has_section('legit'):
     config.add_section('legit')
 
