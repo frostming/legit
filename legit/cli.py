@@ -142,6 +142,37 @@ def cmd_switch(args):
     if unstash_index(branch=from_branch):
         status_log(unstash_it, 'Restoring local changes.', branch=from_branch)
 
+def cmd_resync(args):
+    """Stashes unstaged changes, 
+    Fetches upstream data from master branch,
+    Auto-Merge/Rebase from master branch 
+    Performs smart pull+merge, 
+    Pushes local commits up, and Unstashes changes.
+    Defaults to current branch.
+    """
+    if args.get(0):
+        upstream = fuzzy_match_branch(args.get(0))
+        if upstream:
+            is_external = True
+            original_branch = repo.head.ref.name
+        else:
+            print "{0} doesn't exist. Use a branch that does.".format(
+                colored.yellow(args.get(0)))
+            sys.exit(1)
+    else:
+        upstream = "master"
+    original_branch = repo.head.ref.name
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.', sync=True)
+    switch_to(upstream)
+    status_log(smart_pull, 'Pulling commits from the server.')
+    switch_to(original_branch)
+    status_log(smart_merge, 'Grafting commits from {0}.'.format(
+        colored.yellow(upstream)), upstream, allow_rebase=False)
+    if unstash_index(sync=True):
+        status_log(unstash_it, 'Restoring local changes.', sync=True)
+    status_log(smart_pull, 'Pulling commits from the server.')
+    status_log(push, 'Pushing commits to the server.', original_branch)
 
 def cmd_sync(args):
     """Stashes unstaged changes, Fetches remote data, Performs smart
@@ -402,6 +433,7 @@ def cmd_install(args):
         'sprout',
         'sync',
         'switch',
+        'resync',
     ]
 
     print 'The following git aliases have been installed:\n'
@@ -409,7 +441,7 @@ def cmd_install(args):
     for alias in aliases:
         cmd = '!legit ' + alias
         os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
-        print columns(['', 1], [colored.yellow('git ' + alias), 14], [cmd, None])
+        print columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None])
 
     sys.exit()
 
@@ -623,6 +655,13 @@ def_cmd(
     name='sync',
     short=['sy'],
     fn=cmd_sync,
+    usage='sync <branch>',
+    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
+          'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+def_cmd(
+    name='resync',
+    short=['rs'],
+    fn=cmd_resync,
     usage='sync <branch>',
     help=('Syncronizes the given branch. Defaults to current branch. Stash, '
           'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
