@@ -1,2 +1,2 @@
 clint>=0.2.4
-gitpython==0.3.2.RC1
+GitPython==0.3.2.RC1
