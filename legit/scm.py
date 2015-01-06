@@ -44,12 +44,12 @@ def abort(message, log=None):
 
 def repo_check(require_remote=False):
     if repo is None:
-        print 'Not a git repository.'
+        print('Not a git repository.')
         sys.exit(128)
 
     # TODO: no remote fail
     if not repo.remotes and require_remote:
-        print 'No git remotes configured. Please add one.'
+        print('No git remotes configured. Please add one.')
         sys.exit(128)
 
     # TODO: You're in a merge state.
