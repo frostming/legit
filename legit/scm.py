@@ -209,14 +209,10 @@ def publish_branch(branch):
 def get_repo():
     """Returns the current Repo, based on path."""
 
-    work_path = subprocess.Popen([git, 'rev-parse', '--show-toplevel'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE).communicate()[0].rstrip('\n')
-
-    if work_path:
-        return Repo(work_path)
-    else:
-        return None
+    try:
+        return Repo()
+    except git.exc.InvalidGitRepositoryError:
+        pass
 
 
 def get_remote():
