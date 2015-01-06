@@ -8,7 +8,7 @@ This module boostraps the Legit runtime.
 """
 
 
-import ConfigParser
+from six.moves import configparser
 
 
 import clint.textui.colored
@@ -31,7 +31,7 @@ except IOError:
 
 
 # Load existing configuration.
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.readfp(config_file)
 
 
