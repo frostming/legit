@@ -11,7 +11,6 @@ import os
 import sys
 import subprocess
 from collections import namedtuple
-from exceptions import ValueError
 from operator import attrgetter
 
 from git import Repo
