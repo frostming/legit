@@ -507,10 +507,10 @@ def display_info():
     puts('Commands:\n')
     for command in Command.all_commands():
         usage = command.usage or command.name
-        help = command.help or ''
-        puts('{0:40} {1}'.format(
+        detail = command.help or ''
+        puts('{0} {1}'.format(
                 colored.green(usage),
-                first_sentence(help)))
+                first_sentence(detail)))
 
 
 def first_sentence(s):
