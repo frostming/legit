@@ -500,7 +500,7 @@ def display_info():
 
     puts('{0}. {1}\n'.format(
         colored.red('legit'),
-        black(u'A Kenneth Reitz Project™')
+        black('A Kenneth Reitz Project')
     ))
 
     puts('Usage: {0}'.format(colored.blue('legit <command>')))
