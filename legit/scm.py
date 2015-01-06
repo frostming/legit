@@ -137,7 +137,7 @@ def smart_merge(branch, allow_rebase=True):
 
     try:
         return repo.git.execute([git, verb, branch])
-    except GitCommandError, why:
+    except GitCommandError as why:
         log = repo.git.execute([git,'merge', '--abort'])
         abort('Merge failed. Reverting.', log=why)
 
@@ -179,7 +179,7 @@ def graft_branch(branch):
     try:
         msg = repo.git.execute([git, 'merge', '--no-ff', branch])
         log.append(msg)
-    except GitCommandError, why:
+    except GitCommandError as why:
         log = repo.git.execute([git,'merge', '--abort'])
         abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
 
