@@ -13,7 +13,11 @@ from subprocess import call
 from time import sleep
 
 import clint.resources
-from clint import Args
+try:
+    from clint import Args
+    args = Args()
+except ImportError:
+    from clint import args
 from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns
 
@@ -22,7 +26,6 @@ from .settings import settings
 from .helpers import is_lin, is_osx, is_win
 from .scm import *
 
-args = Args()
 
 def black(s):
     if settings.allow_black_foreground:
