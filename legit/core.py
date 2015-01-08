@@ -7,7 +7,7 @@ legit.core
 This module provides the basic functionality of legit.
 """
 
-import bootstrap
+from . import bootstrap
 del bootstrap
 
 __version__ = '0.1.1'
