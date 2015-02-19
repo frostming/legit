@@ -137,8 +137,8 @@ def smart_merge(branch, allow_rebase=True):
     try:
         return repo.git.execute([git, verb, branch])
     except GitCommandError as why:
-        log = repo.git.execute([git,'merge', '--abort'])
-        abort('Merge failed. Reverting.', log=why)
+        log = repo.git.execute([git, verb, '--abort'])
+        abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
 
 
 
