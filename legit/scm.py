@@ -14,7 +14,7 @@ from collections import namedtuple
 from operator import attrgetter
 
 from git import Repo
-from git.exc import GitCommandError
+from git.exc import GitCommandError,  InvalidGitRepositoryError
 
 from .settings import settings
 
@@ -211,7 +211,7 @@ def get_repo():
 
     try:
         return Repo()
-    except git.exc.InvalidGitRepositoryError:
+    except InvalidGitRepositoryError:
         pass
 
 
