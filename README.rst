@@ -67,6 +67,8 @@ You can also install it with pip::
 
     $ pip install legit
 
+(Note that the current pip version is outdated.)
+
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
