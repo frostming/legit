@@ -51,11 +51,11 @@ def main():
 
     elif args.contains(('-h', '--help')):
         display_help()
-        sys.exit(1)
+        sys.exit()
 
     elif args.contains(('-v', '--version')):
         display_version()
-        sys.exit(1)
+        sys.exit()
 
     else:
         if settings.git_transparency:
@@ -271,7 +271,7 @@ def cmd_graft(args):
     if not branch:
         print('Please specify a branch to graft:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     if not into_branch:
         into_branch = get_current_branch_name()
@@ -336,7 +336,7 @@ def cmd_unpublish(args):
     if not branch:
         print('Please specify a branch to unpublish:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     branch_names = get_branch_names(local=False)
 
@@ -358,7 +358,7 @@ def cmd_harvest(args):
     if not from_branch:
         print('Please specify a branch to harvest commits from:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     if to_branch:
         original_branch = get_current_branch_name()
