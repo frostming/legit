@@ -59,27 +59,24 @@ The Interface
 The Installation
 ----------------
 
-The easiest way to install legit is through homebrew::
+From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
-    $ brew install legit
+    pip install legit
 
-You can also install it with pip::
+Or on Mac OS X through `homebrew <http://braumeister.org/formula/legit>`_::
 
-    $ pip install legit
-
-(Note that the current pip version is outdated.)
+    brew install legit
 
 To install the cutting edge version::
 
-    $ git clone https://github.com/kennethreitz/legit.git
-    $ [sudo] python setup.py install
+    pip install git+https://github.com/kennethreitz/legit.git@develop
 
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
 To install the git aliases, run the following command::
 
-    $ legit install
+    legit install
 
 
 Caveats
