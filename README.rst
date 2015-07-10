@@ -67,6 +67,13 @@ You can also install it with pip::
 
     $ pip install legit
 
+(Note that the current pip version is outdated.)
+
+To install the cutting edge version::
+
+    $ git clone https://github.com/kennethreitz/legit.git
+    $ [sudo] python setup.py install
+
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
