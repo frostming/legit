@@ -64,26 +64,35 @@ _legit ()
                                 (harvest)
                                         _arguments \
                                                 '1:from-branch:__git_branch_names' \
-                                                '2:to-branch:__get_branch_names'
+                                                '2:to-branch:__git_branch_names'
                                 ;;
                         esac
         esac
 }
 
+
+# Helper functions copied from Completion/Unix/Command/_git (a2098b0) {{{
+# The approach to trigger the load of _git completion did not work (recursion, ...):
+# https://dev.0x50.de/projects/ftzsh/repository/revisions/master/entry/functions/_ta#L17
+(( $+functions[__git_branch_names] )) ||
 __git_branch_names () {
-        local expl
-        declare -a branch_names
+  local expl
+  declare -a branch_names
 
-        branch_names=(${${(f)"$(_call_program branchrefs git for-each-ref --format='"%(refname)"' refs/heads 2>/dev/null)"}#refs/heads/})
-        __git_command_successful || return
+  branch_names=(${${(f)"$(_call_program branchrefs git for-each-ref --format='"%(refname)"' refs/heads 2>/dev/null)"}#refs/heads/})
+  __git_command_successful $pipestatus || return 1
 
-        _wanted branch-names expl branch-name compadd $* - $branch_names
+  _wanted branch-names expl branch-name compadd $* - $branch_names
 }
 
+(( $+functions[__git_command_successful] )) ||
 __git_command_successful () {
-        if (( ${#pipestatus:#0} > 0 )); then
-                _message 'not a git repository'
-                return 1
-        fi
-        return 0
+  if (( ${#*:#0} > 0 )); then
+    _message 'not a git repository'
+    return 1
+  fi
+  return 0
 }
+# }}}
+
+_legit
