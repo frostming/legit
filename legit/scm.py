@@ -280,4 +280,5 @@ def get_branch_names(local=True, remote_branches=True):
 
 
 repo = get_repo()
-remote = get_remote()
+if repo:  # in git repository
+    remote = get_remote()
