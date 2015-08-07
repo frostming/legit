@@ -210,7 +210,7 @@ def get_repo():
     """Returns the current Repo, based on path."""
 
     try:
-        return Repo()
+        return Repo(search_parent_directories=True)
     except InvalidGitRepositoryError:
         pass
 
