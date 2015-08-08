@@ -4,7 +4,8 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages  # Always prefer setuptools over distutils
+from codecs import open  # To use a consistent encoding
 
 
 APP_NAME = 'legit'
