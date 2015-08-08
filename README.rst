@@ -66,9 +66,7 @@ From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manag
 
     pip install legit
 
-Or to install the cutting edge version::
-
-    pip install git+https://github.com/kennethreitz/legit.git@develop
+Or download a standalone Windows executable from `GitHub Releases <https://github.com/kennethreitz/legit/releases>`_.
 
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
