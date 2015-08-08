@@ -4,15 +4,12 @@
 import os
 import sys
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 
 
 # Grab requirements.
@@ -25,7 +22,7 @@ settings = dict()
 
 # Publish Helper.
 if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
+    os.system('python setup.py sdist bdist_wheel upload')
     sys.exit()
 
 

@@ -59,15 +59,14 @@ The Interface
 The Installation
 ----------------
 
+.. image:: https://img.shields.io/pypi/v/nine.svg
+    :target: https://pypi.python.org/pypi/legit/
+
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
     pip install legit
 
-Or on Mac OS X through `homebrew <http://braumeister.org/formula/legit>`_::
-
-    brew install legit
-
-To install the cutting edge version::
+Or to install the cutting edge version::
 
     pip install git+https://github.com/kennethreitz/legit.git@develop
 
@@ -84,4 +83,3 @@ Caveats
 
 - All remote operations are carried out by the remote identified in ``$ git config legit.remote remotename``
 - If a ``stash pop`` merge fails, Legit stops. I'd like to add checking for a failed merge, and undo the command with friendly error reporting.
-- ``pip install`` is cumbersome to people unfamiliar with Python. Package. (Py2App + PyInstaller)

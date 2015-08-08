@@ -5,4 +5,3 @@ builders/pyinstaller-1.5.1
 builders/artifacts/*
 dist/
 build/
-!build/legit/
