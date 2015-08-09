@@ -46,7 +46,7 @@ The Interface
     Auto-Merge/Rebase of specified branch into the second branch.
     Immediately removes specified branch. You can only graft unpublished branches.
 
-``publish <branch>``
+``publish [<branch>]``
     Publishes specified branch to the remote.
 
 ``unpublish <branch>``
