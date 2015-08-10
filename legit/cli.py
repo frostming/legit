@@ -311,7 +311,10 @@ def cmd_publish(args):
     if not branch:
         branch = repo.head.ref.name
         display_available_branches()
-        print("Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch)))
+        if args.get(0) is None:
+            print("Using current branch {0}".format(colored.yellow(branch)))
+        else:
+            print("Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch)))
 
     branch_names = get_branch_names(local=False)
 
@@ -629,7 +632,7 @@ def_cmd(
     name='publish',
     short=['pub'],
     fn=cmd_publish,
-    usage='publish <branch>',
+    usage='publish [<branch>]',
     help='Publishes specified branch to the remote.')
 
 def_cmd(
