@@ -542,10 +542,14 @@ def display_version():
     ))
 
 
-def handle_abort(aborted):
-    print(colored.red('Error:'), aborted.message)
+def handle_abort(aborted, type=None):
+    print('{0} {1}'.format(colored.red('Error:'), aborted.message))
     print(black(str(aborted.log)))
-    print('Unfortunately, there was a merge conflict. It has to be merged manually.')
+    if type == 'merge':
+        print('Unfortunately, there was a merge conflict.'
+              ' It has to be merged manually.')
+    elif type == 'unpublish':
+        print('It seems that the remote branch has been already deleted.')
     sys.exit(1)
 
 
