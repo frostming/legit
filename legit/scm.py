@@ -73,7 +73,7 @@ def unstash_index(sync=False, branch=None):
         'stash', 'list'])
 
     if branch is None:
-        branch = repo.head.ref.name
+        branch = get_current_branch_name()
 
     for stash in stash_list.splitlines():
 
@@ -113,7 +113,7 @@ def smart_pull():
 
     repo_check()
 
-    branch = repo.head.ref.name
+    branch = get_current_branch_name()
 
     fetch()
 
@@ -124,7 +124,7 @@ def smart_merge(branch, allow_rebase=True):
 
     repo_check()
 
-    from_branch = repo.head.ref.name
+    from_branch = get_current_branch_name()
 
     merges = repo.git.execute([git,
         'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
@@ -235,6 +235,14 @@ def get_remote():
                          'configuration.'.format(remote_name))
 
     return repo.remote(remote_name)
+
+
+def get_current_branch_name():
+    """Returns current branch name"""
+
+    repo_check()
+
+    return repo.head.ref.name
 
 
 def get_branches(local=True, remote_branches=True):

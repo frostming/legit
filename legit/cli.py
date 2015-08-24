@@ -127,7 +127,7 @@ def fuzzy_match_branch(branch):
 def cmd_switch(args):
     """Legit Switch command."""
 
-    from_branch = repo.head.ref.name
+    from_branch = get_current_branch_name()
     to_branch = args.get(0)
     to_branch = fuzzy_match_branch(to_branch)
 
@@ -157,14 +157,14 @@ def cmd_resync(args):
         upstream = fuzzy_match_branch(args.get(0))
         if upstream:
             is_external = True
-            original_branch = repo.head.ref.name
+            original_branch = get_current_branch_name()
         else:
             print("{0} doesn't exist. Use a branch that does.".format(
                 colored.yellow(args.get(0))))
             sys.exit(1)
     else:
         upstream = "master"
-    original_branch = repo.head.ref.name
+    original_branch = get_current_branch_name()
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.', sync=True)
     switch_to(upstream)
@@ -189,14 +189,14 @@ def cmd_sync(args):
         branch = fuzzy_match_branch(args.get(0))
         if branch:
             is_external = True
-            original_branch = repo.head.ref.name
+            original_branch = get_current_branch_name()
         else:
             print("{0} doesn't exist. Use a branch that does.".format(
                 colored.yellow(args.get(0))))
             sys.exit(1)
     else:
         # Sync current branch.
-        branch = repo.head.ref.name
+        branch = get_current_branch_name()
         is_external = False
 
     if branch in get_branch_names(local=False):
@@ -232,7 +232,7 @@ def cmd_sprout(args):
 
     if new_branch is None:
         new_branch = off_branch
-        off_branch = repo.head.ref.name
+        off_branch = get_current_branch_name()
     else:
         off_branch = fuzzy_match_branch(off_branch)
 
@@ -274,7 +274,7 @@ def cmd_graft(args):
         sys.exit()
 
     if not into_branch:
-        into_branch = repo.head.ref.name
+        into_branch = get_current_branch_name()
     else:
         into_branch = fuzzy_match_branch(into_branch)
 
@@ -309,7 +309,7 @@ def cmd_publish(args):
     branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
-        branch = repo.head.ref.name
+        branch = get_current_branch_name()
         display_available_branches()
         if args.get(0) is None:
             print("Using current branch {0}".format(colored.yellow(branch)))
@@ -361,7 +361,7 @@ def cmd_harvest(args):
         sys.exit()
 
     if to_branch:
-        original_branch = repo.head.ref.name
+        original_branch = get_current_branch_name()
         is_external = True
     else:
         is_external = False
@@ -486,7 +486,7 @@ def display_available_branches():
     for branch in branches:
 
         try:
-            branch_is_selected = (branch.name == repo.head.ref.name)
+            branch_is_selected = (branch.name == get_current_branch_name())
         except TypeError:
             branch_is_selected = False
 
