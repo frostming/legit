@@ -221,12 +221,8 @@ def get_remote():
 
     reader = repo.config_reader()
 
-    # If there is no legit section return the default remote.
-    if not reader.has_section('legit'):
-        return repo.remotes[0]
-
-    # If there is no remote option in the legit section return the default.
-    if not any('legit' in s and 'remote' in s for s in reader.sections()):
+    # If there is no remote option in legit section, return default
+    if not reader.has_option('legit', 'remote'):
         return repo.remotes[0]
 
     remote_name = reader.get('legit', 'remote')
