@@ -666,7 +666,7 @@ def_cmd(
     short=['sy'],
     fn=cmd_sync,
     usage='sync <branch>',
-    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
+    help=('Synchronizes the given branch. Defaults to current branch. Stash, '
           'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
 
 def_cmd(

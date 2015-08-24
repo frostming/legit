@@ -26,7 +26,7 @@ The Interface
     Get a nice pretty list of available branches.
 
 ``sync [<branch>]``
-    Syncronizes the given branch. Defaults to current branch.
+    Synchronizes the given branch. Defaults to current branch.
     Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
     You can only sync published branches.
 
