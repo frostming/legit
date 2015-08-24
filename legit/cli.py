@@ -230,16 +230,17 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
-    if new_branch is None:
-        new_branch = off_branch
+    if (off_branch is None) and (new_branch is None):
+        # new_branch is required, so should be passed at least 1 arg
+        show_error('Please pass new branch name to create.')
+        help('sprout', to_stderr=True)
+        sys.exit(1)
+    elif new_branch is None:
+        # off_branch is optional, so use specified one as new_branch
+        new_branch = args.get(0)
         off_branch = get_current_branch_name()
     else:
         off_branch = fuzzy_match_branch(off_branch)
-
-    if not off_branch:
-        print('Please specify branch to sprout:')
-        display_available_branches()
-        sys.exit()
 
     branch_names = get_branch_names()
 
@@ -461,7 +462,7 @@ def cmd_help(args):
 # Views
 # -----
 
-def help(command):
+def help(command, to_stderr=False):
     if command == None:
         command = 'help'
 
@@ -469,7 +470,10 @@ def help(command):
     usage = cmd.usage or ''
     help = cmd.help or ''
     help_text = '%s\n\n%s' % (usage, help)
-    print(help_text)
+    if to_stderr:
+        show_error(help_text)
+    else:
+        print(help_text)
 
 
 def display_available_branches():
