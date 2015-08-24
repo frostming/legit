@@ -33,13 +33,13 @@ class Aborted(object):
         self.log = None
 
 
-def abort(message, log=None):
+def abort(message, log=None, type=None):
 
     a = Aborted()
     a.message = message
     a.log = log
 
-    settings.abort_handler(a)
+    settings.abort_handler(a, type=type)
 
 def repo_check(require_remote=False):
     if repo is None:
@@ -138,7 +138,8 @@ def smart_merge(branch, allow_rebase=True):
         return repo.git.execute([git, verb, branch])
     except GitCommandError as why:
         log = repo.git.execute([git, verb, '--abort'])
-        abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
+        abort('Merge failed. Reverting.',
+              log='{0}\n{1}'.format(why, log), type='merge')
 
 
 
@@ -180,7 +181,8 @@ def graft_branch(branch):
         log.append(msg)
     except GitCommandError as why:
         log = repo.git.execute([git,'merge', '--abort'])
-        abort('Merge failed. Reverting.', log='{0}\n{1}'.format(why, log))
+        abort('Merge failed. Reverting.',
+              log='{0}\n{1}'.format(why, log), type='merge')
 
 
     out = repo.git.execute([git, 'branch', '-D', branch])
@@ -193,8 +195,13 @@ def unpublish_branch(branch):
 
     repo_check()
 
-    return repo.git.execute([git,
-        'push', remote.name, ':{0}'.format(branch)])
+    try:
+        return repo.git.execute([git,
+            'push', remote.name, ':{0}'.format(branch)])
+    except GitCommandError:
+        _, _, log = repo.git.execute([git, 'fetch', remote.name, '--prune'],
+                                     with_extended_output=True)
+        abort('Unpublish failed. Fetching.', log=log, type='unpublish')
 
 
 def publish_branch(branch):
