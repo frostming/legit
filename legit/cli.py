@@ -145,13 +145,13 @@ def cmd_switch(args):
     if unstash_index(branch=from_branch):
         status_log(unstash_it, 'Restoring local changes.', branch=from_branch)
 
+
 def cmd_resync(args):
-    """Stashes unstaged changes, 
-    Fetches upstream data from master branch,
-    Auto-Merge/Rebase from master branch 
-    Performs smart pull+merge, 
+    """Stashes unstaged changes,
+    Fetches, Auto-Merge/Rebase upstream data from specified upstream branch,
+    Performs smart pull+merge for current branch,
     Pushes local commits up, and Unstashes changes.
-    Defaults to current branch.
+    Default upstream branch is 'master'.
     """
     if args.get(0):
         upstream = fuzzy_match_branch(args.get(0))
@@ -167,15 +167,19 @@ def cmd_resync(args):
     original_branch = repo.head.ref.name
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.', sync=True)
+    # Update upstream branch
     switch_to(upstream)
     status_log(smart_pull, 'Pulling commits from the server.')
+    # Update original branch with upstream
     switch_to(original_branch)
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
         colored.yellow(upstream)), upstream, allow_rebase=False)
     if unstash_index(sync=True):
         status_log(unstash_it, 'Restoring local changes.', sync=True)
+    # Sync original_branch
     status_log(smart_pull, 'Pulling commits from the server.')
     status_log(push, 'Pushing commits to the server.', original_branch)
+
 
 def cmd_sync(args):
     """Stashes unstaged changes, Fetches remote data, Performs smart
@@ -664,13 +668,16 @@ def_cmd(
     usage='sync <branch>',
     help=('Syncronizes the given branch. Defaults to current branch. Stash, '
           'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+
 def_cmd(
     name='resync',
     short=['rs'],
     fn=cmd_resync,
-    usage='sync <branch>',
-    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
-          'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+    usage='resync <upstream-branch>',
+    help=('Re-synchronize current branch with specified upstream branch. '
+          "Defaults upstream branch is 'master'. "
+          'Fetch, Auto-Merge/Rebase for upstream, '
+          'Fetch, Auto-Merge/Rebase, Push, and Unstash for current branch.'))
 
 def_cmd(
     name='unpublish',

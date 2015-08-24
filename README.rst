@@ -30,6 +30,13 @@ The Interface
     Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
     You can only sync published branches.
 
+``resync <upstream-branch>``
+    Stashes unstaged changes,
+    Fetches, Auto-Merge/Rebase upstream data from specified upstream branch,
+    Performs smart pull+merge for current branch,
+    Pushes local commits up, and Unstashes changes.
+    Default upstream branch is 'master'.
+
 ``switch <branch>``
     Switches to specified branch.
     Defaults to current branch.
