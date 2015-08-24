@@ -236,11 +236,6 @@ def cmd_sprout(args):
     else:
         off_branch = fuzzy_match_branch(off_branch)
 
-    if not off_branch:
-        print('Please specify branch to sprout:')
-        display_available_branches()
-        sys.exit()
-
     branch_names = get_branch_names()
 
     if off_branch not in branch_names:
