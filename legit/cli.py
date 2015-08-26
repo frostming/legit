@@ -11,6 +11,7 @@ import os
 import sys
 from subprocess import call
 from time import sleep
+import difflib
 
 import clint.resources
 try:
@@ -504,6 +505,25 @@ def display_available_branches():
         ))
 
 
+def sort_with_similarity(iterable, key=None):
+    """Sort string list with similarity following original order."""
+    if key is None:
+        key = lambda x: x
+    ordered = []
+    left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
+    for k in left_iterable.keys():
+        if k not in left_iterable:
+            continue
+        ordered.append(left_iterable[k])
+        del left_iterable[k]
+        # find close named iterable
+        close_iterable = difflib.get_close_matches(k, left_iterable.keys())
+        for close in close_iterable:
+            ordered.append(left_iterable[close])
+            del left_iterable[close]
+    return ordered
+
+
 def display_info():
     """Displays Legit informatics."""
 
@@ -514,7 +534,8 @@ def display_info():
 
     puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
     puts('Commands:\n')
-    for command in Command.all_commands():
+    commands = Command.all_commands()
+    for command in sort_with_similarity(commands, key=lambda x:x.name):
         usage = command.usage or command.name
         detail = command.help or ''
         puts(colored.green(usage))
