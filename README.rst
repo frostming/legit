@@ -66,7 +66,7 @@ The Interface
 The Installation
 ----------------
 
-.. image:: https://img.shields.io/pypi/v/nine.svg
+.. image:: https://img.shields.io/pypi/v/legit.svg
     :target: https://pypi.python.org/pypi/legit/
 
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
