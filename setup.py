@@ -79,7 +79,12 @@ settings.update(
         'console_scripts': [
             'legit = legit.cli:main',
         ],
-    }
+    },
+    data_files=[
+        ('man/man1', ['extra/man/legit.1']),
+        ('etc/bash_completion.d', ['extra/bash-completion/legit']),
+        ('share/zsh/site-functions', ['extra/zsh-completion/_legit']),
+    ],
 )
 
 
