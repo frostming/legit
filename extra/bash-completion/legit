@@ -8,31 +8,31 @@ _legit()
     local running=`git for-each-ref --format='%(refname:short)' --sort='refname:short' refs/heads`
 
     case "${prev}" in
-        sync)
+        sy|sync)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        switch)
+        sw|switch)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        sprout)
+        sp|sprout)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        graft)
+        gr|graft)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        harvest)
+        ha|hv|har|harvest)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        publish)
+        pub|publish)
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0
             ;;
-        unpublish|rs|resync)
+        unp|unpublish|rs|resync)
             local running=$(for x in `git ls-remote 2>/dev/null | grep refs/heads | awk '{ print $2 }' | sed -e 's/refs\/heads\///g'`; do echo ${x} ; done )
             COMPREPLY=( $(compgen -W "${running}" -- ${cur}) )
             return 0

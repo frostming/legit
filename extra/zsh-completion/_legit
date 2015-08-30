@@ -48,21 +48,21 @@ _legit ()
                         case $line[1] in
                                 (settings|branches)
                                 ;;
-                                (sync|switch|publish|unpublish|rs|resync)
+                                (sy|sync|sw|switch|pub|publish|unp|unpublish|rs|resync)
                                         _arguments \
                                                 ':branch:__git_branch_names'
                                 ;;
-                                (sprout)
+                                (sp|sprout)
                                         _arguments \
                                                 '1:branch:__git_branch_names' \
                                                 '2:new-branch'
                                 ;;
-                                (graft)
+                                (gr|graft)
                                         _arguments \
                                                 '1:branch:__git_branch_names' \
                                                 '2:into-branch:__git_branch_names'
                                 ;;
-                                (harvest)
+                                (ha|hv|har|harvest)
                                         _arguments \
                                                 '1:from-branch:__git_branch_names' \
                                                 '2:to-branch:__git_branch_names'
