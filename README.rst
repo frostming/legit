@@ -28,36 +28,38 @@ The Interface
 ``sync [<branch>]``
     Synchronizes the given branch. Defaults to current branch.
     Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
-    You can only sync published branches.
+    You can only sync published branches. (alias: ``sy``)
 
 ``resync <upstream-branch>``
     Stashes unstaged changes,
     Fetches, Auto-Merge/Rebase upstream data from specified upstream branch,
     Performs smart pull+merge for current branch,
     Pushes local commits up, and Unstashes changes.
-    Default upstream branch is 'master'.
+    Default upstream branch is 'master'. (alias: ``rs``)
 
 ``switch <branch>``
     Switches to specified branch.
     Defaults to current branch.
-    Automatically stashes and unstashes any changes.
+    Automatically stashes and unstashes any changes. (alias: ``sw``)
 
 ``sprout [<branch>] <new-branch>``
     Creates a new branch off of the specified branch.
-    Swiches to it immediately.
+    Swiches to it immediately. (alias: ``sp``)
 
 ``harvest [<branch>] <into-branch>``
     Auto-Merge/Rebase of specified branch changes into the second branch.
+    (alias: ``ha``, ``hv``, ``har``)
 
 ``graft <branch> <into-branch>``
     Auto-Merge/Rebase of specified branch into the second branch.
     Immediately removes specified branch. You can only graft unpublished branches.
+    (alias: ``gr``)
 
 ``publish [<branch>]``
-    Publishes specified branch to the remote.
+    Publishes specified branch to the remote. (alias: ``pub``)
 
 ``unpublish <branch>``
-    Removes specified branch from the remote.
+    Removes specified branch from the remote. (alias: ``unp``)
 
 ``install``
     Installs legit git aliases.
