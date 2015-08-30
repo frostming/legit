@@ -1,102 +1,133 @@
-.\" generated with Ronn/v0.7.3
-.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.\" Man page generated from reStructuredText.
 .
-.TH "LEGIT" "1" "August 2015" "" ""
-Inspired by GitHub for Mac\.
+.TH LEGIT: GIT FOR HUMANS  "" "" ""
+.SH NAME
+Legit: Git for Humans \- 
 .
-.SH "The Concept"
-GitHub for Mac \fIhttp://mac\.github\.com\fR is not just a Git client\.
+.nr rst2man-indent-level 0
 .
-.P
-This comment \fIhttps://news\.ycombinator\.com/item?id=2684483\fR on Hacker News says it best:
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.\" -*-restructuredtext-*-
 .
-.P
+.sp
+Inspired by GitHub for Mac.
+.SH THE CONCEPT
+.sp
+\fI\%GitHub for Mac\fP is not just a Git client.
+.sp
+This \fI\%comment\fP on Hacker News
+says it best:
+.INDENT 0.0
+.INDENT 3.5
+They haven\(aqt re\-created the git CLI tool in a GUI, they\(aqve created something different. They\(aqve created a tool that makes Git more accessible. Little things like auto\-stashing when you switch branches will confuse git veterans, but it will make Git much easier to grok for newcomers because of the assumptions it makes about your Git workflow.
+.UNINDENT
+.UNINDENT
+.sp
 Why not bring this innovation back to the command line?
-.
-.SH "The Interface"
-.
+.SH THE INTERFACE
+.INDENT 0.0
 .TP
-\fBbranches\fR
-Get a nice pretty list of available branches\.
-.
+.B \fBbranches\fP
+Get a nice pretty list of available branches.
 .TP
-\fBsync [<branch>]\fR
-Synchronizes the given branch\. Defaults to current branch\. Stash, Fetch, Auto\-Merge/Rebase, Push, and Unstash\. You can only sync published branches\.
-.
+.B \fBsync [<branch>]\fP
+Synchronizes the given branch. Defaults to current branch.
+Stash, Fetch, Auto\-Merge/Rebase, Push, and Unstash.
+You can only sync published branches.
 .TP
-\fBresync <upstream\-branch>\fR
-Stashes unstaged changes, Fetches, Auto\-Merge/Rebase upstream data from specified upstream branch, Performs smart pull+merge for current branch, Pushes local commits up, and Unstashes changes\. Default upstream branch is \'master\'\.
-.
+.B \fBresync <upstream\-branch>\fP
+Stashes unstaged changes,
+Fetches, Auto\-Merge/Rebase upstream data from specified upstream branch,
+Performs smart pull+merge for current branch,
+Pushes local commits up, and Unstashes changes.
+Default upstream branch is \(aqmaster\(aq.
 .TP
-\fBswitch <branch>\fR
-Switches to specified branch\. Defaults to current branch\. Automatically stashes and unstashes any changes\.
-.
+.B \fBswitch <branch>\fP
+Switches to specified branch.
+Defaults to current branch.
+Automatically stashes and unstashes any changes.
 .TP
-\fBsprout [<branch>] <new\-branch>\fR
-Creates a new branch off of the specified branch\. Swiches to it immediately\.
-.
+.B \fBsprout [<branch>] <new\-branch>\fP
+Creates a new branch off of the specified branch.
+Swiches to it immediately.
 .TP
-\fBharvest [<branch>] <into\-branch>\fR
-Auto\-Merge/Rebase of specified branch changes into the second branch\.
-.
+.B \fBharvest [<branch>] <into\-branch>\fP
+Auto\-Merge/Rebase of specified branch changes into the second branch.
 .TP
-\fBgraft <branch> <into\-branch>\fR
-Auto\-Merge/Rebase of specified branch into the second branch\. Immediately removes specified branch\. You can only graft unpublished branches\.
-.
+.B \fBgraft <branch> <into\-branch>\fP
+Auto\-Merge/Rebase of specified branch into the second branch.
+Immediately removes specified branch. You can only graft unpublished branches.
 .TP
-\fBpublish [<branch>]\fR
-Publishes specified branch to the remote\.
-.
+.B \fBpublish [<branch>]\fP
+Publishes specified branch to the remote.
 .TP
-\fBunpublish <branch>\fR
-Removes specified branch from the remote\.
-.
+.B \fBunpublish <branch>\fP
+Removes specified branch from the remote.
 .TP
-\fBinstall\fR
-Installs legit git aliases\.
-.
-.SH "The Installation"
- \fIhttps://pypi\.python\.org/pypi/legit/\fR
-.
-.P
-From PyPI \fIhttps://pypi\.python\.org/pypi/legit/\fR with the Python package manager:
-.
-.IP "" 4
-.
+.B \fBinstall\fP
+Installs legit git aliases.
+.UNINDENT
+.SH THE INSTALLATION
+\fI\%[image: https://img.shields.io/pypi/v/legit.svg]
+\fP
+.sp
+From \fI\%PyPI\fP with the Python package manager:
+.INDENT 0.0
+.INDENT 3.5
+.sp
 .nf
-
+.ft C
 pip install legit
-.
+.ft P
 .fi
-.
-.IP "" 0
-.
-.P
-Or download a standalone Windows executable from GitHub Releases \fIhttps://github\.com/kennethreitz/legit/releases\fR\.
-.
-.P
-You\'ll then have the wonderful \fBlegit\fR command available\. Run it within a repository\.
-.
-.P
+.UNINDENT
+.UNINDENT
+.sp
+Or download a standalone Windows executable from \fI\%GitHub Releases\fP\&.
+.sp
+You\(aqll then have the wonderful \fBlegit\fP command available. Run it within
+a repository.
+.sp
 To install the git aliases, run the following command:
-.
-.IP "" 4
-.
+.INDENT 0.0
+.INDENT 3.5
+.sp
 .nf
-
+.ft C
 legit install
-.
+.ft P
 .fi
+.UNINDENT
+.UNINDENT
+.SH CAVEATS
+.INDENT 0.0
+.IP \(bu 2
+All remote operations are carried out by the remote identified in \fB$ git config legit.remote remotename\fP
+.IP \(bu 2
+If a \fBstash pop\fP merge fails, Legit stops. I\(aqd like to add checking for a failed merge, and undo the command with friendly error reporting.
+.UNINDENT
+.\" Generated by docutils manpage writer.
 .
-.IP "" 0
-.
-.SH "Caveats"
-.
-.IP "\(bu" 4
-All remote operations are carried out by the remote identified in \fB$ git config legit\.remote remotename\fR
-.
-.IP "\(bu" 4
-If a \fBstash pop\fR merge fails, Legit stops\. I\'d like to add checking for a failed merge, and undo the command with friendly error reporting\.
-.
-.IP "" 0
-
