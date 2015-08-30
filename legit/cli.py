@@ -118,7 +118,7 @@ def fuzzy_match_branch(branch):
     if len(possible_branches) == 1:
         return possible_branches[0]
 
-    return False
+    return branch
 
 # --------
 # Commands
@@ -130,11 +130,6 @@ def cmd_switch(args):
     from_branch = get_current_branch_name()
     to_branch = args.get(0)
     to_branch = fuzzy_match_branch(to_branch)
-
-    if not to_branch:
-        print('Please specify a branch to switch to:')
-        display_available_branches()
-        sys.exit()
 
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
