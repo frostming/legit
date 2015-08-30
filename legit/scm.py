@@ -158,7 +158,9 @@ def checkout_branch(branch):
 
     repo_check()
 
-    return repo.git.execute([git, 'checkout', branch])
+    _, stdout, stderr = repo.git.execute([git, 'checkout', branch],
+                                         with_extended_output=True)
+    return '\n'.join([stderr, stdout])
 
 
 def sprout_branch(off_branch, branch):
