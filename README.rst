@@ -64,6 +64,9 @@ The Interface
 ``install``
     Installs legit git aliases.
 
+``help``
+    Displays help for legit command. (alias: ``h``)
+
 
 The Installation
 ----------------
