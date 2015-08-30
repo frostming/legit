@@ -473,7 +473,7 @@ def help(command, to_stderr=False):
     cmd = Command.lookup(command)
     usage = cmd.usage or ''
     alias = 'alias: %s\n\n' % ', '.join(cmd.short) if cmd.short else ''
-    help = cmd.help or ''
+    help = columns([cmd.help, 60]) or ''
     help_text = '%s\n\n%s%s' % (usage, alias, help)
     if to_stderr:
         show_error(help_text)
