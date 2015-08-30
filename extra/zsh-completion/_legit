@@ -33,6 +33,7 @@ _legit ()
                                 'settings: Display and edit the current Legit settings.'
                                 'branches: Get a nice pretty list of available branches.'
                                 'sync: Synchronizes the given branch. Defaults to current branch. Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash. You can only sync published branches.'
+                                'resync: Re-synchronize current branch with specified upstream branch.'
                                 'switch: Switches to specified branch. Defaults to current branch. Automatically stashes and unstashes any changes.'
                                 'sprout: Creates a new branch off of the specified branch. Switches to it immediately.'
                                 'graft: Merges specified branch into the second branch, and removes it. You can only graft unpublished branches.'
@@ -47,7 +48,7 @@ _legit ()
                         case $line[1] in
                                 (settings|branches)
                                 ;;
-                                (sync|switch|publish|unpublish)
+                                (sync|switch|publish|unpublish|rs|resync)
                                         _arguments \
                                                 ':branch:__git_branch_names'
                                 ;;
