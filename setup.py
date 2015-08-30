@@ -27,6 +27,14 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 
+if sys.argv[-1] == 'build_manpage':
+    os.system('pandoc --from=rst --to=markdown README.rst'
+              ' -o extra/man/legit.1.ronn')
+    os.system('ronn --rof extra/man/legit.1.ronn')
+    os.system('rm extra/man/legit.1.ronn')
+    sys.exit()
+
+
 # Build Helper.
 if sys.argv[-1] == 'build':
     import py2exe
