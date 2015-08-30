@@ -1,0 +1,102 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "LEGIT" "1" "August 2015" "" ""
+Inspired by GitHub for Mac\.
+.
+.SH "The Concept"
+GitHub for Mac \fIhttp://mac\.github\.com\fR is not just a Git client\.
+.
+.P
+This comment \fIhttps://news\.ycombinator\.com/item?id=2684483\fR on Hacker News says it best:
+.
+.P
+Why not bring this innovation back to the command line?
+.
+.SH "The Interface"
+.
+.TP
+\fBbranches\fR
+Get a nice pretty list of available branches\.
+.
+.TP
+\fBsync [<branch>]\fR
+Synchronizes the given branch\. Defaults to current branch\. Stash, Fetch, Auto\-Merge/Rebase, Push, and Unstash\. You can only sync published branches\.
+.
+.TP
+\fBresync <upstream\-branch>\fR
+Stashes unstaged changes, Fetches, Auto\-Merge/Rebase upstream data from specified upstream branch, Performs smart pull+merge for current branch, Pushes local commits up, and Unstashes changes\. Default upstream branch is \'master\'\.
+.
+.TP
+\fBswitch <branch>\fR
+Switches to specified branch\. Defaults to current branch\. Automatically stashes and unstashes any changes\.
+.
+.TP
+\fBsprout [<branch>] <new\-branch>\fR
+Creates a new branch off of the specified branch\. Swiches to it immediately\.
+.
+.TP
+\fBharvest [<branch>] <into\-branch>\fR
+Auto\-Merge/Rebase of specified branch changes into the second branch\.
+.
+.TP
+\fBgraft <branch> <into\-branch>\fR
+Auto\-Merge/Rebase of specified branch into the second branch\. Immediately removes specified branch\. You can only graft unpublished branches\.
+.
+.TP
+\fBpublish [<branch>]\fR
+Publishes specified branch to the remote\.
+.
+.TP
+\fBunpublish <branch>\fR
+Removes specified branch from the remote\.
+.
+.TP
+\fBinstall\fR
+Installs legit git aliases\.
+.
+.SH "The Installation"
+ \fIhttps://pypi\.python\.org/pypi/legit/\fR
+.
+.P
+From PyPI \fIhttps://pypi\.python\.org/pypi/legit/\fR with the Python package manager:
+.
+.IP "" 4
+.
+.nf
+
+pip install legit
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Or download a standalone Windows executable from GitHub Releases \fIhttps://github\.com/kennethreitz/legit/releases\fR\.
+.
+.P
+You\'ll then have the wonderful \fBlegit\fR command available\. Run it within a repository\.
+.
+.P
+To install the git aliases, run the following command:
+.
+.IP "" 4
+.
+.nf
+
+legit install
+.
+.fi
+.
+.IP "" 0
+.
+.SH "Caveats"
+.
+.IP "\(bu" 4
+All remote operations are carried out by the remote identified in \fB$ git config legit\.remote remotename\fR
+.
+.IP "\(bu" 4
+If a \fBstash pop\fR merge fails, Legit stops\. I\'d like to add checking for a failed merge, and undo the command with friendly error reporting\.
+.
+.IP "" 0
+
