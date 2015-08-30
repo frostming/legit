@@ -19,7 +19,7 @@ try:
 except ImportError:
     from clint import args
 from clint.eng import join as eng_join
-from clint.textui import colored, puts, columns
+from clint.textui import colored, puts, columns, indent
 
 from .core import __version__
 from .settings import settings
@@ -517,14 +517,14 @@ def display_info():
         black('A Kenneth Reitz Project')
     ))
 
-    puts('Usage: {0}'.format(colored.blue('legit <command>')))
+    puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
     puts('Commands:\n')
     for command in Command.all_commands():
         usage = command.usage or command.name
         detail = command.help or ''
-        puts('{0} {1}'.format(
-                colored.green(usage),
-                first_sentence(detail)))
+        puts(colored.green(usage))
+        with indent(2):
+            puts(first_sentence(detail))
 
 
 def first_sentence(s):
