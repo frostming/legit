@@ -28,10 +28,7 @@ if sys.argv[-1] == 'publish':
 
 
 if sys.argv[-1] == 'build_manpage':
-    os.system('pandoc --from=rst --to=markdown README.rst'
-              ' -o extra/man/legit.1.ronn')
-    os.system('ronn --rof extra/man/legit.1.ronn')
-    os.system('rm extra/man/legit.1.ronn')
+    os.system('rst2man.py README.rst > extra/man/legit.1')
     sys.exit()
 
 
