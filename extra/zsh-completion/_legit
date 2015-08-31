@@ -12,8 +12,6 @@
 #  * Ryan James (https://github.com/autoplectic)
 #
 # ------------------------------------------------------------------------------
-# -*- mode: zsh; -*-
-# ------------------------------------------------------------------------------
 
 
 _legit ()
@@ -25,22 +23,23 @@ _legit ()
                 '1:command:->command' \
                 '*::options:->options'
 
+        local -a subcommands
+        subcommands=(
+                'settings: Display and edit the current Legit settings.'
+                'branches: Get a nice pretty list of available branches.'
+                'sync: Synchronizes the given branch. Defaults to current branch. Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash. You can only sync published branches.'
+                'resync: Re-synchronize current branch with specified upstream branch.'
+                'switch: Switches to specified branch. Defaults to current branch. Automatically stashes and unstashes any changes.'
+                'sprout: Creates a new branch off of the specified branch. Switches to it immediately.'
+                'graft: Merges specified branch into the second branch, and removes it. You can only graft unpublished branches.'
+                'publish: Publishes specified branch to the remote.'
+                'unpublish: Removes specified branch from the remote.'
+                'harvest: Syncs a branch with a given branch. Defaults to current.'
+                'help: Displays help for legit command.'
+        )
+
         case $state in
                 (command)
-
-                        local -a subcommands
-                        subcommands=(
-                                'settings: Display and edit the current Legit settings.'
-                                'branches: Get a nice pretty list of available branches.'
-                                'sync: Synchronizes the given branch. Defaults to current branch. Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash. You can only sync published branches.'
-                                'resync: Re-synchronize current branch with specified upstream branch.'
-                                'switch: Switches to specified branch. Defaults to current branch. Automatically stashes and unstashes any changes.'
-                                'sprout: Creates a new branch off of the specified branch. Switches to it immediately.'
-                                'graft: Merges specified branch into the second branch, and removes it. You can only graft unpublished branches.'
-                                'publish: Publishes specified branch to the remote.'
-                                'unpublish: Removes specified branch from the remote.'
-                                'harvest: Syncs a branch with a given branch. Defaults to current.'
-                        )
                         _describe -t commands 'legit' subcommands
                 ;;
 
@@ -66,6 +65,9 @@ _legit ()
                                         _arguments \
                                                 '1:from-branch:__git_branch_names' \
                                                 '2:to-branch:__git_branch_names'
+                                ;;
+                                (help)
+                                        _describe -t commands 'legit' subcommands
                                 ;;
                         esac
         esac
@@ -97,3 +99,7 @@ __git_command_successful () {
 # }}}
 
 _legit
+
+
+# -*- mode: zsh; -*-
+# vim: ft=zsh sw=8 ts=8 et
