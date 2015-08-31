@@ -627,7 +627,7 @@ def_cmd(
     short=['h'],
     fn=cmd_help,
     usage='help <command>',
-    help='Display help for legit command.')
+    help='Displays help for legit command.')
 
 def_cmd(
     name='install',
