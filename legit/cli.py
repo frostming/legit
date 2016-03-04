@@ -128,7 +128,6 @@ def fuzzy_match_branch(branch):
 def cmd_switch(args):
     """Legit Switch command."""
 
-    from_branch = get_current_branch_name()
     to_branch = args.get(0)
     to_branch = fuzzy_match_branch(to_branch)
 
@@ -138,8 +137,8 @@ def cmd_switch(args):
     status_log(checkout_branch, 'Switching to {0}.'.format(
         colored.yellow(to_branch)), to_branch)
 
-    if unstash_index(branch=from_branch):
-        status_log(unstash_it, 'Restoring local changes.', branch=from_branch)
+    if unstash_index():
+        status_log(unstash_it, 'Restoring local changes.')
 
 
 def cmd_resync(args):
