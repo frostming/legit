@@ -114,7 +114,7 @@ def fuzzy_match_branch(branch):
         return branch
 
     def branch_fuzzy_match(b): return b.startswith(branch)
-    possible_branches = filter(branch_fuzzy_match, all_branches)
+    possible_branches = list(filter(branch_fuzzy_match, all_branches))
 
     if len(possible_branches) == 1:
         return possible_branches[0]
