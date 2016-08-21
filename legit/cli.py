@@ -11,6 +11,7 @@ import os
 import sys
 from subprocess import call
 from time import sleep
+import difflib
 
 import clint.resources
 try:
@@ -19,7 +20,7 @@ try:
 except ImportError:
     from clint import args
 from clint.eng import join as eng_join
-from clint.textui import colored, puts, columns
+from clint.textui import colored, puts, columns, indent
 
 from .core import __version__
 from .settings import settings
@@ -50,11 +51,11 @@ def main():
 
     elif args.contains(('-h', '--help')):
         display_help()
-        sys.exit(1)
+        sys.exit()
 
     elif args.contains(('-v', '--version')):
         display_version()
-        sys.exit(1)
+        sys.exit()
 
     else:
         if settings.git_transparency:
@@ -118,7 +119,7 @@ def fuzzy_match_branch(branch):
     if len(possible_branches) == 1:
         return possible_branches[0]
 
-    return False
+    return branch
 
 # --------
 # Commands
@@ -127,14 +128,8 @@ def fuzzy_match_branch(branch):
 def cmd_switch(args):
     """Legit Switch command."""
 
-    from_branch = repo.head.ref.name
     to_branch = args.get(0)
     to_branch = fuzzy_match_branch(to_branch)
-
-    if not to_branch:
-        print('Please specify a branch to switch to:')
-        display_available_branches()
-        sys.exit()
 
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.')
@@ -142,40 +137,44 @@ def cmd_switch(args):
     status_log(checkout_branch, 'Switching to {0}.'.format(
         colored.yellow(to_branch)), to_branch)
 
-    if unstash_index(branch=from_branch):
-        status_log(unstash_it, 'Restoring local changes.', branch=from_branch)
+    if unstash_index():
+        status_log(unstash_it, 'Restoring local changes.')
+
 
 def cmd_resync(args):
-    """Stashes unstaged changes, 
-    Fetches upstream data from master branch,
-    Auto-Merge/Rebase from master branch 
-    Performs smart pull+merge, 
+    """Stashes unstaged changes,
+    Fetches, Auto-Merge/Rebase upstream data from specified upstream branch,
+    Performs smart pull+merge for current branch,
     Pushes local commits up, and Unstashes changes.
-    Defaults to current branch.
+    Default upstream branch is 'master'.
     """
     if args.get(0):
         upstream = fuzzy_match_branch(args.get(0))
         if upstream:
             is_external = True
-            original_branch = repo.head.ref.name
+            original_branch = get_current_branch_name()
         else:
             print("{0} doesn't exist. Use a branch that does.".format(
                 colored.yellow(args.get(0))))
             sys.exit(1)
     else:
         upstream = "master"
-    original_branch = repo.head.ref.name
+    original_branch = get_current_branch_name()
     if repo.is_dirty():
         status_log(stash_it, 'Saving local changes.', sync=True)
+    # Update upstream branch
     switch_to(upstream)
     status_log(smart_pull, 'Pulling commits from the server.')
+    # Update original branch with upstream
     switch_to(original_branch)
     status_log(smart_merge, 'Grafting commits from {0}.'.format(
         colored.yellow(upstream)), upstream, allow_rebase=False)
     if unstash_index(sync=True):
         status_log(unstash_it, 'Restoring local changes.', sync=True)
+    # Sync original_branch
     status_log(smart_pull, 'Pulling commits from the server.')
     status_log(push, 'Pushing commits to the server.', original_branch)
+
 
 def cmd_sync(args):
     """Stashes unstaged changes, Fetches remote data, Performs smart
@@ -189,14 +188,14 @@ def cmd_sync(args):
         branch = fuzzy_match_branch(args.get(0))
         if branch:
             is_external = True
-            original_branch = repo.head.ref.name
+            original_branch = get_current_branch_name()
         else:
             print("{0} doesn't exist. Use a branch that does.".format(
                 colored.yellow(args.get(0))))
             sys.exit(1)
     else:
         # Sync current branch.
-        branch = repo.head.ref.name
+        branch = get_current_branch_name()
         is_external = False
 
     if branch in get_branch_names(local=False):
@@ -230,16 +229,17 @@ def cmd_sprout(args):
     off_branch = args.get(0)
     new_branch = args.get(1)
 
-    if new_branch is None:
-        new_branch = off_branch
-        off_branch = repo.head.ref.name
+    if (off_branch is None) and (new_branch is None):
+        # new_branch is required, so should be passed at least 1 arg
+        show_error('Please pass new branch name to create.')
+        help('sprout', to_stderr=True)
+        sys.exit(1)
+    elif new_branch is None:
+        # off_branch is optional, so use specified one as new_branch
+        new_branch = args.get(0)
+        off_branch = get_current_branch_name()
     else:
         off_branch = fuzzy_match_branch(off_branch)
-
-    if not off_branch:
-        print('Please specify branch to sprout:')
-        display_available_branches()
-        sys.exit()
 
     branch_names = get_branch_names()
 
@@ -271,10 +271,10 @@ def cmd_graft(args):
     if not branch:
         print('Please specify a branch to graft:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     if not into_branch:
-        into_branch = repo.head.ref.name
+        into_branch = get_current_branch_name()
     else:
         into_branch = fuzzy_match_branch(into_branch)
 
@@ -309,9 +309,12 @@ def cmd_publish(args):
     branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
-        branch = repo.head.ref.name
+        branch = get_current_branch_name()
         display_available_branches()
-        print("Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch)))
+        if args.get(0) is None:
+            print("Using current branch {0}".format(colored.yellow(branch)))
+        else:
+            print("Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch)))
 
     branch_names = get_branch_names(local=False)
 
@@ -333,7 +336,7 @@ def cmd_unpublish(args):
     if not branch:
         print('Please specify a branch to unpublish:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     branch_names = get_branch_names(local=False)
 
@@ -355,10 +358,10 @@ def cmd_harvest(args):
     if not from_branch:
         print('Please specify a branch to harvest commits from:')
         display_available_branches()
-        sys.exit()
+        sys.exit(64)  # EX_USAGE
 
     if to_branch:
-        original_branch = repo.head.ref.name
+        original_branch = get_current_branch_name()
         is_external = True
     else:
         is_external = False
@@ -458,7 +461,7 @@ def cmd_help(args):
 # Views
 # -----
 
-def help(command):
+def help(command, to_stderr=False):
     if command == None:
         command = 'help'
 
@@ -466,7 +469,10 @@ def help(command):
     usage = cmd.usage or ''
     help = cmd.help or ''
     help_text = '%s\n\n%s' % (usage, help)
-    print(help_text)
+    if to_stderr:
+        show_error(help_text)
+    else:
+        print(help_text)
 
 
 def display_available_branches():
@@ -483,7 +489,7 @@ def display_available_branches():
     for branch in branches:
 
         try:
-            branch_is_selected = (branch.name == repo.head.ref.name)
+            branch_is_selected = (branch.name == get_current_branch_name())
         except TypeError:
             branch_is_selected = False
 
@@ -498,6 +504,25 @@ def display_available_branches():
         ))
 
 
+def sort_with_similarity(iterable, key=None):
+    """Sort string list with similarity following original order."""
+    if key is None:
+        key = lambda x: x
+    ordered = []
+    left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
+    for k in left_iterable.keys():
+        if k not in left_iterable:
+            continue
+        ordered.append(left_iterable[k])
+        del left_iterable[k]
+        # find close named iterable
+        close_iterable = difflib.get_close_matches(k, left_iterable.keys())
+        for close in close_iterable:
+            ordered.append(left_iterable[close])
+            del left_iterable[close]
+    return ordered
+
+
 def display_info():
     """Displays Legit informatics."""
 
@@ -506,14 +531,15 @@ def display_info():
         black('A Kenneth Reitz Project')
     ))
 
-    puts('Usage: {0}'.format(colored.blue('legit <command>')))
+    puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
     puts('Commands:\n')
-    for command in Command.all_commands():
+    commands = Command.all_commands()
+    for command in sort_with_similarity(commands, key=lambda x:x.name):
         usage = command.usage or command.name
         detail = command.help or ''
-        puts('{0} {1}'.format(
-                colored.green(usage),
-                first_sentence(detail)))
+        puts(colored.green(usage))
+        with indent(2):
+            puts(first_sentence(detail))
 
 
 def first_sentence(s):
@@ -539,10 +565,14 @@ def display_version():
     ))
 
 
-def handle_abort(aborted):
-    print(colored.red('Error:'), aborted.message)
+def handle_abort(aborted, type=None):
+    print('{0} {1}'.format(colored.red('Error:'), aborted.message))
     print(black(str(aborted.log)))
-    print('Unfortunately, there was a merge conflict. It has to be merged manually.')
+    if type == 'merge':
+        print('Unfortunately, there was a merge conflict.'
+              ' It has to be merged manually.')
+    elif type == 'unpublish':
+        print('It seems that the remote branch has been already deleted.')
     sys.exit(1)
 
 
@@ -617,7 +647,7 @@ def_cmd(
     short=['h'],
     fn=cmd_help,
     usage='help <command>',
-    help='Display help for legit command.')
+    help='Displays help for legit command.')
 
 def_cmd(
     name='install',
@@ -629,7 +659,7 @@ def_cmd(
     name='publish',
     short=['pub'],
     fn=cmd_publish,
-    usage='publish <branch>',
+    usage='publish [<branch>]',
     help='Publishes specified branch to the remote.')
 
 def_cmd(
@@ -659,15 +689,18 @@ def_cmd(
     short=['sy'],
     fn=cmd_sync,
     usage='sync <branch>',
-    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
+    help=('Synchronizes the given branch. Defaults to current branch. Stash, '
           'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+
 def_cmd(
     name='resync',
     short=['rs'],
     fn=cmd_resync,
-    usage='sync <branch>',
-    help=('Syncronizes the given branch. Defaults to current branch. Stash, '
-          'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
+    usage='resync <upstream-branch>',
+    help=('Re-synchronize current branch with specified upstream branch. '
+          "Defaults upstream branch is 'master'. "
+          'Fetch, Auto-Merge/Rebase for upstream, '
+          'Fetch, Auto-Merge/Rebase, Push, and Unstash for current branch.'))
 
 def_cmd(
     name='unpublish',

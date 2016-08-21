@@ -4,7 +4,8 @@
 import os
 import sys
 
-from setuptools import setup
+from setuptools import setup, find_packages  # Always prefer setuptools over distutils
+from codecs import open  # To use a consistent encoding
 
 
 APP_NAME = 'legit'
@@ -23,6 +24,11 @@ settings = dict()
 # Publish Helper.
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist bdist_wheel upload')
+    sys.exit()
+
+
+if sys.argv[-1] == 'build_manpage':
+    os.system('rst2man.py README.rst > extra/man/legit.1')
     sys.exit()
 
 
