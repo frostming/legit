@@ -1,6 +1,12 @@
 History
 -------
 
+0.1.1
++++++
+
+* Fix packaging.
+* Update doc.
+
 0.1.0
 ++++++
 
