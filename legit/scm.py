@@ -111,7 +111,7 @@ def fetch():
 def smart_pull():
     'git log --merges origin/master..master'
 
-    repo_check()
+    repo_check(require_remote=True)
 
     branch = get_current_branch_name()
 
@@ -145,7 +145,7 @@ def smart_merge(branch, allow_rebase=True):
 
 def push(branch=None):
 
-    repo_check()
+    repo_check(require_remote=True)
 
     if branch is None:
         return repo.git.execute([git, 'push'])
@@ -195,7 +195,7 @@ def graft_branch(branch):
 def unpublish_branch(branch):
     """Unpublishes given branch."""
 
-    repo_check()
+    repo_check(require_remote=True)
 
     try:
         return repo.git.execute([git,
@@ -209,7 +209,7 @@ def unpublish_branch(branch):
 def publish_branch(branch):
     """Publishes given branch."""
 
-    repo_check()
+    repo_check(require_remote=True)
 
     return repo.git.execute([git,
         'push', '-u', remote.name, branch])
@@ -230,19 +230,16 @@ def get_remote():
 
     reader = repo.config_reader()
 
-    if repo.remotes:
-        # If there is no remote option in legit section, return default
-        if not reader.has_option('legit', 'remote'):
-            return repo.remotes[0]
+    # If there is no remote option in legit section, return default
+    if not reader.has_option('legit', 'remote'):
+        return repo.remotes[0]
 
-        remote_name = reader.get('legit', 'remote')
-        if not remote_name in [r.name for r in repo.remotes]:
-            raise ValueError('Remote "{0}" does not exist! Please update your git '
+    remote_name = reader.get('legit', 'remote')
+    if not remote_name in [r.name for r in repo.remotes]:
+        raise ValueError('Remote "{0}" does not exist! Please update your git '
                              'configuration.'.format(remote_name))
 
-        return repo.remote(remote_name)
-    else:
-        return None
+    return repo.remote(remote_name)
 
 
 def get_current_branch_name():
