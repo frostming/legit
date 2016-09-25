@@ -1,6 +1,27 @@
 History
 -------
 
+0.2.0
++++++
+
+* Particial Python 3 support.
+* Add bash and zsh tab-completion.
+* Fuzzy branch name matching.
+* Default behavior to current branch on the command publish.
+* `git config legit.remote <remote name>`
+* Fix incorrect stash pop index and stash index with extra data.
+* Fix synchronization in git stash.
+* Handle failed smart_merge.
+* Use correct branch for unstaging in switch command.
+* Ensure parseability of git stash list output.
+* Set up a tracking branch on publish.
+* Handle detached head in legit branches.
+* Handle repo with no branches or remotes.
+* Fix exceptions of `get_repo`.
+* Fixed 'legit install' failed and other issues on Windows
+* Handle not git error.
+* Use git to find root directory.
+
 0.1.1
 +++++
 
