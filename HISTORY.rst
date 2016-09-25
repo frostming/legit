@@ -1,6 +1,19 @@
 History
 -------
 
+0.2.1
++++++
+
+* Improve Python 3 support.
+* Support special expression for branch.
+* Improve completio
+* Better help message.
+* Add manpage.
+* off_branch becomes optional.
+* Use correct branch for unstaging in switch command.
+* Fetch and abort if unpublishing branch not found.
+* Fix remote name config with legit.remote.
+
 0.2.0
 +++++
 
