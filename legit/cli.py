@@ -703,7 +703,7 @@ def_cmd(
     fn=cmd_resync,
     usage='resync <upstream-branch>',
     help=('Re-synchronize current branch with specified upstream branch. '
-          "Defaults upstream branch is 'master'. "
+          "Default upstream branch is 'master'. "
           'Fetch, Auto-Merge/Rebase for upstream, '
           'Fetch, Auto-Merge/Rebase, Push, and Unstash for current branch.'))
 
