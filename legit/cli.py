@@ -57,6 +57,10 @@ def main():
         display_version()
         sys.exit()
 
+    elif len(args) == 0:
+        display_help()
+        sys.exit()
+
     else:
         if settings.git_transparency:
             # Send everything to git
