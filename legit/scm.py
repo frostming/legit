@@ -53,8 +53,6 @@ def repo_check(require_remote=False):
 
     # TODO: You're in a merge state.
 
-
-
 def stash_it(sync=False):
     repo_check()
     msg = 'syncing branch' if sync else 'switching branches'
