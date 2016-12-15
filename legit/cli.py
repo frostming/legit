@@ -265,6 +265,19 @@ def cmd_sprout(args):
         colored.yellow(off_branch), colored.yellow(new_branch)),
         off_branch, new_branch)
 
+def cmd_undo(args):
+    """Makes last commit not exist.
+    --hard for """
+
+    is_hard = args.get(0) == '--hard'
+
+    if is_hard:
+        repo.git.reset('--hard')
+    else:
+        repo.git.reset('--hard')
+
+    print('Last commit removed from history.')
+
 
 def cmd_graft(args):
     """Merges an unpublished branch into the given branch, then deletes it."""
@@ -444,6 +457,7 @@ def cmd_install(args):
         'sync',
         'switch',
         'resync',
+        'undo'
     ]
 
     print('The following git aliases have been installed:\n')
@@ -539,6 +553,7 @@ def display_info():
     puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
     puts('Commands:\n')
     commands = Command.all_commands()
+    print commands
     for command in sort_with_similarity(commands, key=lambda x:x.name):
         usage = command.usage or command.name
         detail = command.help or ''
@@ -606,8 +621,7 @@ class Command(object):
 
     @classmethod
     def all_commands(klass):
-        return sorted(klass.COMMANDS.values(),
-                      key=lambda cmd: cmd.name)
+        return sorted(klass.COMMANDS.values(), key=lambda cmd: cmd.name)
 
     def __init__(self, name=None, short=None, fn=None, usage=None, help=None):
         self.name = name
@@ -713,3 +727,10 @@ def_cmd(
     fn=cmd_unpublish,
     usage='unpublish <branch>',
     help='Removes specified branch from the remote.')
+
+def_cmd(
+    name='undo',
+    short=['undo'],
+    fn=cmd_undo,
+    usage='undo [--hard]',
+    help='Removes the last commit from history.')
