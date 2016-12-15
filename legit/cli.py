@@ -272,9 +272,9 @@ def cmd_undo(args):
     is_hard = args.get(0) == '--hard'
 
     if is_hard:
-        repo.git.reset('--hard')
+        repo.git.reset('--hard HEAD^')
     else:
-        repo.git.reset('--hard')
+        repo.git.reset('HEAD^')
 
     print('Last commit removed from history.')
 
@@ -732,5 +732,5 @@ def_cmd(
     name='undo',
     short=['undo'],
     fn=cmd_undo,
-    usage='undo [--hard]',
+    usage='undo',
     help='Removes the last commit from history.')
