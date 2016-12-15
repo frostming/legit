@@ -1,6 +1,12 @@
 History
 -------
 
+0.3.1
++++++
+
+* Added the new 'undo' command. 
+
+
 0.2.1
 +++++
 
