@@ -19,7 +19,6 @@ try:
     args = Args()
 except ImportError:
     from clint import args
-from clint.eng import join as eng_join
 from clint.textui import colored, puts, columns, indent
 
 from .core import __version__
@@ -37,6 +36,7 @@ def black(s):
 # --------
 # Dispatch
 # --------
+
 
 def main():
     """Primary Legit command dispatch."""
@@ -110,14 +110,18 @@ def switch_to(branch):
 
     return cmd_switch(switch_args)
 
+
 def fuzzy_match_branch(branch):
-    if not branch: return False
+    if not branch:
+        return False
 
     all_branches = get_branch_names()
     if branch in all_branches:
         return branch
 
-    def branch_fuzzy_match(b): return b.startswith(branch)
+    def branch_fuzzy_match(b):
+        return b.startswith(branch)
+
     possible_branches = list(filter(branch_fuzzy_match, all_branches))
 
     if len(possible_branches) == 1:
@@ -128,6 +132,7 @@ def fuzzy_match_branch(branch):
 # --------
 # Commands
 # --------
+
 
 def cmd_switch(args):
     """Legit Switch command."""
@@ -419,12 +424,10 @@ def cmd_settings(args):
 
     path = clint.resources.user.open('config.ini').name
 
-
     print('Legit Settings:\n')
 
     for (option, _, description) in settings.config_defaults:
         print(columns([colored.yellow(option), 25], [description, None]))
-
 
     print('\nSee {0} for more details.'.format(settings.config_url))
 
@@ -475,12 +478,14 @@ def cmd_help(args):
     command = args.get(0)
     help(command)
 
+
 # -----
 # Views
 # -----
 
+
 def help(command, to_stderr=False):
-    if command == None:
+    if command is None:
         command = 'help'
 
     cmd = Command.lookup(command)
@@ -554,7 +559,7 @@ def display_info():
     puts('Commands:\n')
     commands = Command.all_commands()
     print commands
-    for command in sort_with_similarity(commands, key=lambda x:x.name):
+    for command in sort_with_similarity(commands, key=lambda x: x.name):
         usage = command.usage or command.name
         detail = command.help or ''
         puts(colored.green(usage))
@@ -577,7 +582,6 @@ def display_help():
 
 def display_version():
     """Displays Legit version/release."""
-
 
     puts('{0} v{1}'.format(
         colored.yellow('legit'),
