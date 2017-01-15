@@ -553,7 +553,7 @@ def display_info():
     puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
     puts('Commands:\n')
     commands = Command.all_commands()
-    print commands
+    print(commands)
     for command in sort_with_similarity(commands, key=lambda x:x.name):
         usage = command.usage or command.name
         detail = command.help or ''
