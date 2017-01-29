@@ -12,10 +12,11 @@ APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
 VERSION = '0.2.0'
 
-
-# Grab requirements.
-with open('reqs.txt') as f:
-    required = f.readlines()
+required = [
+    'clint>=0.4.1',
+    'GitPython>=0.3.4',
+    'six>=1.9.0'
+]
 
 
 settings = dict()
@@ -30,22 +31,6 @@ if sys.argv[-1] == 'publish':
 if sys.argv[-1] == 'build_manpage':
     os.system('rst2man.py README.rst > extra/man/legit.1')
     sys.exit()
-
-
-# Build Helper.
-if sys.argv[-1] == 'build':
-    import py2exe
-
-    sys.argv.append('py2exe')
-
-    settings.update(
-        console=[{'script': APP_SCRIPT}],
-        zipfile = None,
-        options = {
-            'py2exe': {
-                'compressed': 1,
-                'optimize': 0,
-                'bundle_files': 1}})
 
 settings.update(
     name=APP_NAME,

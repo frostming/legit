@@ -1,0 +1,8 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[packages]
+clint = ">=0.4.1"
+gitpython = ">=0.3.4"
+six = ">=1.9.0"

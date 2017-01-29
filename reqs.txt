@@ -1,3 +1,0 @@
-clint>=0.4.1
-GitPython>=0.3.4
-six>=1.9.0
