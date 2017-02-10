@@ -10,7 +10,7 @@ from codecs import open  # To use a consistent encoding
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
-VERSION = '0.4.0'
+VERSION = '0.4.1'
 
 
 # Grab requirements.

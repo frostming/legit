@@ -42,24 +42,14 @@ The Interface
     Defaults to current branch.
     Automatically stashes and unstashes any changes. (alias: ``sw``)
 
-``sprout [<branch>] <new-branch>``
-    Creates a new branch off of the specified branch.
-    Swiches to it immediately. (alias: ``sp``)
-
-``harvest [<branch>] <into-branch>``
-    Auto-Merge/Rebase of specified branch changes into the second branch.
-    (alias: ``ha``, ``hv``, ``har``)
-
-``graft <branch> <into-branch>``
-    Auto-Merge/Rebase of specified branch into the second branch.
-    Immediately removes specified branch. You can only graft unpublished branches.
-    (alias: ``gr``)
-
 ``publish [<branch>]``
     Publishes specified branch to the remote. (alias: ``pub``)
 
 ``unpublish <branch>``
     Removes specified branch from the remote. (alias: ``unp``)
+
+``undo``
+    Un-does the last commit in git history.
 
 ``install``
     Installs legit git aliases.
