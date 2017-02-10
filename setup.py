@@ -58,7 +58,7 @@ settings.update(
     packages= ['legit',],
     install_requires=required,
     license='BSD',
-    classifiers=(
+    classifiers=[
         # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
@@ -71,7 +71,7 @@ settings.update(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
-    ),
+    ],
     entry_points={
         'console_scripts': [
             'legit = legit.cli:main',
