@@ -45,7 +45,6 @@ def main():
     if command:
         arg = args.get(0)
         args.remove(arg)
-
         command.__call__(args)
         sys.exit()
 
@@ -225,99 +224,13 @@ def cmd_sync(args):
         sys.exit(1)
 
 
-def cmd_sprout(args):
-    """Creates a new branch of given name from given branch.
-    Defaults to current branch.
-    """
-
-    off_branch = args.get(0)
-    new_branch = args.get(1)
-
-    if (off_branch is None) and (new_branch is None):
-        # new_branch is required, so should be passed at least 1 arg
-        show_error('Please pass new branch name to create.')
-        help('sprout', to_stderr=True)
-        sys.exit(1)
-    elif new_branch is None:
-        # off_branch is optional, so use specified one as new_branch
-        new_branch = args.get(0)
-        off_branch = get_current_branch_name()
-    else:
-        off_branch = fuzzy_match_branch(off_branch)
-
-    branch_names = get_branch_names()
-
-    if off_branch not in branch_names:
-        print("{0} doesn't exist. Use a branch that does.".format(
-            colored.yellow(off_branch)))
-        sys.exit(1)
-
-    if new_branch in branch_names:
-        print("{0} already exists. Use a unique name.".format(
-            colored.yellow(new_branch)))
-        sys.exit(1)
-
-
-    if repo.is_dirty():
-        status_log(stash_it, 'Saving local changes.')
-
-    status_log(sprout_branch, 'Branching {0} to {1}.'.format(
-        colored.yellow(off_branch), colored.yellow(new_branch)),
-        off_branch, new_branch)
-
 def cmd_undo(args):
     """Makes last commit not exist.
     --hard for """
 
-    is_hard = args.get(0) == '--hard'
-
-    if is_hard:
-        repo.git.reset('--hard HEAD^')
-    else:
-        repo.git.reset('HEAD^')
+    repo.git.reset('HEAD^')
 
     print('Last commit removed from history.')
-
-
-def cmd_graft(args):
-    """Merges an unpublished branch into the given branch, then deletes it."""
-
-    branch = fuzzy_match_branch(args.get(0))
-    into_branch = args.get(1)
-
-    if not branch:
-        print('Please specify a branch to graft:')
-        display_available_branches()
-        sys.exit(64)  # EX_USAGE
-
-    if not into_branch:
-        into_branch = get_current_branch_name()
-    else:
-        into_branch = fuzzy_match_branch(into_branch)
-
-    branch_names = get_branch_names(local=True, remote_branches=False)
-    remote_branch_names = get_branch_names(local=False, remote_branches=True)
-
-    if branch not in branch_names:
-        print("{0} doesn't exist. Use a branch that does.".format(
-            colored.yellow(branch)))
-        sys.exit(1)
-
-    if branch in remote_branch_names:
-        print("{0} is published. To graft it, unpublish it first.".format(
-            colored.yellow(branch)))
-        sys.exit(1)
-
-    if into_branch not in branch_names:
-        print("{0} doesn't exist. Use a branch that does.".format(
-            colored.yellow(into_branch)))
-        sys.exit(1)
-
-    # Go to new branch.
-    switch_to(into_branch)
-
-    status_log(graft_branch, 'Grafting {0} into {1}.'.format(
-        colored.yellow(branch), colored.yellow(into_branch)), branch)
 
 
 def cmd_publish(args):
@@ -366,47 +279,6 @@ def cmd_unpublish(args):
         colored.yellow(branch)), branch)
 
 
-def cmd_harvest(args):
-    """Syncs a branch with given branch. Defaults to current."""
-
-    from_branch = fuzzy_match_branch(args.get(0))
-    to_branch = fuzzy_match_branch(args.get(1))
-
-    if not from_branch:
-        print('Please specify a branch to harvest commits from:')
-        display_available_branches()
-        sys.exit(64)  # EX_USAGE
-
-    if to_branch:
-        original_branch = get_current_branch_name()
-        is_external = True
-    else:
-        is_external = False
-
-    branch_names = get_branch_names(local=True, remote_branches=False)
-
-    if from_branch not in branch_names:
-        print("{0} isn't an available branch. Use a branch that is.".format(
-            colored.yellow(from_branch)))
-        sys.exit(1)
-
-    if is_external:
-        switch_to(to_branch)
-
-    if repo.is_dirty():
-        status_log(stash_it, 'Saving local changes.')
-
-    status_log(smart_merge, 'Grafting commits from {0}.'.format(
-        colored.yellow(from_branch)), from_branch, allow_rebase=False)
-
-    if is_external:
-        switch_to(original_branch)
-
-    if unstash_index():
-        status_log(unstash_it, 'Restoring local changes.')
-
-
-#
 
 def cmd_branches(args):
     """Displays available branches."""
@@ -449,11 +321,8 @@ def cmd_install(args):
 
     aliases = [
         'branches',
-        'graft',
-        'harvest',
         'publish',
         'unpublish',
-        'sprout',
         'sync',
         'switch',
         'resync',
@@ -645,22 +514,6 @@ def_cmd(
     help='Get a nice pretty list of branches.')
 
 def_cmd(
-    name='graft',
-    short=['gr'],
-    fn=cmd_graft,
-    usage='graft <branch> <into-branch>',
-    help=('Merges specified branch into the second branch, and removes it. '
-          'You can only graft unpublished branches.'))
-
-def_cmd(
-    name='harvest',
-    short=['ha', 'hv', 'har'],
-    usage='harvest [<branch>] <into-branch>',
-    help=('Auto-Merge/Rebase of specified branch changes into the second '
-          'branch.'),
-    fn=cmd_harvest)
-
-def_cmd(
     name='help',
     short=['h'],
     fn=cmd_help,
@@ -685,14 +538,6 @@ def_cmd(
     fn=cmd_settings,
     usage='settings',
     help='Opens legit settings in a text editor.')
-
-def_cmd(
-    name='sprout',
-    short=['sp'],
-    fn=cmd_sprout,
-    usage='sprout [<branch>] <new-branch>',
-    help=('Creates a new branch off of the specified branch. Defaults to '
-          'current branch. Switches to it immediately.'))
 
 def_cmd(
     name='switch',
@@ -729,7 +574,7 @@ def_cmd(
 
 def_cmd(
     name='undo',
-    short=['undo'],
+    short=['un'],
     fn=cmd_undo,
     usage='undo',
     help='Removes the last commit from history.')
