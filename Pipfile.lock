@@ -1,0 +1,41 @@
+{
+    "_meta": {
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ],
+        "requires": {},
+        "hash": {
+            "sha256": "ac2e5d269c626f0d8ae82d859c0af6693cec892849e18f0f1c63a2da444732ca"
+        }
+    },
+    "default": {
+        "args": {
+            "hash": "sha256:a785b8d837625e9b61c39108532d95b85274acd679693b71ebb5156848fcf814",
+            "version": "==0.1.0"
+        },
+        "clint": {
+            "hash": "sha256:05224c32b1075563d0b16d0015faaf9da43aa214e4a2140e51f08789e7a4c5aa",
+            "version": "==0.5.1"
+        },
+        "gitdb2": {
+            "hash": "sha256:2ab3d41a03d74025649c882007b4495981535d19f9f70d1f4f275a68cdf77f6f",
+            "version": "==2.0.0"
+        },
+        "gitpython": {
+            "hash": "sha256:a313754737d9a2600b1267262769dda115566eec7e59b0ac855ff0cc9b1da81d",
+            "version": "==2.1.1"
+        },
+        "six": {
+            "hash": "sha256:0ff78c403d9bccf5a425a6d31a12aa6b47f1c21ca4dc2573a7e2f32a97335eb1",
+            "version": "==1.10.0"
+        },
+        "smmap2": {
+            "hash": "sha256:2fd9bf96acf84caf80363c2e7178163cda58633fe657f82d0feeed69cf612626",
+            "version": "==2.0.1"
+        }
+    },
+    "develop": {}
+}
