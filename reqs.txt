@@ -1,0 +1,9 @@
+appdirs==1.4.0
+args==0.1.0
+clint==0.5.1
+gitdb2==2.0.0
+GitPython==2.1.1
+packaging==16.8
+pyparsing==2.1.10
+six==1.10.0
+smmap2==2.0.1
