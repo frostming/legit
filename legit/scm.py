@@ -224,20 +224,23 @@ def get_repo():
 
 def get_remote():
 
-    repo_check(require_remote=True)
+    repo_check()
 
     reader = repo.config_reader()
 
-    # If there is no remote option in legit section, return default
-    if not reader.has_option('legit', 'remote'):
-        return repo.remotes[0]
+    if repo.remotes:
+        # If there is no remote option in legit section, return default
+        if not reader.has_option('legit', 'remote'):
+            return repo.remotes[0]
 
-    remote_name = reader.get('legit', 'remote')
-    if not remote_name in [r.name for r in repo.remotes]:
-        raise ValueError('Remote "{0}" does not exist! Please update your git '
-                         'configuration.'.format(remote_name))
+        remote_name = reader.get('legit', 'remote')
+        if not remote_name in [r.name for r in repo.remotes]:
+            raise ValueError('Remote "{0}" does not exist! Please update your git '
+                             'configuration.'.format(remote_name))
 
-    return repo.remote(remote_name)
+        return repo.remote(remote_name)
+    else:
+        return None
 
 
 def get_current_branch_name():
@@ -253,7 +256,9 @@ def get_branches(local=True, remote_branches=True):
 
     repo_check()
 
-    # print local
+    if not repo.remotes:
+        remote_branches = False
+
     branches = []
 
     if remote_branches:
