@@ -398,7 +398,7 @@ def sort_with_similarity(iterable, key=None):
         key = lambda x: x
     ordered = []
     left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
-    for k in left_iterable.keys():
+    for k in list(left_iterable.keys()):
         if k not in left_iterable:
             continue
         ordered.append(left_iterable[k])
