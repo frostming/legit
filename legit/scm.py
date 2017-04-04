@@ -100,14 +100,6 @@ def unstash_it(sync=False, branch=None):
         return repo.git.execute([git,
             'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
-
-def fetch():
-
-    repo_check()
-
-    return repo.git.execute([git, 'fetch', remote.name])
-
-
 def smart_pull():
     'git log --merges origin/master..master'
 
@@ -115,7 +107,7 @@ def smart_pull():
 
     branch = get_current_branch_name()
 
-    fetch()
+    repo.git.execute([git, 'fetch', remote.name])
 
     return smart_merge('{0}/{1}'.format(remote.name, branch))
 
