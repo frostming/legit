@@ -103,7 +103,7 @@ def unstash_it(sync=False, branch=None):
 def smart_pull():
     'git log --merges origin/master..master'
 
-    repo_check()
+    repo_check(require_remote=True)
 
     branch = get_current_branch_name()
 
@@ -137,7 +137,7 @@ def smart_merge(branch, allow_rebase=True):
 
 def push(branch=None):
 
-    repo_check()
+    repo_check(require_remote=True)
 
     if branch is None:
         return repo.git.execute([git, 'push'])
@@ -187,7 +187,7 @@ def graft_branch(branch):
 def unpublish_branch(branch):
     """Unpublishes given branch."""
 
-    repo_check()
+    repo_check(require_remote=True)
 
     try:
         return repo.git.execute([git,
@@ -201,7 +201,7 @@ def unpublish_branch(branch):
 def publish_branch(branch):
     """Publishes given branch."""
 
-    repo_check()
+    repo_check(require_remote=True)
 
     return repo.git.execute([git,
         'push', '-u', remote.name, branch])
@@ -218,7 +218,7 @@ def get_repo():
 
 def get_remote():
 
-    repo_check(require_remote=True)
+    repo_check()
 
     reader = repo.config_reader()
 
@@ -229,7 +229,7 @@ def get_remote():
     remote_name = reader.get('legit', 'remote')
     if not remote_name in [r.name for r in repo.remotes]:
         raise ValueError('Remote "{0}" does not exist! Please update your git '
-                         'configuration.'.format(remote_name))
+                             'configuration.'.format(remote_name))
 
     return repo.remote(remote_name)
 
@@ -247,7 +247,9 @@ def get_branches(local=True, remote_branches=True):
 
     repo_check()
 
-    # print local
+    if not repo.remotes:
+        remote_branches = False
+
     branches = []
 
     if remote_branches:

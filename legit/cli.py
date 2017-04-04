@@ -186,6 +186,8 @@ def cmd_sync(args):
     Defaults to current branch.
     """
 
+    repo_check(require_remote=True)
+
     if args.get(0):
         # Optional branch specifier.
         branch = fuzzy_match_branch(args.get(0))
@@ -236,6 +238,7 @@ def cmd_undo(args):
 def cmd_publish(args):
     """Pushes an unpublished branch to a remote repository."""
 
+    repo_check(require_remote=True)
     branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
@@ -261,6 +264,7 @@ def cmd_publish(args):
 def cmd_unpublish(args):
     """Removes a published branch from the remote repository."""
 
+    repo_check(require_remote=True)
     branch = fuzzy_match_branch(args.get(0))
 
     if not branch:
