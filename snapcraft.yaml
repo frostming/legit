@@ -1,0 +1,19 @@
+name: legit
+version: master
+summary: Git for Humans
+description: |
+  Legit is a complementary command-line interface for Git, optimized for
+  workflow simplicity. It is heavily inspired by GitHub for Mac.
+
+grade: devel
+confinement: classic
+
+apps:
+  legit:
+    command: legit
+
+parts:
+  legit:
+    source: .
+    plugin: python
+    python-version: python2
