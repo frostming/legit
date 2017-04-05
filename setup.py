@@ -4,6 +4,8 @@
 import os
 import sys
 
+from distutils.core import Command
+from distutils.command.build import build
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from codecs import open  # To use a consistent encoding
 
@@ -27,9 +29,24 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 
-if sys.argv[-1] == 'build_manpage':
-    os.system('rst2man.py README.rst > extra/man/legit.1')
-    sys.exit()
+class LegitBuildMan(Command):
+    description = 'build man from README'
+    user_options = []
+    def initialize_options(self): pass
+    def finalize_options(self): pass
+    def run(self):
+        if not os.path.exists('extra/man'):
+            os.makedirs('extra/man')
+        os.system('rst2man.py README.rst > extra/man/legit.1')
+class LegitBuild(build):
+    """Run additional command with build command"""
+    def run(self):
+        self.run_command('build_man')
+        build.run(self)
+cmdclass = dict(
+    build_man=LegitBuildMan,
+    build=LegitBuild,
+)
 
 
 # Build Helper.
@@ -56,6 +73,7 @@ settings.update(
     author_email='me@kennethreitz.com',
     url='https://github.com/kennethreitz/legit',
     packages= ['legit',],
+    cmdclass=cmdclass,
     install_requires=required,
     license='BSD',
     classifiers=[
