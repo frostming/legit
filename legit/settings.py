@@ -73,6 +73,5 @@ settings.config_defaults = (
         'Date of the last update check.'))
 
 
-settings.config_url = 'http://git-legit.org/config'
 settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
 settings.forbidden_branches = ['HEAD',]

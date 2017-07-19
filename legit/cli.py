@@ -301,9 +301,6 @@ def cmd_settings(args):
     for (option, _, description) in settings.config_defaults:
         print(columns([colored.yellow(option), 25], [description, None]))
 
-
-    print('\nSee {0} for more details.'.format(settings.config_url))
-
     sleep(0.35)
 
     if is_osx:
