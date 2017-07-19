@@ -20,7 +20,7 @@ try:
 except ImportError:
     from clint import args
 from clint.eng import join as eng_join
-from clint.textui import colored, puts, columns, indent
+from clint.textui import colored, puts, columns, indent, prompt
 
 from .core import __version__
 from .settings import settings
@@ -298,14 +298,22 @@ def cmd_install(args):
         'undo'
     ]
 
-    print('The following git aliases have been installed:\n')
+    print('The following git aliases will be installed:\n')
 
     for alias in aliases:
         cmd = '!legit ' + alias
-        os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
         print(columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None]))
 
-    sys.exit()
+    is_confirmed = prompt.yn("\nInstall aliases above?")
+    if is_confirmed:
+        for alias in aliases:
+            cmd = '!legit ' + alias
+            os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
+        print("\nAliases installed.")
+        sys.exit()
+    else:
+        print("\nAliases will not be installed.")
+        sys.exit()
 
 
 def cmd_help(args):
