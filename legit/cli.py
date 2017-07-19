@@ -130,18 +130,22 @@ def fuzzy_match_branch(branch):
 
 def cmd_switch(args):
     """Legit Switch command."""
-
     to_branch = args.get(0)
     to_branch = fuzzy_match_branch(to_branch)
 
-    if repo.is_dirty():
-        status_log(stash_it, 'Saving local changes.')
+    if to_branch is False:
+        print('Please specify a branch to switch:')
+        display_available_branches()
+        sys.exit(64)  # EX_USAGE
+    else:
+        if repo.is_dirty():
+            status_log(stash_it, 'Saving local changes.')
 
-    status_log(checkout_branch, 'Switching to {0}.'.format(
-        colored.yellow(to_branch)), to_branch)
+        status_log(checkout_branch, 'Switching to {0}.'.format(
+            colored.yellow(to_branch)), to_branch)
 
-    if unstash_index():
-        status_log(unstash_it, 'Restoring local changes.')
+        if unstash_index():
+            status_log(unstash_it, 'Restoring local changes.')
 
 
 def cmd_resync(args):
