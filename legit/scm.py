@@ -224,7 +224,10 @@ def get_remote():
 
     # If there is no remote option in legit section, return default
     if not reader.has_option('legit', 'remote'):
-        return repo.remotes[0]
+        if len(repo.remotes) == 0:
+            return None
+        else:
+            return repo.remotes[0]
 
     remote_name = reader.get('legit', 'remote')
     if not remote_name in [r.name for r in repo.remotes]:
@@ -269,7 +272,7 @@ def get_branches(local=True, remote_branches=True):
         # Local refs.
         for b in [h.name for h in repo.heads]:
 
-            if b not in [br.name for br in branches] or not remote_branches:
+            if (not remote_branches) or (b not in [br.name for br in branches]):
                 if b not in settings.forbidden_branches:
                     branches.append(Branch(b, is_published=False))
 

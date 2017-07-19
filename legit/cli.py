@@ -343,7 +343,11 @@ def help(command, to_stderr=False):
 def display_available_branches():
     """Displays available branches."""
 
-    branches = get_branches()
+    if not repo.remotes:
+        remote_branches = False
+    else:
+        remote_branches = True
+    branches = get_branches(local=True, remote_branches=remote_branches)
 
     if not branches:
         print(colored.red('No branches available'))
