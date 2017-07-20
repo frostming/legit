@@ -156,35 +156,6 @@ def checkout_branch(branch):
     return '\n'.join([stderr, stdout])
 
 
-def sprout_branch(off_branch, branch):
-    """Checks out given branch."""
-
-    repo_check()
-
-    return repo.git.execute([git, 'checkout', off_branch, '-b', branch])
-
-
-def graft_branch(branch):
-    """Merges branch into current branch, and deletes it."""
-
-    repo_check()
-
-    log = []
-
-    try:
-        msg = repo.git.execute([git, 'merge', '--no-ff', branch])
-        log.append(msg)
-    except GitCommandError as why:
-        log = repo.git.execute([git,'merge', '--abort'])
-        abort('Merge failed. Reverting.',
-              log='{0}\n{1}'.format(why, log), type='merge')
-
-
-    out = repo.git.execute([git, 'branch', '-D', branch])
-    log.append(out)
-    return '\n'.join(log)
-
-
 def unpublish_branch(branch):
     """Unpublishes given branch."""
 
