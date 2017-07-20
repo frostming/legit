@@ -240,6 +240,7 @@ def get_remote():
                 else:
                     writer = repo.config_writer()
                     writer.set_value('legit', 'remoteFallback', 'true')
+                    print('\n`legit.RemoteFallback` changed to true for current repo.')
                     return get_default_remote()
         else:
             return repo.remote(remote_name)
