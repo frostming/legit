@@ -13,6 +13,7 @@ import subprocess
 from collections import namedtuple
 from operator import attrgetter
 
+import clint
 from git import Repo
 from git.exc import GitCommandError,  InvalidGitRepositoryError
 
@@ -224,17 +225,27 @@ def get_remote():
 
     # If there is no remote option in legit section, return default
     if not reader.has_option('legit', 'remote'):
-        if len(repo.remotes) == 0:
-            return None
+        return get_default_remote()
+    else:
+        remote_name = reader.get('legit', 'remote')
+        if remote_name not in [r.name for r in repo.remotes]:
+            print('Remote "{0}" does not exist!'.format(remote_name))
+            will_aborted = clint.textui.prompt.yn(
+                "\nPress `y` to abort now, `n` to ignore legit.remote setting and use default remote:")
+            if will_aborted:
+                print("\nAborted. Please update your git configuration.")
+                sys.exit(64)  # EX_USAGE
+            else:
+                return get_default_remote()
         else:
-            return repo.remotes[0]
+            return repo.remote(remote_name)
 
-    remote_name = reader.get('legit', 'remote')
-    if remote_name not in [r.name for r in repo.remotes]:
-        raise ValueError('Remote "{0}" does not exist! Please update your git '
-                         'configuration.'.format(remote_name))
 
-    return repo.remote(remote_name)
+def get_default_remote():
+    if len(repo.remotes) == 0:
+        return None
+    else:
+        return repo.remotes[0]
 
 
 def get_current_branch_name():
