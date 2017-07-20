@@ -133,7 +133,10 @@ def smart_merge(branch, allow_rebase=True):
     if allow_rebase:
         verb = 'merge' if merges.count('commit') else 'rebase'
     else:
-        verb = 'merge'
+        if git_pull_rebase():
+            verb = 'rebase'
+        else:
+            verb = 'merge'
 
     try:
         return repo.git.execute([git, verb, branch])
@@ -141,6 +144,14 @@ def smart_merge(branch, allow_rebase=True):
         log = repo.git.execute([git, verb, '--abort'])
         abort('Merge failed. Reverting.',
               log='{0}\n{1}'.format(why, log), type='merge')
+
+
+def git_pull_rebase():
+    reader = repo.config_reader()
+    if reader.has_option('pull', 'rebase'):
+        return reader.getboolean('pull', 'rebase')
+    else:
+        return False
 
 
 def push(branch=None):
