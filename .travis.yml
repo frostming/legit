@@ -5,6 +5,8 @@ python:
   - 3.2
   - 3.3
   - 3.4
+  - 3.5
+  - 3.6
 install:
   - python setup.py install
 script: python legit.py help # should have exit code 0
