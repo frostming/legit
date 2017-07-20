@@ -33,6 +33,7 @@ if sys.argv[-1] == 'build_manpage':
 
 # Build Helper.
 if sys.argv[-1] == 'build':
+    import py2exe
     sys.argv.append('py2exe')
 
     settings.update(
