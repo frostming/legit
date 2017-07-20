@@ -3,10 +3,9 @@
 
 import os
 import sys
-
-from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from codecs import open  # To use a consistent encoding
 
+from setuptools import setup  # Always prefer setuptools over distutils
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
@@ -34,8 +33,6 @@ if sys.argv[-1] == 'build_manpage':
 
 # Build Helper.
 if sys.argv[-1] == 'build':
-    import py2exe
-
     sys.argv.append('py2exe')
 
     settings.update(

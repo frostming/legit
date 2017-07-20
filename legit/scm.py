@@ -9,16 +9,14 @@ This module provides the main interface to Git.
 
 import os
 import sys
-import subprocess
 from collections import namedtuple
 from operator import attrgetter
 
 import clint
 from git import Repo
-from git.exc import GitCommandError,  InvalidGitRepositoryError
+from git.exc import GitCommandError, InvalidGitRepositoryError
 
 from .settings import settings
-
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 

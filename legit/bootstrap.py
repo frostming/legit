@@ -8,18 +8,11 @@ This module boostraps the Legit runtime.
 """
 
 
-from six.moves import configparser
-
-
 import clint.textui.colored
 from clint import resources
-from clint.textui import colored
-
-
+from six.moves import configparser
 
 from .settings import settings
-
-
 
 resources.init('kennethreitz', 'legit')
 

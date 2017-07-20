@@ -7,8 +7,6 @@ legit.helpers
 Various Python helpers.
 """
 
-
-import os
 import platform
 
 _platform = platform.system().lower()
