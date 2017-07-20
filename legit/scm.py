@@ -138,18 +138,32 @@ def smart_merge(branch, allow_rebase=True):
         else:
             verb = 'merge'
 
-    try:
-        return repo.git.execute([git, verb, branch])
-    except GitCommandError as why:
-        log = repo.git.execute([git, verb, '--abort'])
-        abort('Merge failed. Reverting.',
-              log='{0}\n{1}'.format(why, log), type='merge')
+    if git_pull_ff_only():
+        return repo.git.execute([git, verb, '--ff-only', branch])
+    else:
+        try:
+            return repo.git.execute([git, verb, branch])
+        except GitCommandError as why:
+            log = repo.git.execute([git, verb, '--abort'])
+            abort('Merge failed. Reverting.',
+                  log='{0}\n{1}'.format(why, log), type='merge')
 
 
 def git_pull_rebase():
     reader = repo.config_reader()
     if reader.has_option('pull', 'rebase'):
         return reader.getboolean('pull', 'rebase')
+    else:
+        return False
+
+
+def git_pull_ff_only():
+    reader = repo.config_reader()
+    if reader.has_option('pull', 'ff'):
+        if reader.getboolean('pull', 'ff') == "only":
+            return True
+        else:
+            return False
     else:
         return False
 
