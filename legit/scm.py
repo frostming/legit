@@ -230,9 +230,9 @@ def get_remote():
             return repo.remotes[0]
 
     remote_name = reader.get('legit', 'remote')
-    if not remote_name in [r.name for r in repo.remotes]:
+    if remote_name not in [r.name for r in repo.remotes]:
         raise ValueError('Remote "{0}" does not exist! Please update your git '
-                             'configuration.'.format(remote_name))
+                         'configuration.'.format(remote_name))
 
     return repo.remote(remote_name)
 
