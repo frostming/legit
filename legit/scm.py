@@ -100,6 +100,7 @@ def unstash_it(sync=False, branch=None):
         return repo.git.execute([git,
             'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
+
 def smart_pull():
     'git log --merges origin/master..master'
 
@@ -109,7 +110,15 @@ def smart_pull():
 
     repo.git.execute([git, 'fetch', remote.name])
 
-    return smart_merge('{0}/{1}'.format(remote.name, branch))
+    return smart_merge('{0}/{1}'.format(remote.name, branch), smart_merge_enabled())
+
+
+def smart_merge_enabled():
+    reader = repo.config_reader()
+    if reader.has_option('legit', 'smartMerge'):
+        return reader.getboolean('legit', 'smartMerge')
+    else:
+        return True
 
 
 def smart_merge(branch, allow_rebase=True):
@@ -132,7 +141,6 @@ def smart_merge(branch, allow_rebase=True):
         log = repo.git.execute([git, verb, '--abort'])
         abort('Merge failed. Reverting.',
               log='{0}\n{1}'.format(why, log), type='merge')
-
 
 
 def push(branch=None):
