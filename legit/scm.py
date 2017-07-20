@@ -101,6 +101,7 @@ def unstash_it(sync=False, branch=None):
         return repo.git.execute([git,
             'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
+
 def smart_pull():
     'git log --merges origin/master..master'
 
@@ -110,7 +111,15 @@ def smart_pull():
 
     repo.git.execute([git, 'fetch', remote.name])
 
-    return smart_merge('{0}/{1}'.format(remote.name, branch))
+    return smart_merge('{0}/{1}'.format(remote.name, branch), smart_merge_enabled())
+
+
+def smart_merge_enabled():
+    reader = repo.config_reader()
+    if reader.has_option('legit', 'smartMerge'):
+        return reader.getboolean('legit', 'smartMerge')
+    else:
+        return True
 
 
 def smart_merge(branch, allow_rebase=True):
@@ -125,15 +134,39 @@ def smart_merge(branch, allow_rebase=True):
     if allow_rebase:
         verb = 'merge' if merges.count('commit') else 'rebase'
     else:
-        verb = 'merge'
+        if git_pull_rebase():
+            verb = 'rebase'
+        else:
+            verb = 'merge'
 
-    try:
-        return repo.git.execute([git, verb, branch])
-    except GitCommandError as why:
-        log = repo.git.execute([git, verb, '--abort'])
-        abort('Merge failed. Reverting.',
-              log='{0}\n{1}'.format(why, log), type='merge')
+    if git_pull_ff_only():
+        return repo.git.execute([git, verb, '--ff-only', branch])
+    else:
+        try:
+            return repo.git.execute([git, verb, branch])
+        except GitCommandError as why:
+            log = repo.git.execute([git, verb, '--abort'])
+            abort('Merge failed. Reverting.',
+                  log='{0}\n{1}'.format(why, log), type='merge')
 
+
+def git_pull_rebase():
+    reader = repo.config_reader()
+    if reader.has_option('pull', 'rebase'):
+        return reader.getboolean('pull', 'rebase')
+    else:
+        return False
+
+
+def git_pull_ff_only():
+    reader = repo.config_reader()
+    if reader.has_option('pull', 'ff'):
+        if reader.getboolean('pull', 'ff') == "only":
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 def push(branch=None):
