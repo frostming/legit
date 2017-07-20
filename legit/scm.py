@@ -224,21 +224,36 @@ def get_remote():
     reader = repo.config_reader()
 
     # If there is no remote option in legit section, return default
-    if not reader.has_option('legit', 'remote'):
-        return get_default_remote()
-    else:
+    if reader.has_option('legit', 'remote'):
         remote_name = reader.get('legit', 'remote')
         if remote_name not in [r.name for r in repo.remotes]:
-            print('Remote "{0}" does not exist!'.format(remote_name))
-            will_aborted = clint.textui.prompt.yn(
-                "\nPress `y` to abort now, `n` to ignore legit.remote setting and use default remote:")
-            if will_aborted:
-                print("\nAborted. Please update your git configuration.")
-                sys.exit(64)  # EX_USAGE
-            else:
+            if fallback_enabled(reader):
                 return get_default_remote()
+            else:
+                print('Remote "{0}" does not exist!'.format(remote_name))
+                will_aborted = clint.textui.prompt.yn(
+                    '\nPress `y` to abort now,\n' +
+                    '`n` to use default remote and turn fallback on for this repo:')
+                if will_aborted:
+                    print('\nAborted. Please update your git configuration.')
+                    sys.exit(64)  # EX_USAGE
+                else:
+                    writer = repo.config_writer()
+                    writer.set_value('legit', 'remoteFallback', 'true')
+                    return get_default_remote()
         else:
             return repo.remote(remote_name)
+    else:
+        return get_default_remote()
+
+
+# Instead of getboolean('legit', 'remoteFallback', fallback=False)
+# since getboolean in Python 2 does not have fallback argument.
+def fallback_enabled(reader):
+    if reader.has_option('legit', 'remoteFallback'):
+        return reader.getboolean('legit', 'remoteFallback')
+    else:
+        return False
 
 
 def get_default_remote():
