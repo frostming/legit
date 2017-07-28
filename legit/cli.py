@@ -438,7 +438,12 @@ def handle_abort(aborted, type=None):
         print('Unfortunately, there was a merge conflict.'
               ' It has to be merged manually.')
     elif type == 'unpublish':
-        print('It seems that the remote branch has been already deleted.')
+        print(
+            '''It seems that the remote branch has been already deleted.
+            If `legit branches` still list it as published,
+            then probably the branch has been deleted at the remote by someone else.
+            You can run `git fetch --prune` to update remote information.
+            ''')
     sys.exit(1)
 
 
