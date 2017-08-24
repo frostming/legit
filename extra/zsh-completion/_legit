@@ -29,11 +29,8 @@ _legit ()
                 'branches: Get a nice pretty list of available branches.'
                 'sync: Synchronizes the given branch. Defaults to current branch. Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash. You can only sync published branches.'
                 'switch: Switches to specified branch. Defaults to current branch. Automatically stashes and unstashes any changes.'
-                'sprout: Creates a new branch off of the specified branch. Switches to it immediately.'
-                'graft: Merges specified branch into the second branch, and removes it. You can only graft unpublished branches.'
                 'publish: Publishes specified branch to the remote.'
                 'unpublish: Removes specified branch from the remote.'
-                'harvest: Syncs a branch with a given branch. Defaults to current.'
                 'help: Displays help for legit command.'
         )
 
@@ -49,21 +46,6 @@ _legit ()
                                 (sy|sync|sw|switch|pub|publish|unp|unpublish|rs)
                                         _arguments \
                                                 ':branch:__git_branch_names'
-                                ;;
-                                (sp|sprout)
-                                        _arguments \
-                                                '1:branch:__git_branch_names' \
-                                                '2:new-branch'
-                                ;;
-                                (gr|graft)
-                                        _arguments \
-                                                '1:branch:__git_branch_names' \
-                                                '2:into-branch:__git_branch_names'
-                                ;;
-                                (ha|hv|har|harvest)
-                                        _arguments \
-                                                '1:from-branch:__git_branch_names' \
-                                                '2:to-branch:__git_branch_names'
                                 ;;
                                 (help)
                                         _describe -t commands 'legit' subcommands
