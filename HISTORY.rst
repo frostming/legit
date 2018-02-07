@@ -5,7 +5,8 @@ History
 +++++
 
 * Added the new 'undo' command. 
-
+* Refine some exit code.
+* Run `legit` without args prints help message.
 
 0.2.1
 +++++
