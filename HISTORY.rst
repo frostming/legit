@@ -1,6 +1,11 @@
 History
 -------
 
+0.4.1
++++++
+
+* Remove commands: 'graft', 'harvest', 'sprout'.
+
 0.3.1
 +++++
 
