@@ -1,6 +1,16 @@
 History
 -------
 
+0.5.0
++++++
+
+* Remove 'rsync' command.
+* Fix issues when using legit in repos without remotes.
+* Except for the smart merge, `sync` also supports
+  'never rebase', 'always rebase', and 'fast-forward only'.
+* Fix some compatibility issues with Python 3.5 and Git 2.15.0.
+* Refine some error & info messages.
+
 0.4.1
 +++++
 
