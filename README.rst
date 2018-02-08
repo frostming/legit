@@ -63,6 +63,15 @@ From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manag
 
 Or download a standalone Windows executable from `GitHub Releases <https://github.com/kennethreitz/legit/releases>`_.
 
+To install the cutting edge version from the git repository::
+
+    git clone https://github.com/kennethreitz/legit.git
+    cd legit
+    python setup.py install
+
+Note: if you encountered `Permission denied`,
+prepend `sudo` before the `pip` or `python setup.py` command.
+
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
