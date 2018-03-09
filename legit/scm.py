@@ -40,7 +40,8 @@ def abort(message, log=None, type=None):
 
     settings.abort_handler(a, type=type)
 
-def repo_check(require_remote=False):
+
+def repo_check(repo, require_remote=False):
     if repo is None:
         print('Not a git repository.')
         sys.exit(128)
@@ -53,9 +54,8 @@ def repo_check(require_remote=False):
     # TODO: You're in a merge state.
 
 
-
-def stash_it(sync=False):
-    repo_check()
+def stash_it(repo, sync=False):
+    repo_check(repo)
     msg = 'syncing branch' if sync else 'switching branches'
 
     return repo.git.execute([git,
@@ -63,16 +63,15 @@ def stash_it(sync=False):
         LEGIT_TEMPLATE.format(msg)])
 
 
-def unstash_index(sync=False, branch=None):
+def unstash_index(repo, sync=False, branch=None):
     """Returns an unstash index if one is available."""
 
-    repo_check()
+    repo_check(repo)
 
-    stash_list = repo.git.execute([git,
-        'stash', 'list'])
+    stash_list = repo.git.execute([git, 'stash', 'list'])
 
     if branch is None:
-        branch = get_current_branch_name()
+        branch = get_current_branch_name(repo)
 
     for stash in stash_list.splitlines():
 
@@ -88,31 +87,32 @@ def unstash_index(sync=False, branch=None):
         ):
             return stash[7]
 
-def unstash_it(sync=False, branch=None):
+
+def unstash_it(repo, sync=False, branch=None):
     """Unstashes changes from current branch for branch sync."""
 
-    repo_check()
+    repo_check(repo)
 
-    stash_index = unstash_index(sync=sync, branch=branch)
+    stash_index = unstash_index(repo, sync=sync, branch=branch)
 
     if stash_index is not None:
         return repo.git.execute([git,
             'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
 
-def smart_pull():
+def smart_pull(repo):
     'git log --merges origin/master..master'
 
     repo_check(require_remote=True)
 
     branch = get_current_branch_name()
 
-    repo.git.execute([git, 'fetch', remote.name])
+    repo.git.execute([git, 'fetch', repo.remote.name])
 
-    return smart_merge('{0}/{1}'.format(remote.name, branch), smart_merge_enabled())
+    return smart_merge('{0}/{1}'.format(repo.remote.name, branch), smart_merge_enabled())
 
 
-def smart_merge_enabled():
+def smart_merge_enabled(repo):
     reader = repo.config_reader()
     if reader.has_option('legit', 'smartMerge'):
         return reader.getboolean('legit', 'smartMerge')
@@ -120,9 +120,9 @@ def smart_merge_enabled():
         return True
 
 
-def smart_merge(branch, allow_rebase=True):
+def smart_merge(repo, branch, allow_rebase=True):
 
-    repo_check()
+    repo_check(repo)
 
     from_branch = get_current_branch_name()
 
@@ -148,7 +148,7 @@ def smart_merge(branch, allow_rebase=True):
                   log='{0}\n{1}'.format(why, log), type='merge')
 
 
-def git_pull_rebase():
+def git_pull_rebase(repo):
     reader = repo.config_reader()
     if reader.has_option('pull', 'rebase'):
         return reader.getboolean('pull', 'rebase')
@@ -156,7 +156,7 @@ def git_pull_rebase():
         return False
 
 
-def git_pull_ff_only():
+def git_pull_ff_only(repo):
     reader = repo.config_reader()
     if reader.has_option('pull', 'ff'):
         if reader.getboolean('pull', 'ff') == "only":
@@ -167,47 +167,47 @@ def git_pull_ff_only():
         return False
 
 
-def push(branch=None):
+def push(repo, branch=None):
 
-    repo_check(require_remote=True)
+    repo_check(repo, require_remote=True)
 
     if branch is None:
         return repo.git.execute([git, 'push'])
     else:
-        return repo.git.execute([git, 'push', remote.name, branch])
+        return repo.git.execute([git, 'push', repo.remote.name, branch])
 
 
-def checkout_branch(branch):
+def checkout_branch(repo, branch):
     """Checks out given branch."""
 
-    repo_check()
+    repo_check(repo)
 
     _, stdout, stderr = repo.git.execute([git, 'checkout', branch],
                                          with_extended_output=True)
     return '\n'.join([stderr, stdout])
 
 
-def unpublish_branch(branch):
+def unpublish_branch(repo, branch):
     """Unpublishes given branch."""
 
-    repo_check(require_remote=True)
+    repo_check(repo, require_remote=True)
 
     try:
         return repo.git.execute([git,
-            'push', remote.name, ':{0}'.format(branch)])
+            'push', repo.remote.name, ':{0}'.format(branch)])
     except GitCommandError:
-        _, _, log = repo.git.execute([git, 'fetch', remote.name, '--prune'],
+        _, _, log = repo.git.execute([git, 'fetch', repo.remote.name, '--prune'],
                                      with_extended_output=True)
         abort('Unpublish failed. Fetching.', log=log, type='unpublish')
 
 
-def publish_branch(branch):
+def publish_branch(repo, branch):
     """Publishes given branch."""
 
-    repo_check(require_remote=True)
+    repo_check(repo, require_remote=True)
 
     return repo.git.execute([git,
-        'push', '-u', remote.name, branch])
+        'push', '-u', repo.remote.name, branch])
 
 
 def get_repo():
@@ -219,9 +219,9 @@ def get_repo():
         pass
 
 
-def get_remote():
+def get_remote(repo):
 
-    repo_check()
+    repo_check(repo)
 
     reader = repo.config_reader()
 
@@ -243,11 +243,11 @@ def get_remote():
                     writer = repo.config_writer()
                     writer.set_value('legit', 'remoteFallback', 'true')
                     print('\n`legit.RemoteFallback` changed to true for current repo.')
-                    return get_default_remote()
+                    return get_default_remote(repo)
         else:
             return repo.remote(remote_name)
     else:
-        return get_default_remote()
+        return get_default_remote(repo)
 
 
 # Instead of getboolean('legit', 'remoteFallback', fallback=False)
@@ -259,25 +259,25 @@ def fallback_enabled(reader):
         return False
 
 
-def get_default_remote():
+def get_default_remote(repo):
     if len(repo.remotes) == 0:
         return None
     else:
         return repo.remotes[0]
 
 
-def get_current_branch_name():
+def get_current_branch_name(repo):
     """Returns current branch name"""
 
-    repo_check()
+    repo_check(repo)
 
     return repo.head.ref.name
 
 
-def get_branches(local=True, remote_branches=True):
+def get_branches(repo, local=True, remote_branches=True):
     """Returns a list of local and remote branches."""
 
-    repo_check()
+    repo_check(repo)
 
     if not repo.remotes:
         remote_branches = False
@@ -288,7 +288,7 @@ def get_branches(local=True, remote_branches=True):
 
         # Remote refs.
         try:
-            for b in remote.refs:
+            for b in repo.remote.refs:
                 name = '/'.join(b.name.split('/')[1:])
 
                 if name not in settings.forbidden_branches:
@@ -309,15 +309,10 @@ def get_branches(local=True, remote_branches=True):
     return sorted(branches, key=attrgetter('name'))
 
 
-def get_branch_names(local=True, remote_branches=True):
+def get_branch_names(repo, local=True, remote_branches=True):
 
-    repo_check()
+    repo_check(repo)
 
     branches = get_branches(local=local, remote_branches=remote_branches)
 
     return [b.name for b in branches]
-
-
-repo = get_repo()
-if repo:  # in git repository
-    remote = get_remote()

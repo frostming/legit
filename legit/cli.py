@@ -7,87 +7,62 @@ legit.cli
 This module provides the CLI interface to legit.
 """
 
-import difflib
-from subprocess import call
-from time import sleep
-
-import clint.resources
-
-try:
-    from clint import Args
-    args = Args()
-except ImportError:
-    from clint import args
-from clint.textui import colored, puts, columns, indent, prompt
+import click
+from clint.textui import colored, columns
 
 from .core import __version__
-from .helpers import is_lin, is_osx, is_win
 from .scm import *
 
 
-def black(s):
-    if settings.allow_black_foreground:
-        return colored.black(s)
-    else:
-        return s.encode('utf-8')
-
-# --------
-# Dispatch
-# --------
-
-def main():
-    """Primary Legit command dispatch."""
-
-    command = Command.lookup(args.get(0))
-    if command:
-        arg = args.get(0)
-        args.remove(arg)
-        command.__call__(args)
-        sys.exit()
-
-    elif args.contains(('-h', '--help')):
-        display_help()
-        sys.exit()
-
-    elif args.contains(('-v', '--version')):
-        display_version()
-        sys.exit()
-
-    elif len(args) == 0:
-        display_help()
-        sys.exit()
-
-    else:
-        if settings.git_transparency:
-            # Send everything to git
-            git_args = list(sys.argv)
-            if settings.git_transparency is True:
-                settings.git_transparency = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
-
-            git_args[0] = settings.git_transparency
-
-            sys.exit(call(' '.join(git_args), shell=True))
-
-        else:
-            show_error(colored.red('Unknown command {0}'.format(args.get(0))))
-            display_info()
-            sys.exit(1)
+pass_repo = click.make_pass_decorator(Repo)
 
 
-def show_error(msg):
-    sys.stdout.flush()
-    sys.stderr.write(msg + '\n')
+@click.group()
+@click.option('--verbose', is_flag=True,
+              help='Enables verbose mode.')
+@click.version_option(__version__)
+@click.pass_context
+def cli(ctx, verbose):
+    """Legit command dispatch"""
+    # Create a repo object and remember it as as the context object.  From
+    # this point onwards other commands can refer to it by using the
+    # @pass_repo decorator.
+    ctx.obj = get_repo()
+    if ctx.obj:
+        ctx.obj.remote = get_remote(ctx.obj)
+        ctx.obj.verbose = verbose
+
+
+@cli.command()
+@click.argument('to_branch')
+@pass_repo
+def switch(repo, to_branch):
+    """Switches from one branch to another, safely stashing/restoring local changes.
+    """
+    if to_branch is None:
+        print('Please specify a branch to switch:')
+        display_available_branches(repo)
+        raise click.Abort
+
+    if repo.is_dirty():
+        status_log(stash_it, 'Saving local changes.', repo)
+
+    status_log(checkout_branch, 'Switching to {0}.'.format(
+        colored.yellow(to_branch)), repo, to_branch)
+
+    if unstash_index(repo):
+        status_log(unstash_it, 'Restoring local changes.', repo)
 
 
 # -------
 # Helpers
 # -------
 
-def status_log(func, message, *args, **kwargs):
+def status_log(func, message, repo, *args, **kwargs):
     """Executes a callable with a header message."""
 
-    print(message)
-    log = func(*args, **kwargs)
+    click.echo(message)
+    log = func(repo, *args, **kwargs)
 
     if log:
         out = []
@@ -95,256 +70,17 @@ def status_log(func, message, *args, **kwargs):
         for line in log.split('\n'):
             if not line.startswith('#'):
                 out.append(line)
-        print(black('\n'.join(out)))
+        click.secho('\n'.join(out), fg="black")
 
 
-def switch_to(branch):
-    """Runs the cmd_switch command with given branch arg."""
-
-    switch_args = args.copy
-    switch_args._args = [branch]
-
-    return cmd_switch(switch_args)
-
-def fuzzy_match_branch(branch):
-    if not branch: return False
-
-    all_branches = get_branch_names()
-    if branch in all_branches:
-        return branch
-
-    def branch_fuzzy_match(b): return b.startswith(branch)
-    possible_branches = list(filter(branch_fuzzy_match, all_branches))
-
-    if len(possible_branches) == 1:
-        return possible_branches[0]
-
-    return branch
-
-# --------
-# Commands
-# --------
-
-def cmd_switch(args):
-    """Legit Switch command."""
-    to_branch = args.get(0)
-    to_branch = fuzzy_match_branch(to_branch)
-
-    if to_branch is False:
-        print('Please specify a branch to switch:')
-        display_available_branches()
-        sys.exit(64)  # EX_USAGE
-    else:
-        if repo.is_dirty():
-            status_log(stash_it, 'Saving local changes.')
-
-        status_log(checkout_branch, 'Switching to {0}.'.format(
-            colored.yellow(to_branch)), to_branch)
-
-        if unstash_index():
-            status_log(unstash_it, 'Restoring local changes.')
-
-
-def cmd_sync(args):
-    """Stashes unstaged changes, Fetches remote data, Performs smart
-    pull+merge, Pushes local commits up, and Unstashes changes.
-
-    Defaults to current branch.
-    """
-
-    repo_check(require_remote=True)
-
-    if args.get(0):
-        # Optional branch specifier.
-        branch = fuzzy_match_branch(args.get(0))
-        if branch:
-            is_external = True
-            original_branch = get_current_branch_name()
-        else:
-            print("{0} doesn't exist. Use a branch that does.".format(
-                colored.yellow(args.get(0))))
-            sys.exit(1)
-    else:
-        # Sync current branch.
-        branch = get_current_branch_name()
-        is_external = False
-
-    if branch in get_branch_names(local=False):
-
-        if is_external:
-            switch_to(branch)
-
-        if repo.is_dirty():
-            status_log(stash_it, 'Saving local changes.', sync=True)
-
-        status_log(smart_pull, 'Pulling commits from the server.')
-        status_log(push, 'Pushing commits to the server.', branch)
-
-        if unstash_index(sync=True):
-            status_log(unstash_it, 'Restoring local changes.', sync=True)
-
-        if is_external:
-            switch_to(original_branch)
-
-    else:
-        print('{0} has not been published yet.'.format(
-            colored.yellow(branch)))
-        sys.exit(1)
-
-
-def cmd_undo(args):
-    """Makes last commit not exist.
-    --hard for """
-
-    repo.git.reset('HEAD^')
-
-    print('Last commit removed from history.')
-
-
-def cmd_publish(args):
-    """Pushes an unpublished branch to a remote repository."""
-
-    repo_check(require_remote=True)
-    branch = fuzzy_match_branch(args.get(0))
-
-    if not branch:
-        branch = get_current_branch_name()
-        display_available_branches()
-        if args.get(0) is None:
-            print("Using current branch {0}".format(colored.yellow(branch)))
-        else:
-            print("Branch {0} not found, using current branch {1}".format(colored.red(args.get(0)),colored.yellow(branch)))
-
-    branch_names = get_branch_names(local=False)
-
-    if branch in branch_names:
-        print("{0} is already published. Use a branch that isn't.".format(
-            colored.yellow(branch)))
-        sys.exit(1)
-
-    status_log(publish_branch, 'Publishing {0}.'.format(
-        colored.yellow(branch)), branch)
-
-
-
-def cmd_unpublish(args):
-    """Removes a published branch from the remote repository."""
-
-    repo_check(require_remote=True)
-    branch = fuzzy_match_branch(args.get(0))
-
-    if not branch:
-        print('Please specify a branch to unpublish:')
-        display_available_branches()
-        sys.exit(64)  # EX_USAGE
-
-    branch_names = get_branch_names(local=False)
-
-    if branch not in branch_names:
-        print("{0} isn't published. Use a branch that is.".format(
-            colored.yellow(branch)))
-        sys.exit(1)
-
-    status_log(unpublish_branch, 'Unpublishing {0}.'.format(
-        colored.yellow(branch)), branch)
-
-
-
-def cmd_branches(args):
-    """Displays available branches."""
-
-    display_available_branches()
-
-
-def cmd_settings(args):
-    """Opens legit settings in editor."""
-
-    path = clint.resources.user.open('config.ini').name
-
-
-    print('Legit Settings:\n')
-
-    for (option, _, description) in settings.config_defaults:
-        print(columns([colored.yellow(option), 25], [description, None]))
-
-    sleep(0.35)
-
-    if is_osx:
-        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'open'
-        os.system("{0} '{1}'".format(editor, path))
-    elif is_lin:
-        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
-        os.system("{0} '{1}'".format(editor, path))
-    elif is_win:
-        os.system("\"{0}\"".format(path))
-    else:
-        print("Edit '{0}' to manage Legit settings.\n".format(path))
-
-    sys.exit()
-
-
-def cmd_install(args):
-    """Installs legit git aliases."""
-
-    aliases = [
-        'branches',
-        'publish',
-        'unpublish',
-        'sync',
-        'switch',
-        'undo'
-    ]
-
-    print('The following git aliases will be installed:\n')
-
-    for alias in aliases:
-        cmd = '!legit ' + alias
-        print(columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None]))
-
-    is_confirmed = prompt.yn("\nInstall aliases above?")
-    if is_confirmed:
-        for alias in aliases:
-            cmd = '!legit ' + alias
-            os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
-        print("\nAliases installed.")
-        sys.exit()
-    else:
-        print("\nAliases will not be installed.")
-        sys.exit()
-
-
-def cmd_help(args):
-    """Display help for individual commands."""
-    command = args.get(0)
-    help(command)
-
-# -----
-# Views
-# -----
-
-def help(command, to_stderr=False):
-    if command == None:
-        command = 'help'
-
-    cmd = Command.lookup(command)
-    usage = cmd.usage or ''
-    alias = 'alias: %s\n\n' % ', '.join(cmd.short) if cmd.short else ''
-    help = columns([cmd.help, 60]) or ''
-    help_text = '%s\n\n%s%s' % (usage, alias, help)
-    if to_stderr:
-        show_error(help_text)
-    else:
-        print(help_text)
-
-
-def display_available_branches():
+def display_available_branches(repo):
     """Displays available branches."""
 
     if not repo.remotes:
         remote_branches = False
     else:
         remote_branches = True
-    branches = get_branches(local=True, remote_branches=remote_branches)
+    branches = get_branches(repo, local=True, remote_branches=remote_branches)
 
     if not branches:
         print(colored.red('No branches available'))
@@ -355,7 +91,7 @@ def display_available_branches():
     for branch in branches:
 
         try:
-            branch_is_selected = (branch.name == get_current_branch_name())
+            branch_is_selected = (branch.name == get_current_branch_name(repo))
         except TypeError:
             branch_is_selected = False
 
@@ -366,188 +102,5 @@ def display_available_branches():
         print(columns(
             [colored.red(marker), 2],
             [color(branch.name), branch_col],
-            [black(pub), 14]
+            [colored.black(pub), 14]
         ))
-
-
-def sort_with_similarity(iterable, key=None):
-    """Sort string list with similarity following original order."""
-    if key is None:
-        key = lambda x: x
-    ordered = []
-    left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
-    for k in list(left_iterable.keys()):
-        if k not in left_iterable:
-            continue
-        ordered.append(left_iterable[k])
-        del left_iterable[k]
-        # find close named iterable
-        close_iterable = difflib.get_close_matches(k, left_iterable.keys())
-        for close in close_iterable:
-            ordered.append(left_iterable[close])
-            del left_iterable[close]
-    return ordered
-
-
-def display_info():
-    """Displays Legit informatics."""
-
-    puts('{0}. {1}\n'.format(
-        colored.red('legit'),
-        black('A Kenneth Reitz Project')
-    ))
-
-    puts('Usage: {0}\n'.format(colored.blue('legit <command>')))
-    puts('Commands:\n')
-    commands = Command.all_commands()
-    for command in sort_with_similarity(commands, key=lambda x:x.name):
-        usage = command.usage or command.name
-        detail = command.help or ''
-        puts(colored.green(usage))
-        with indent(2):
-            puts(first_sentence(detail))
-
-
-def first_sentence(s):
-    pos = s.find('. ')
-    if pos < 0:
-        pos = len(s) - 1
-    return s[:pos + 1]
-
-
-def display_help():
-    """Displays Legit help."""
-
-    display_info()
-
-
-def display_version():
-    """Displays Legit version/release."""
-
-
-    puts('{0} v{1}'.format(
-        colored.yellow('legit'),
-        __version__
-    ))
-
-
-def handle_abort(aborted, type=None):
-    print('{0} {1}'.format(colored.red('Error:'), aborted.message))
-    print(black(str(aborted.log)))
-    if type == 'merge':
-        print('Unfortunately, there was a merge conflict.'
-              ' It has to be merged manually.')
-    elif type == 'unpublish':
-        print(
-            '''It seems that the remote branch has been already deleted.
-            If `legit branches` still list it as published,
-            then probably the branch has been deleted at the remote by someone else.
-            You can run `git fetch --prune` to update remote information.
-            ''')
-    sys.exit(1)
-
-
-settings.abort_handler = handle_abort
-
-
-class Command(object):
-    COMMANDS = {}
-    SHORT_MAP = {}
-
-    @classmethod
-    def register(klass, command):
-        klass.COMMANDS[command.name] = command
-        if command.short:
-            for short in command.short:
-                klass.SHORT_MAP[short] = command
-
-    @classmethod
-    def lookup(klass, name):
-        if name in klass.SHORT_MAP:
-            return klass.SHORT_MAP[name]
-        if name in klass.COMMANDS:
-            return klass.COMMANDS[name]
-        else:
-            return None
-
-    @classmethod
-    def all_commands(klass):
-        return sorted(klass.COMMANDS.values(), key=lambda cmd: cmd.name)
-
-    def __init__(self, name=None, short=None, fn=None, usage=None, help=None):
-        self.name = name
-        self.short = short
-        self.fn = fn
-        self.usage = usage
-        self.help = help
-
-    def __call__(self, *args, **kw_args):
-        return self.fn(*args, **kw_args)
-
-
-def def_cmd(name=None, short=None, fn=None, usage=None, help=None):
-    command = Command(name=name, short=short, fn=fn, usage=usage, help=help)
-    Command.register(command)
-
-
-def_cmd(
-    name='branches',
-    fn=cmd_branches,
-    usage='branches',
-    help='Get a nice pretty list of branches.')
-
-def_cmd(
-    name='help',
-    short=['h'],
-    fn=cmd_help,
-    usage='help <command>',
-    help='Displays help for legit command.')
-
-def_cmd(
-    name='install',
-    fn=cmd_install,
-    usage='install',
-    help='Installs legit git aliases.')
-
-def_cmd(
-    name='publish',
-    short=['pub'],
-    fn=cmd_publish,
-    usage='publish [<branch>]',
-    help='Publishes specified branch to the remote.')
-
-def_cmd(
-    name='settings',
-    fn=cmd_settings,
-    usage='settings',
-    help='Opens legit settings in a text editor.')
-
-def_cmd(
-    name='switch',
-    short=['sw'],
-    fn=cmd_switch,
-    usage='switch <branch>',
-    help=('Switches to specified branch. Automatically stashes and unstashes '
-          'any changes.'))
-
-def_cmd(
-    name='sync',
-    short=['sy'],
-    fn=cmd_sync,
-    usage='sync <branch>',
-    help=('Synchronizes the given branch. Defaults to current branch. Stash, '
-          'Fetch, Auto-Merge/Rebase, Push, and Unstash.'))
-
-def_cmd(
-    name='unpublish',
-    short=['unp'],
-    fn=cmd_unpublish,
-    usage='unpublish <branch>',
-    help='Removes specified branch from the remote.')
-
-def_cmd(
-    name='undo',
-    short=['un'],
-    fn=cmd_undo,
-    usage='undo',
-    help='Removes the last commit from history.')
