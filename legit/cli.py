@@ -16,7 +16,7 @@ import difflib
 
 from .core import __version__
 from .helpers import is_lin, is_osx, is_win
-from .scm import SCMRepo, black
+from .scm import SCMRepo
 from .settings import settings
 
 
@@ -48,50 +48,60 @@ class LegitGroup(click.Group):
 
 
 @click.group(cls=LegitGroup, context_settings=CONTEXT_SETTINGS)
-# @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.version_option(message='{} {}'.format(colored.yellow('legit'), __version__))
 @click.pass_context
-def cli(ctx):
+def cli(ctx, verbose, fake):
     """legit : A Kenneth Reitz Project"""
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
     ctx.obj = SCMRepo()
-    # if ctx.obj:
-    #     ctx.obj.verbose = verbose
+    ctx.obj.verbose = verbose
+    ctx.obj.fake = fake
 
 
 @cli.command(short_help='Switches to specified branch.')
 @click.argument('to_branch', required=False)
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
-def switch(scm, to_branch):
+def switch(scm, to_branch, verbose, fake):
     """Switches from one branch to another, safely stashing and restoring local changes.
     """
+    scm.verbose = verbose
+    scm.fake = fake
+
     if to_branch is None:
         click.echo('Please specify a branch to switch:')
         scm.display_available_branches()
         raise click.Abort
 
     if scm.repo.is_dirty():
-        status_log(scm.stash_it, 'Saving local changes.')
+        scm.status_log(scm.stash_it, 'Saving local changes.')
 
-    status_log(scm.checkout_branch, 'Switching to {0}.'.format(
+    scm.status_log(scm.checkout_branch, 'Switching to {0}.'.format(
         colored.yellow(to_branch)), to_branch)
 
     if scm.unstash_index():
-        status_log(scm.repo.unstash_it, 'Restoring local changes.')
+        scm.status_log(scm.unstash_it, 'Restoring local changes.')
 
 
 @cli.command(short_help='Synchronizes the given branch.')
 @click.argument('to_branch', required=False)
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
 @click.pass_context
-def sync(ctx, scm, to_branch):
+def sync(ctx, scm, to_branch, verbose, fake):
     """Stashes unstaged changes, Fetches remote data, Performs smart
     pull+merge, Pushes local commits up, and Unstashes changes.
 
     Defaults to current branch.
     """
+    scm.verbose = verbose
+    scm.fake = fake
 
     scm.repo_check(require_remote=True)
 
@@ -116,13 +126,13 @@ def sync(ctx, scm, to_branch):
             ctx.invoke(switch, to_branch=branch)
 
         if scm.repo.is_dirty():
-            status_log(scm.stash_it, 'Saving local changes.', sync=True)
+            scm.status_log(scm.stash_it, 'Saving local changes.', sync=True)
 
-        status_log(scm.smart_pull, 'Pulling commits from the server.')
-        status_log(scm.push, 'Pushing commits to the server.', branch)
+        scm.status_log(scm.smart_pull, 'Pulling commits from the server.')
+        scm.status_log(scm.push, 'Pushing commits to the server.', branch)
 
         if scm.unstash_index(sync=True):
-            status_log(scm.unstash_it, 'Restoring local changes.', sync=True)
+            scm.status_log(scm.unstash_it, 'Restoring local changes.', sync=True)
 
         if is_external:
             ctx.invoke(switch, to_branch=original_branch)
@@ -135,9 +145,13 @@ def sync(ctx, scm, to_branch):
 
 @cli.command(short_help='Publishes specified branch to the remote.')
 @click.argument('to_branch', required=False)
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
-def publish(scm, to_branch):
+def publish(scm, to_branch, verbose, fake):
     """Pushes an unpublished branch to a remote repository."""
+    scm.verbose = verbose
+    scm.fake = fake
 
     scm.repo_check(require_remote=True)
     branch = scm.fuzzy_match_branch(to_branch)
@@ -159,15 +173,19 @@ def publish(scm, to_branch):
             colored.yellow(branch)))
         raise click.Abort
 
-    status_log(scm.publish_branch, 'Publishing {0}.'.format(
+    scm.status_log(scm.publish_branch, 'Publishing {0}.'.format(
         colored.yellow(branch)), branch)
 
 
 @cli.command(short_help='Removes specified branch from the remote.')
 @click.argument('published_branch')
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
-def unpublish(scm, published_branch):
+def unpublish(scm, published_branch, verbose, fake):
     """Removes a published branch from the remote repository."""
+    scm.verbose = verbose
+    scm.fake = fake
 
     scm.repo_check(require_remote=True)
     branch = scm.fuzzy_match_branch(published_branch)
@@ -184,7 +202,7 @@ def unpublish(scm, published_branch):
             colored.yellow(branch)))
         raise click.Abort
 
-    status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
+    scm.status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
         colored.yellow(branch)), branch)
 
 
@@ -196,15 +214,22 @@ def branches(scm):
 
 
 @cli.command()
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
-def undo(scm):
+def undo(scm, verbose, fake):
     """Removes the last commit from history."""
-    status_log(scm.undo, 'Last commit removed from history.')
+    scm.verbose = verbose
+    scm.fake = fake
+
+    scm.status_log(scm.undo, 'Last commit removed from history.')
 
 
 @cli.command()
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.pass_context
-def install(ctx):
+def install(ctx, verbose, fake):
     """Installs legit git aliases."""
 
     # aliases = [
@@ -216,24 +241,31 @@ def install(ctx):
     #     'undo'
     # ]
 
-    print('The following git aliases will be installed:\n')
+    click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
     aliases.remove('install')  # not to be used with git
     for alias in aliases:
         cmd = '!legit ' + alias
         click.echo(columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None]))
 
-    if click.confirm("\nInstall aliases above?"):
+    if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else '')):
         for alias in aliases:
             cmd = '!legit ' + alias
-            os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
-        click.echo("\nAliases installed.")
+            system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
+            if fake:
+                click.echo(colored.red('Faked! >>> {}'.format(system_command)))
+            else:
+                if verbose:
+                    click.echo(colored.green('>>> {}'.format(system_command)))
+                os.system(system_command)
+        if not fake:
+            click.echo("\nAliases installed.")
     else:
         click.echo("\nAliases will not be installed.")
 
 
 @cli.command(name="settings")
-def cmd_settings():
+def cmd_settings():  # command function name is not `settings` to avoid conflict
     """Opens legit settings in editor."""
 
     path = clint.resources.user.open('config.ini').name
@@ -261,20 +293,6 @@ def cmd_settings():
 # -------
 # Helpers
 # -------
-
-def status_log(func, message, *args, **kwargs):
-    """Executes a callable with a header message."""
-
-    click.echo(message)
-    log = func(*args, **kwargs)
-
-    if log:
-        out = []
-
-        for line in log.split('\n'):
-            if not line.startswith('#'):
-                out.append(line)
-        click.echo(black('\n'.join(out)))
 
 
 def handle_abort(aborted, type=None):
@@ -314,3 +332,7 @@ def sort_with_similarity(iterable, key=None):
             ordered.append(left_iterable[close])
             del left_iterable[close]
     return ordered
+
+
+def is_verbose(scm):
+    return scm.verbose

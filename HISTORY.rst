@@ -5,6 +5,8 @@ History
 +++++
 
 * Refactor CLI using `click`
+* Add --verbose option
+* Add --fake option
 
 0.5.0
 +++++

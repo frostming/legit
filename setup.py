@@ -9,7 +9,7 @@ from setuptools import setup  # Always prefer setuptools over distutils
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
-VERSION = '0.5.2'
+VERSION = '0.6.0'
 
 
 # Grab requirements.

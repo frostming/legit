@@ -22,7 +22,6 @@ from .settings import settings
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
-git = os.environ.get("GIT_PYTHON_GIT_EXECUTABLE", 'git')
 
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
@@ -44,16 +43,40 @@ def abort(message, log=None, type=None):
 
 
 class SCMRepo(object):
+    git = None
     repo = None
     remote = None
     verbose = False
+    fake = False
 
     def __init__(self):
+        self.git = os.environ.get('GIT_PYTHON_GIT_EXECUTABLE', 'git')
+
         try:
             self.repo = Repo(search_parent_directories=True)
             self.remote = self.get_remote()
         except InvalidGitRepositoryError:
             self.repo = None
+
+    def exec(self, command, **kwargs):
+        """Execute git commands"""
+
+        command.insert(0, self.git)
+        no_verbose = kwargs.pop('no_verbose', False)
+        if (self.verbose or self.fake) and not no_verbose:
+            if self.fake:
+                click.echo(colored.red('Faked! >>> {}'.format(' '.join(command))))
+            else:
+                click.echo(colored.green('>>> {}'.format(' '.join(command))))
+
+        if not self.fake:
+            result = self.repo.git.execute(command, **kwargs)
+        else:
+            if 'with_extended_output' in kwargs:
+                result = (0, '', '')
+            else:
+                result = ''
+        return result
 
     def repo_check(self, require_remote=False):
         if self.repo is None:
@@ -71,15 +94,15 @@ class SCMRepo(object):
         self.repo_check()
         msg = 'syncing branch' if sync else 'switching branches'
 
-        return self.repo.git.execute(
-            [git, 'stash', 'save', '--include-untracked', LEGIT_TEMPLATE.format(msg)])
+        return self.exec(
+            ['stash', 'save', '--include-untracked', LEGIT_TEMPLATE.format(msg)])
 
     def unstash_index(self, sync=False, branch=None):
         """Returns an unstash index if one is available."""
 
         self.repo_check()
 
-        stash_list = self.repo.git.execute([git, 'stash', 'list'])
+        stash_list = self.exec(['stash', 'list'], no_verbose=True)
 
         if branch is None:
             branch = self.get_current_branch_name()
@@ -108,8 +131,8 @@ class SCMRepo(object):
         stash_index = self.unstash_index(sync=sync, branch=branch)
 
         if stash_index is not None:
-            return self.repo.git.execute(
-                [git, 'stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
+            return self.exec(
+                ['stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
     def smart_pull(self):
         """
@@ -120,7 +143,7 @@ class SCMRepo(object):
 
         branch = self.get_current_branch_name()
 
-        self.repo.git.execute([git, 'fetch', self.remote.name])
+        self.exec(['fetch', self.remote.name])
 
         return self.smart_merge('{0}/{1}'.format(self.remote.name, branch),
                                 self.smart_merge_enabled())
@@ -138,8 +161,8 @@ class SCMRepo(object):
 
         from_branch = self.get_current_branch_name()
 
-        merges = self.repo.git.execute(
-            [git, 'log', '--merges', '{0}..{1}'.format(branch, from_branch)])
+        merges = self.exec(
+            ['log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
         if allow_rebase:
             verb = 'merge' if merges.count('commit') else 'rebase'
@@ -150,12 +173,12 @@ class SCMRepo(object):
                 verb = 'merge'
 
         if self.pull_ff_only():
-            return self.repo.git.execute([git, verb, '--ff-only', branch])
+            return self.exec([verb, '--ff-only', branch])
         else:
             try:
-                return self.repo.git.execute([git, verb, branch])
+                return self.exec([verb, branch])
             except GitCommandError as why:
-                log = self.repo.git.execute([git, verb, '--abort'])
+                log = self.exec([verb, '--abort'])
                 abort('Merge failed. Reverting.',
                       log='{0}\n{1}'.format(why, log), type='merge')
 
@@ -169,7 +192,7 @@ class SCMRepo(object):
     def pull_ff_only(self):
         reader = self.repo.config_reader()
         if reader.has_option('pull', 'ff'):
-            if reader.getboolean('pull', 'ff') == "only":
+            if reader.getboolean('pull', 'ff') == 'only':
                 return True
             else:
                 return False
@@ -181,17 +204,17 @@ class SCMRepo(object):
         self.repo_check(require_remote=True)
 
         if branch is None:
-            return self.repo.git.execute([git, 'push'])
+            return self.exec(['push'])
         else:
-            return self.repo.git.execute([git, 'push', self.remote.name, branch])
+            return self.exec(['push', self.remote.name, branch])
 
     def checkout_branch(self, branch):
         """Checks out given branch."""
 
         self.repo_check()
 
-        _, stdout, stderr = self.repo.git.execute(
-            [git, 'checkout', branch],
+        _, stdout, stderr = self.exec(
+            ['checkout', branch],
             with_extended_output=True)
         return '\n'.join([stderr, stdout])
 
@@ -201,11 +224,11 @@ class SCMRepo(object):
         self.repo_check(require_remote=True)
 
         try:
-            return self.repo.git.execute(
-                [git, 'push', self.remote.name, ':{0}'.format(branch)])
+            return self.exec(
+                ['push', self.remote.name, ':{0}'.format(branch)])
         except GitCommandError:
-            _, _, log = self.repo.git.execute(
-                [git, 'fetch', self.remote.name, '--prune'],
+            _, _, log = self.exec(
+                ['fetch', self.remote.name, '--prune'],
                 with_extended_output=True)
             abort('Unpublish failed. Fetching.', log=log, type='unpublish')
 
@@ -214,12 +237,16 @@ class SCMRepo(object):
 
         self.repo_check(require_remote=True)
 
-        return self.repo.git.execute(
-            [git, 'push', '-u', self.remote.name, branch])
+        return self.exec(
+            ['push', '-u', self.remote.name, branch])
 
     def undo(self):
         """Makes last commit not exist"""
-        return self.repo.git.reset('HEAD^')
+        if not self.fake:
+            return self.repo.git.reset('HEAD^')
+        else:
+            click.echo(colored.red('Faked! >>> git reset HEAD^'))
+            return 0
 
     def get_remote(self):
 
@@ -354,6 +381,20 @@ class SCMRepo(object):
                 [color(branch.name), branch_col],
                 [black(pub), 14]
             ))
+
+    def status_log(self, func, message, *args, **kwargs):
+        """Executes a callable with a header message."""
+
+        click.echo(message)
+        log = func(*args, **kwargs)
+
+        if log:
+            out = []
+
+            for line in log.split('\n'):
+                if not line.startswith('#'):
+                    out.append(line)
+            click.echo(black('\n'.join(out)))
 
 
 # Instead of getboolean('legit', 'remoteFallback', fallback=False)
