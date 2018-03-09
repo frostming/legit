@@ -1,7 +1,17 @@
 *.pyc
 *.egg-info
+/.venv
+__pycache__/
+.cache
+pipenv.egg-info/
 
 builders/pyinstaller-1.5.1
 builders/artifacts/*
 dist/
 build/
+
+.sublime-text-git-autocommit
+/.vscode/
+.idea
+
+.DS_Store

@@ -1,6 +1,11 @@
 History
 -------
 
+0.6.0
++++++
+
+* Refactor CLI using `click`
+
 0.5.0
 +++++
 

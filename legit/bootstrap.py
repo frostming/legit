@@ -25,8 +25,7 @@ except IOError:
 
 # Load existing configuration.
 config = configparser.ConfigParser()
-config.readfp(config_file)
-
+config.read_file(config_file)
 
 
 # Populate if needed.

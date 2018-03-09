@@ -9,7 +9,7 @@ from setuptools import setup  # Always prefer setuptools over distutils
 
 APP_NAME = 'legit'
 APP_SCRIPT = './legit_r'
-VERSION = '0.5.0'
+VERSION = '0.5.2'
 
 
 # Grab requirements.
@@ -74,7 +74,7 @@ settings.update(
     ],
     entry_points={
         'console_scripts': [
-            'legit = legit.cli:main',
+            'legit = legit.cli:cli',
         ],
     }
 )
