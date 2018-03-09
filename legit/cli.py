@@ -57,8 +57,7 @@ def cli(ctx):
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
     ctx.obj = SCMRepo()
-    # if ctx.obj:
-    #     ctx.obj.verbose = verbose
+    # ctx.obj.verbose = verbose
 
 
 @cli.command(short_help='Switches to specified branch.')
@@ -79,7 +78,7 @@ def switch(scm, to_branch):
         colored.yellow(to_branch)), to_branch)
 
     if scm.unstash_index():
-        status_log(scm.repo.unstash_it, 'Restoring local changes.')
+        status_log(scm.unstash_it, 'Restoring local changes.')
 
 
 @cli.command(short_help='Synchronizes the given branch.')
