@@ -6,12 +6,16 @@ legit.cli
 
 This module provides the CLI interface to legit.
 """
+import os
+from time import sleep
 
 import click
-from clint.textui import colored
+import clint
+from clint.textui import colored, columns
 import difflib
 
 from .core import __version__
+from .helpers import is_lin, is_osx, is_win
 from .scm import SCMRepo
 from .settings import settings
 
@@ -20,6 +24,8 @@ pass_scm = click.make_pass_decorator(SCMRepo)
 
 
 class LegitGroup(click.Group):
+    """Custom Group class with specially sorted command list"""
+    
     def list_commands(self, ctx):
         commands = super(LegitGroup, self).list_commands(ctx)
         return [cmd for cmd in sort_with_similarity(commands)]
@@ -33,7 +39,7 @@ def cli(ctx):
     """legit : A Kenneth Reitz Project"""
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
-    # @pass_repo decorator.
+    # @pass_scm decorator.
     ctx.obj = SCMRepo()
     # if ctx.obj:
     #     ctx.obj.verbose = verbose
@@ -178,6 +184,62 @@ def branches(scm):
 def undo(scm):
     """Removes the last commit from history."""
     status_log(scm.undo, 'Last commit removed from history.')
+
+
+@cli.command()
+@click.pass_context
+def install(ctx):
+    """Installs legit git aliases."""
+
+    # aliases = [
+    #     'branches',
+    #     'publish',
+    #     'unpublish',
+    #     'switch',
+    #     'sync',
+    #     'undo'
+    # ]
+
+    print('The following git aliases will be installed:\n')
+    aliases = cli.list_commands(ctx)
+    aliases.remove('install')  # not to be used with git
+    for alias in aliases:
+        cmd = '!legit ' + alias
+        click.echo(columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None]))
+
+    if click.confirm("\nInstall aliases above?"):
+        for alias in aliases:
+            cmd = '!legit ' + alias
+            os.system('git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd))
+        click.echo("\nAliases installed.")
+    else:
+        click.echo("\nAliases will not be installed.")
+
+
+@cli.command(name="settings")
+def cmd_settings():
+    """Opens legit settings in editor."""
+
+    path = clint.resources.user.open('config.ini').name
+
+    click.echo('Legit Settings:\n')
+
+    for (option, _, description) in settings.config_defaults:
+        click.echo(columns([colored.yellow(option), 25], [description, None]))
+    click.echo("")  # separate settings info from os output
+
+    sleep(0.35)
+
+    if is_osx:
+        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'open'
+        os.system("{0} '{1}'".format(editor, path))
+    elif is_lin:
+        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
+        os.system("{0} '{1}'".format(editor, path))
+    elif is_win:
+        os.system("\"{0}\"".format(path))
+    else:
+        click.echo("Edit '{0}' to manage Legit settings.\n".format(path))
 
 
 # -------
