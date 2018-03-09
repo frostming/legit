@@ -53,7 +53,7 @@ def switch(scm, to_branch):
 
 
 @cli.command()
-@click.argument('branch', required=False)
+@click.argument('to_branch', required=False)
 @pass_repo
 def sync(scm, to_branch):
     """Stashes unstaged changes, Fetches remote data, Performs smart
