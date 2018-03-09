@@ -16,7 +16,7 @@ import difflib
 
 from .core import __version__
 from .helpers import is_lin, is_osx, is_win
-from .scm import SCMRepo
+from .scm import SCMRepo, black
 from .settings import settings
 
 
@@ -314,10 +314,3 @@ def sort_with_similarity(iterable, key=None):
             ordered.append(left_iterable[close])
             del left_iterable[close]
     return ordered
-
-
-def black(s):
-    if settings.allow_black_foreground:
-        return colored.black(s)
-    else:
-        return s.encode('utf-8')

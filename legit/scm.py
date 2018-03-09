@@ -18,7 +18,6 @@ from clint.textui import colored, columns
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 
-from .cli import black
 from .settings import settings
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
@@ -364,3 +363,10 @@ def fallback_enabled(reader):
         return reader.getboolean('legit', 'remoteFallback')
     else:
         return False
+
+
+def black(s):
+    if settings.allow_black_foreground:
+        return colored.black(s)
+    else:
+        return s.encode('utf-8')
