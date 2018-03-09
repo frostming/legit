@@ -18,6 +18,7 @@ from clint.textui import colored, columns
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 
+from .cli import black
 from .settings import settings
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
@@ -90,11 +91,13 @@ class SCMRepo(object):
 
             if (
                 (('Legit' in stash) and
-                    ('On {0}:'.format(branch) in stash) and
-                    (verb in stash))
-                or (('GitHub' in stash) and
-                    ('On {0}:'.format(branch) in stash) and
-                    (verb in stash))
+                 ('On {0}:'.format(branch) in stash) and
+                 (verb in stash)
+                 ) or
+                (('GitHub' in stash) and
+                 ('On {0}:'.format(branch) in stash) and
+                 (verb in stash)
+                 )
             ):
                 return stash[7]
 
@@ -142,12 +145,12 @@ class SCMRepo(object):
         if allow_rebase:
             verb = 'merge' if merges.count('commit') else 'rebase'
         else:
-            if self.git_pull_rebase():
+            if self.pull_rebase():
                 verb = 'rebase'
             else:
                 verb = 'merge'
 
-        if self.git_pull_ff_only():
+        if self.pull_ff_only():
             return self.repo.git.execute([git, verb, '--ff-only', branch])
         else:
             try:
@@ -157,14 +160,14 @@ class SCMRepo(object):
                 abort('Merge failed. Reverting.',
                       log='{0}\n{1}'.format(why, log), type='merge')
 
-    def git_pull_rebase(self):
+    def pull_rebase(self):
         reader = self.repo.config_reader()
         if reader.has_option('pull', 'rebase'):
             return reader.getboolean('pull', 'rebase')
         else:
             return False
 
-    def git_pull_ff_only(self):
+    def pull_ff_only(self):
         reader = self.repo.config_reader()
         if reader.has_option('pull', 'ff'):
             if reader.getboolean('pull', 'ff') == "only":
@@ -350,7 +353,7 @@ class SCMRepo(object):
             click.echo(columns(
                 [colored.red(marker), 2],
                 [color(branch.name), branch_col],
-                [colored.black(pub), 14]
+                [black(pub), 14]
             ))
 
 

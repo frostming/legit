@@ -13,4 +13,3 @@ del bootstrap
 __version__ = '0.5.2'
 __author__ = 'Kenneth Reitz'
 __license__ = 'BSD'
-

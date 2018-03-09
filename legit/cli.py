@@ -20,20 +20,36 @@ from .scm import SCMRepo
 from .settings import settings
 
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 pass_scm = click.make_pass_decorator(SCMRepo)
 
 
 class LegitGroup(click.Group):
     """Custom Group class with specially sorted command list"""
-    
+
+    command_aliases = {
+        'pub': 'publish',
+        'sw': 'switch',
+        'sy': 'sync',
+        'unp': 'unpublish',
+        'un': 'undo',
+    }
+
     def list_commands(self, ctx):
         commands = super(LegitGroup, self).list_commands(ctx)
         return [cmd for cmd in sort_with_similarity(commands)]
 
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        cmd_name = self.command_aliases.get(cmd_name, "")
+        return click.Group.get_command(self, ctx, cmd_name)
 
-@click.group(cls=LegitGroup)
+
+@click.group(cls=LegitGroup, context_settings=CONTEXT_SETTINGS)
 # @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
-@click.version_option(__version__)
+@click.version_option(message='{} {}'.format(colored.yellow('legit'), __version__))
 @click.pass_context
 def cli(ctx):
     """legit : A Kenneth Reitz Project"""
@@ -258,7 +274,7 @@ def status_log(func, message, *args, **kwargs):
         for line in log.split('\n'):
             if not line.startswith('#'):
                 out.append(line)
-        click.secho('\n'.join(out), fg="black")
+        click.echo(black('\n'.join(out)))
 
 
 def handle_abort(aborted, type=None):
@@ -283,7 +299,8 @@ settings.abort_handler = handle_abort
 def sort_with_similarity(iterable, key=None):
     """Sort string list with similarity following original order."""
     if key is None:
-        key = lambda x: x
+        def key(x):
+            return x
     ordered = []
     left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
     for k in list(left_iterable.keys()):
@@ -297,3 +314,10 @@ def sort_with_similarity(iterable, key=None):
             ordered.append(left_iterable[close])
             del left_iterable[close]
     return ordered
+
+
+def black(s):
+    if settings.allow_black_foreground:
+        return colored.black(s)
+    else:
+        return s.encode('utf-8')
