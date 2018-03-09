@@ -38,7 +38,7 @@ def switch(scm, to_branch):
     """Switches from one branch to another, safely stashing and restoring local changes.
     """
     if to_branch is None:
-        print('Please specify a branch to switch:')
+        click.echo('Please specify a branch to switch:')
         scm.display_available_branches()
         raise click.Abort
 
@@ -71,8 +71,7 @@ def sync(scm, to_branch):
             is_external = True
             original_branch = scm.get_current_branch_name()
         else:
-            print("{0} doesn't exist. Use a branch that does.".format(
-                colored.yellow(branch)))
+            click.echo("Branch {0} doesn't exist. Use a branch that does.".format(colored.yellow(branch)))
             sys.exit(1)
     else:
         # Sync current branch.
@@ -97,9 +96,60 @@ def sync(scm, to_branch):
             switch(scm, original_branch)
 
     else:
-        print('{0} has not been published yet.'.format(
+        click.echo('Branch {0} is not published. Publish before syncing.'.format(colored.yellow(branch)))
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument('to_branch', required=False)
+@pass_repo
+def publish(scm, to_branch):
+    """Pushes an unpublished branch to a remote repository."""
+
+    scm.repo_check(require_remote=True)
+    branch = scm.fuzzy_match_branch(to_branch)
+
+    if not branch:
+        branch = scm.get_current_branch_name()
+        scm.display_available_branches()
+        if to_branch is None:
+            click.echo("Using current branch {0}".format(colored.yellow(branch)))
+        else:
+            click.echo("Branch {0} not found, using current branch {1}".format(colored.red(to_branch), colored.yellow(branch)))
+
+    branch_names = scm.get_branch_names(local=False)
+
+    if branch in branch_names:
+        click.echo("Branch {0} is already published. Use a branch that is not published.".format(
             colored.yellow(branch)))
         sys.exit(1)
+
+    status_log(scm.publish_branch, 'Publishing {0}.'.format(
+        colored.yellow(branch)), branch)
+
+@cli.command()
+@click.argument('published_branch', required=False)
+@pass_repo
+def cmd_unpublish(scm, published_branch):
+    """Removes a published branch from the remote repository."""
+
+    scm.repo_check(require_remote=True)
+    branch = scm.fuzzy_match_branch(published_branch)
+
+    if not branch:
+        click.echo('Please specify a branch to unpublish:')
+        scm.display_available_branches()
+        raise click.Abort
+
+    branch_names = scm.get_branch_names(local=False)
+
+    if branch not in branch_names:
+        click.echo("Branch {0} isn't published. Use a branch that is published.".format(
+            colored.yellow(branch)))
+        sys.exit(1)
+
+    status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
+        colored.yellow(branch)), branch)
 
 
 @cli.command()
@@ -107,6 +157,13 @@ def sync(scm, to_branch):
 def branches(scm):
     """Displays available branches."""
     scm.display_available_branches()
+
+
+@cli.command()
+@pass_repo
+def undo(scm):
+    """Makes last commit not exist."""
+    status_log(scm.undo, 'Last commit removed from history.')
 
 
 # -------

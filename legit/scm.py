@@ -12,6 +12,7 @@ import sys
 from collections import namedtuple
 from operator import attrgetter
 
+import click
 import clint
 from clint.textui import colored, columns
 from git import Repo
@@ -56,12 +57,12 @@ class SCMRepo(object):
 
     def repo_check(self, require_remote=False):
         if self.repo is None:
-            print('Not a git repository.')
+            click.echo('Not a git repository.')
             sys.exit(128)
 
         # TODO: no remote fail
         if not self.repo.remotes and require_remote:
-            print('No git remotes configured. Please add one.')
+            click.echo('No git remotes configured. Please add one.')
             sys.exit(128)
 
         # TODO: You're in a merge state.
@@ -214,6 +215,10 @@ class SCMRepo(object):
         return self.repo.git.execute(
             [git, 'push', '-u', self.remote.name, branch])
 
+    def undo(self):
+        """Makes last commit not exist"""
+        return self.repo.git.reset('HEAD^')
+
     def get_remote(self):
 
         self.repo_check()
@@ -227,17 +232,17 @@ class SCMRepo(object):
                 if fallback_enabled(reader):
                     return self.get_default_remote()
                 else:
-                    print('Remote "{0}" does not exist!'.format(remote_name))
+                    click.echo('Remote "{0}" does not exist!'.format(remote_name))
                     will_aborted = clint.textui.prompt.yn(
                         '\nPress `y` to abort now,\n' +
                         '`n` to use default remote and turn fallback on for this repo:')
                     if will_aborted:
-                        print('\nAborted. Please update your git configuration.')
+                        click.echo('\nAborted. Please update your git configuration.')
                         sys.exit(64)  # EX_USAGE
                     else:
                         writer = self.repo.config_writer()
                         writer.set_value('legit', 'remoteFallback', 'true')
-                        print('\n`legit.RemoteFallback` changed to true for current repo.')
+                        click.echo('\n`legit.RemoteFallback` changed to true for current repo.')
                         return self.get_default_remote()
             else:
                 return self.remote(remote_name)
@@ -326,7 +331,7 @@ class SCMRepo(object):
         branches = self.get_branches(local=True, remote_branches=remote_branches)
 
         if not branches:
-            print(colored.red('No branches available'))
+            click.echo(colored.red('No branches available'))
             return
 
         branch_col = len(max([b.name for b in branches], key=len)) + 1
@@ -342,7 +347,7 @@ class SCMRepo(object):
             color = colored.green if branch_is_selected else colored.yellow
             pub = '(published)' if branch.is_published else '(unpublished)'
 
-            print(columns(
+            click.echo(columns(
                 [colored.red(marker), 2],
                 [color(branch.name), branch_col],
                 [colored.black(pub), 14]
