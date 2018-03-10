@@ -13,8 +13,8 @@ from collections import namedtuple
 from operator import attrgetter
 
 import click
-import clint
-from clint.textui import colored, columns
+from clint.textui import columns
+import crayons
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 
@@ -65,9 +65,9 @@ class SCMRepo(object):
         no_verbose = kwargs.pop('no_verbose', False)
         if (self.verbose or self.fake) and not no_verbose:
             if self.fake:
-                click.echo(colored.red('Faked! >>> {}'.format(' '.join(command))))
+                click.echo(crayons.red('Faked! >>> {}'.format(' '.join(command))))
             else:
-                click.echo(colored.green('>>> {}'.format(' '.join(command))))
+                click.echo(crayons.green('>>> {}'.format(' '.join(command))))
 
         if not self.fake:
             result = self.repo.git.execute(command, **kwargs)
@@ -245,7 +245,7 @@ class SCMRepo(object):
         if not self.fake:
             return self.repo.git.reset('HEAD^')
         else:
-            click.echo(colored.red('Faked! >>> git reset HEAD^'))
+            click.echo(crayons.red('Faked! >>> git reset HEAD^'))
             return 0
 
     def get_remote(self):
@@ -262,8 +262,8 @@ class SCMRepo(object):
                     return self.get_default_remote()
                 else:
                     click.echo('Remote "{0}" does not exist!'.format(remote_name))
-                    will_aborted = clint.textui.prompt.yn(
-                        '\nPress `y` to abort now,\n' +
+                    will_aborted = click.confirm(
+                        '\nPress `Y` to abort now,\n' +
                         '`n` to use default remote and turn fallback on for this repo:')
                     if will_aborted:
                         click.echo('\nAborted. Please update your git configuration.')
@@ -360,7 +360,7 @@ class SCMRepo(object):
         branches = self.get_branches(local=True, remote_branches=remote_branches)
 
         if not branches:
-            click.echo(colored.red('No branches available'))
+            click.echo(crayons.red('No branches available'))
             return
 
         branch_col = len(max([b.name for b in branches], key=len)) + 1
@@ -373,11 +373,11 @@ class SCMRepo(object):
                 branch_is_selected = False
 
             marker = '*' if branch_is_selected else ' '
-            color = colored.green if branch_is_selected else colored.yellow
+            color = crayons.green if branch_is_selected else crayons.yellow
             pub = '(published)' if branch.is_published else '(unpublished)'
 
             click.echo(columns(
-                [colored.red(marker), 2],
+                [crayons.red(marker), 2],
                 [color(branch.name), branch_col],
                 [black(pub), 14]
             ))
@@ -396,6 +396,54 @@ class SCMRepo(object):
                     out.append(line)
             click.echo(black('\n'.join(out)))
 
+    def format_help(self, help):
+        """Formats the help string."""
+        help = help.replace('Options:', str(crayons.black('Options:', bold=True)))
+
+        help = help.replace('Usage: legit', str('Usage: {0}'.format(crayons.black('legit', bold=True))))
+
+        help = help.replace('  branches', str(crayons.yellow('  branches', bold=True)))
+        help = help.replace('  install', str(crayons.magenta('  install', bold=True)))
+        help = help.replace('  publish', str(crayons.green('  publish', bold=True)))
+        help = help.replace('  unpublish', str(crayons.green('  unpublish', bold=True)))
+        help = help.replace('  settings', str(crayons.red('  settings', bold=True)))
+        help = help.replace('  switch', str(crayons.green('  switch', bold=True)))
+        help = help.replace('  sync', str(crayons.green('  sync', bold=True)))
+        help = help.replace('  undo', str(crayons.green('  undo', bold=True)))
+
+        additional_help = """
+    Usage Examples:
+       Switch to specific branch:
+       $ {0}
+    
+       Sync current branch with remote:
+       $ {1}
+       
+       Sync current code with a specific remote branch:
+       $ {2}
+    
+       Publish current branch to remote:
+       $ {3}
+    
+       Publish to a specific branch to remote:
+       $ {4}
+    
+       Unpublish a specific branch from remote:
+       $ {5}
+    
+    Commands:""".format(
+            crayons.red('legit switch <branch>'),
+            crayons.red('legit sync'),
+            crayons.red('legit sync <branch>'),
+            crayons.red('legit publish'),
+            crayons.red('legit publish <branch>'),
+            crayons.red('legit unpublish <branch>'),
+        )
+
+        help = help.replace('Commands:', additional_help)
+
+        return help
+
 
 # Instead of getboolean('legit', 'remoteFallback', fallback=False)
 # since getboolean in Python 2 does not have fallback argument.
@@ -408,6 +456,6 @@ def fallback_enabled(reader):
 
 def black(s):
     if settings.allow_black_foreground:
-        return colored.black(s)
+        return crayons.black(s)
     else:
         return s.encode('utf-8')

@@ -10,8 +10,9 @@ import os
 from time import sleep
 
 import click
-import clint
-from clint.textui import colored, columns
+from clint import resources
+from clint.textui import columns
+import crayons
 import difflib
 
 from .core import __version__
@@ -37,7 +38,7 @@ class LegitGroup(click.Group):
 
     def list_commands(self, ctx):
         commands = super(LegitGroup, self).list_commands(ctx)
-        return [cmd for cmd in sort_with_similarity(commands)]
+        return [cmd for cmd in order_manually(commands)]
 
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
@@ -47,13 +48,12 @@ class LegitGroup(click.Group):
         return click.Group.get_command(self, ctx, cmd_name)
 
 
-@click.group(cls=LegitGroup, context_settings=CONTEXT_SETTINGS)
-@click.version_option(message='{} {}'.format(colored.yellow('legit'), __version__))
+@click.group(cls=LegitGroup, invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
+@click.version_option(prog_name=crayons.black('legit', bold=True), version=__version__)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.pass_context
 def cli(ctx, verbose, fake):
-    """legit : A Kenneth Reitz Project"""
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
@@ -61,6 +61,9 @@ def cli(ctx, verbose, fake):
     ctx.obj.verbose = verbose
     ctx.obj.fake = fake
 
+    if ctx.invoked_subcommand is None:
+            # Display help to user, if no commands were passed.
+            click.echo(ctx.obj.format_help(ctx.get_help()))
 
 @cli.command(short_help='Switches to specified branch.')
 @click.argument('to_branch', required=False)
@@ -82,13 +85,13 @@ def switch(scm, to_branch, verbose, fake):
         scm.status_log(scm.stash_it, 'Saving local changes.')
 
     scm.status_log(scm.checkout_branch, 'Switching to {0}.'.format(
-        colored.yellow(to_branch)), to_branch)
+        crayons.yellow(to_branch)), to_branch)
 
     if scm.unstash_index():
         scm.status_log(scm.unstash_it, 'Restoring local changes.')
 
 
-@cli.command(short_help='Synchronizes the given branch.')
+@cli.command(short_help='Synchronizes the given branch with remote.')
 @click.argument('to_branch', required=False)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
@@ -113,7 +116,7 @@ def sync(ctx, scm, to_branch, verbose, fake):
             original_branch = scm.get_current_branch_name()
         else:
             click.echo("Branch {0} doesn't exist. Use a branch that does."
-                       .format(colored.yellow(branch)))
+                       .format(crayons.yellow(branch)))
             raise click.Abort
     else:
         # Sync current branch.
@@ -139,7 +142,7 @@ def sync(ctx, scm, to_branch, verbose, fake):
 
     else:
         click.echo('Branch {0} is not published. Publish before syncing.'
-                   .format(colored.yellow(branch)))
+                   .format(crayons.yellow(branch)))
         raise click.Abort
 
 
@@ -160,21 +163,21 @@ def publish(scm, to_branch, verbose, fake):
         branch = scm.get_current_branch_name()
         scm.display_available_branches()
         if to_branch is None:
-            click.echo("Using current branch {0}".format(colored.yellow(branch)))
+            click.echo("Using current branch {0}".format(crayons.yellow(branch)))
         else:
             click.echo(
                 "Branch {0} not found, using current branch {1}"
-                .format(colored.red(to_branch), colored.yellow(branch)))
+                .format(crayons.red(to_branch), crayons.yellow(branch)))
 
     branch_names = scm.get_branch_names(local=False)
 
     if branch in branch_names:
         click.echo("Branch {0} is already published. Use a branch that is not published.".format(
-            colored.yellow(branch)))
+            crayons.yellow(branch)))
         raise click.Abort
 
     scm.status_log(scm.publish_branch, 'Publishing {0}.'.format(
-        colored.yellow(branch)), branch)
+        crayons.yellow(branch)), branch)
 
 
 @cli.command(short_help='Removes specified branch from the remote.')
@@ -199,17 +202,17 @@ def unpublish(scm, published_branch, verbose, fake):
 
     if branch not in branch_names:
         click.echo("Branch {0} isn't published. Use a branch that is published.".format(
-            colored.yellow(branch)))
+            crayons.yellow(branch)))
         raise click.Abort
 
     scm.status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
-        colored.yellow(branch)), branch)
+        crayons.yellow(branch)), branch)
 
 
 @cli.command()
 @pass_scm
 def branches(scm):
-    """Get a nice pretty list of branches."""
+    """Displays a list of branches."""
     scm.display_available_branches()
 
 
@@ -246,17 +249,17 @@ def install(ctx, verbose, fake):
     aliases.remove('install')  # not to be used with git
     for alias in aliases:
         cmd = '!legit ' + alias
-        click.echo(columns(['', 1], [colored.yellow('git ' + alias), 20], [cmd, None]))
+        click.echo(columns(['', 1], [crayons.yellow('git ' + alias), 20], [cmd, None]))
 
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else '')):
         for alias in aliases:
             cmd = '!legit ' + alias
             system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
             if fake:
-                click.echo(colored.red('Faked! >>> {}'.format(system_command)))
+                click.echo(crayons.red('Faked! >>> {}'.format(system_command)))
             else:
                 if verbose:
-                    click.echo(colored.green('>>> {}'.format(system_command)))
+                    click.echo(crayons.green('>>> {}'.format(system_command)))
                 os.system(system_command)
         if not fake:
             click.echo("\nAliases installed.")
@@ -268,12 +271,12 @@ def install(ctx, verbose, fake):
 def cmd_settings():  # command function name is not `settings` to avoid conflict
     """Opens legit settings in editor."""
 
-    path = clint.resources.user.open('config.ini').name
+    path = resources.user.open('config.ini').name
 
     click.echo('Legit Settings:\n')
 
     for (option, _, description) in settings.config_defaults:
-        click.echo(columns([colored.yellow(option), 25], [description, None]))
+        click.echo(columns([crayons.yellow(option), 25], [description, None]))
     click.echo("")  # separate settings info from os output
 
     sleep(0.35)
@@ -289,21 +292,13 @@ def cmd_settings():  # command function name is not `settings` to avoid conflict
     else:
         click.echo("Edit '{0}' to manage Legit settings.\n".format(path))
 
-
-@cli.command(name="help")
-@click.pass_context
-def cmd_help(ctx):  # command function name is not `help` to avoid conflict
-    """Display legit help."""
-    click.echo(cli.get_help(ctx))
-
-
 # -------
 # Helpers
 # -------
 
 
 def handle_abort(aborted, type=None):
-    click.echo('{0} {1}'.format(colored.red('Error:'), aborted.message))
+    click.echo('{0} {1}'.format(crayons.red('Error:'), aborted.message))
     click.echo(str(aborted.log))
     if type == 'merge':
         click.echo('Unfortunately, there was a merge conflict.'
@@ -321,25 +316,26 @@ def handle_abort(aborted, type=None):
 settings.abort_handler = handle_abort
 
 
-def sort_with_similarity(iterable, key=None):
-    """Sort string list with similarity following original order."""
-    if key is None:
-        def key(x):
-            return x
+def order_manually(iterable):
+    """Order commands for display"""
+    order = [
+        "switch",
+        "sync",
+        "publish",
+        "unpublish",
+        "undo",
+        "branches",
+        "install",
+        "settings",
+    ]
     ordered = []
-    left_iterable = dict(zip([key(elm) for elm in iterable], iterable))
-    for k in list(left_iterable.keys()):
-        if k not in left_iterable:
-            continue
-        ordered.append(left_iterable[k])
-        del left_iterable[k]
-        # find close named iterable
-        close_iterable = difflib.get_close_matches(k, left_iterable.keys())
-        for close in close_iterable:
-            ordered.append(left_iterable[close])
-            del left_iterable[close]
+    commands = dict(zip([cmd for cmd in iterable], iterable))
+    for k in order:
+        ordered.append(commands[k])
+        del commands[k]
+
+    # Add commands not present in `order` above
+    for k in commands:
+        ordered.append(commands[k])
+
     return ordered
-
-
-def is_verbose(scm):
-    return scm.verbose
