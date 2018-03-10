@@ -10,6 +10,8 @@ builders/artifacts/*
 dist/
 build/
 
+.pytest_cache/
+
 .sublime-text-git-autocommit
 /.vscode/
 .idea
