@@ -48,9 +48,9 @@ class LegitGroup(click.Group):
 
 
 @click.group(cls=LegitGroup, context_settings=CONTEXT_SETTINGS)
+@click.version_option(message='{} {}'.format(colored.yellow('legit'), __version__))
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
-@click.version_option(message='{} {}'.format(colored.yellow('legit'), __version__))
 @click.pass_context
 def cli(ctx, verbose, fake):
     """legit : A Kenneth Reitz Project"""
@@ -288,6 +288,13 @@ def cmd_settings():  # command function name is not `settings` to avoid conflict
         os.system("\"{0}\"".format(path))
     else:
         click.echo("Edit '{0}' to manage Legit settings.\n".format(path))
+
+
+@cli.command(name="help")
+@click.pass_context
+def cmd_help(ctx):  # command function name is not `help` to avoid conflict
+    """Display legit help."""
+    click.echo(cli.get_help(ctx))
 
 
 # -------
