@@ -60,9 +60,6 @@ settings.config_defaults = (
     ('allow_black_foreground', 'True',
         'Is the epic black foreground color allowed? Defaults to True.'),
 
-    ('git_transparency', 'False',
-        'Send unknown commands to Git? Defaults to False.'),
-
     ('disable_colors', 'False',
         'Y U NO FUN? Defaults to False.'),
 
