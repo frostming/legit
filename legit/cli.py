@@ -76,6 +76,8 @@ def switch(scm, to_branch, verbose, fake):
     scm.verbose = verbose
     scm.fake = fake
 
+    scm.repo_check()
+
     if to_branch is None:
         click.echo('Please specify a branch to switch:')
         scm.display_available_branches()
@@ -210,13 +212,6 @@ def unpublish(scm, published_branch, verbose, fake):
 
 
 @cli.command()
-@pass_scm
-def branches(scm):
-    """Displays a list of branches."""
-    scm.display_available_branches()
-
-
-@cli.command()
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
@@ -225,7 +220,16 @@ def undo(scm, verbose, fake):
     scm.verbose = verbose
     scm.fake = fake
 
+    scm.repo_check()
+
     scm.status_log(scm.undo, 'Last commit removed from history.')
+
+
+@cli.command()
+@pass_scm
+def branches(scm):
+    """Displays a list of branches."""
+    scm.display_available_branches()
 
 
 @cli.command()
@@ -316,8 +320,8 @@ def handle_abort(aborted, type=None):
 settings.abort_handler = handle_abort
 
 
-def order_manually(iterable):
-    """Order commands for display"""
+def order_manually(sub_commands):
+    """Order sub-commands for display"""
     order = [
         "switch",
         "sync",
@@ -329,7 +333,7 @@ def order_manually(iterable):
         "settings",
     ]
     ordered = []
-    commands = dict(zip([cmd for cmd in iterable], iterable))
+    commands = dict(zip([cmd for cmd in sub_commands], sub_commands))
     for k in order:
         ordered.append(commands[k])
         del commands[k]
