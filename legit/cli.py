@@ -13,7 +13,6 @@ import click
 from clint import resources
 from clint.textui import columns
 import crayons
-import difflib
 
 from .core import __version__
 from .helpers import is_lin, is_osx, is_win
@@ -64,6 +63,7 @@ def cli(ctx, verbose, fake):
     if ctx.invoked_subcommand is None:
             # Display help to user, if no commands were passed.
             click.echo(ctx.obj.format_help(ctx.get_help()))
+
 
 @cli.command(short_help='Switches to specified branch.')
 @click.argument('to_branch', required=False)

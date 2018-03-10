@@ -415,22 +415,22 @@ class SCMRepo(object):
     Usage Examples:
        Switch to specific branch:
        $ {0}
-    
+
        Sync current branch with remote:
        $ {1}
-       
+
        Sync current code with a specific remote branch:
        $ {2}
-    
+
        Publish current branch to remote:
        $ {3}
-    
+
        Publish to a specific branch to remote:
        $ {4}
-    
+
        Unpublish a specific branch from remote:
        $ {5}
-    
+
     Commands:""".format(
             crayons.red('legit switch <branch>'),
             crayons.red('legit sync'),
