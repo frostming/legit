@@ -54,17 +54,12 @@ class Settings(object):
 settings = Settings()
 
 settings.config_defaults = (
-    ('check_for_updates', 'True',
-        'Are update checks allowed? Defaults to True.'),
-
     ('allow_black_foreground', 'True',
         'Is the epic black foreground color allowed? Defaults to True.'),
 
     ('disable_colors', 'False',
         'Y U NO FUN? Defaults to False.'),
-
-    ('last_update_check', '',
-        'Date of the last update check.'))
+)
 
 
 settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
