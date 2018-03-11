@@ -6,6 +6,7 @@ python:
   - 3.6
 
 install:
+  - git fetch --tags
   - pip install coveralls tox-travis
 
   # generate some reflog for tests
