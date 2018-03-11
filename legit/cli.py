@@ -51,9 +51,9 @@ class LegitGroup(click.Group):
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.option('--install', is_flag=True, help='Install legit git aliases.')
 @click.option('--uninstall', is_flag=True, help='Uninstall legit git aliases.')
-@click.option('--settings', is_flag=True, help='Edit legit settings.')
+@click.option('--edit', is_flag=True, help='Edit legit settings.')
 @click.pass_context
-def cli(ctx, verbose, fake, install, uninstall, settings):
+def cli(ctx, verbose, fake, install, uninstall, edit):
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
@@ -65,8 +65,8 @@ def cli(ctx, verbose, fake, install, uninstall, settings):
         do_install(ctx, verbose, fake)
     elif uninstall:
         do_uninstall(ctx, verbose, fake)
-    elif settings:
-        do_settings()
+    elif edit:
+        do_edit_settings()
     else:
         if ctx.invoked_subcommand is None:
                 # Display help to user, if no commands were passed.
@@ -289,7 +289,7 @@ def output_aliases(aliases):
         click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
-def do_settings():
+def do_edit_settings():
     """Opens legit settings in editor."""
 
     path = resources.user.open('config.ini').name
