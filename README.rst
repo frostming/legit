@@ -51,6 +51,13 @@ The Installation
 .. image:: https://img.shields.io/pypi/v/legit.svg
     :target: https://pypi.python.org/pypi/legit/
 
+.. image:: https://img.shields.io/travis/kennethreitz/legit.svg
+    :target: https://travis-ci.org/kennethreitz/legit/
+
+.. image:: https://img.shields.io/coveralls/github/kennethreitz/legit.svg
+    :target: https://coveralls.io/r/kennethreitz/legit/
+
+
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
     pip install legit
