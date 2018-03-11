@@ -11,6 +11,10 @@ install:
 
   # generate some reflog for tests
   - ./init-tests-after-clone.sh
+  
+  # as commits are performed with the default user, it needs to be set for travis too
+  - git config --global user.email "travis@ci.com"
+  - git config --global user.name "Travis Runner"
 
 script:
   - tox
