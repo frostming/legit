@@ -13,7 +13,7 @@ from collections import namedtuple
 from operator import attrgetter
 
 import click
-from clint.textui import columns
+from clint.textui import colored, columns
 import crayons
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
@@ -373,12 +373,12 @@ class SCMRepo(object):
                 branch_is_selected = False
 
             marker = '*' if branch_is_selected else ' '
-            color = crayons.green if branch_is_selected else crayons.yellow
+            color = colored.green if branch_is_selected else colored.yellow
             pub = '(published)' if branch.is_published else '(unpublished)'
 
             click.echo(columns(
-                [crayons.red(marker), 2],
-                [color(branch.name), branch_col],
+                [colored.red(marker), 2],
+                [color(branch.name, bold=True), branch_col],
                 [black(pub), 14]
             ))
 

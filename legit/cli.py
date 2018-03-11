@@ -11,7 +11,7 @@ from time import sleep
 
 import click
 from clint import resources
-from clint.textui import columns
+from clint.textui import colored, columns
 import crayons
 
 from .core import __version__
@@ -229,6 +229,8 @@ def undo(scm, verbose, fake):
 @pass_scm
 def branches(scm):
     """Displays a list of branches."""
+    scm.repo_check()
+
     scm.display_available_branches()
 
 
@@ -253,7 +255,7 @@ def install(ctx, verbose, fake):
     aliases.remove('install')  # not to be used with git
     for alias in aliases:
         cmd = '!legit ' + alias
-        click.echo(columns(['', 1], [crayons.yellow('git ' + alias), 20], [cmd, None]))
+        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else '')):
         for alias in aliases:
