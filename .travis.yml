@@ -7,6 +7,10 @@ python:
 
 install:
   - pip install coveralls tox-travis
+
+  # generate some reflog for tests
+  - ./init-tests-after-clone.sh
+
 script:
   - tox
 
