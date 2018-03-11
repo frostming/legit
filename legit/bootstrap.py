@@ -25,7 +25,11 @@ except IOError:
 
 # Load existing configuration.
 config = configparser.ConfigParser()
-config.read_file(config_file)
+try:
+    # `read_file()` added in Python 3.2
+    config.read_file(config_file)
+except AttributeError:
+    config.readfp(config_file)
 
 
 # Populate if needed.
