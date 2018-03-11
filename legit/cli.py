@@ -63,14 +63,17 @@ def cli(ctx, verbose, fake, install, uninstall, edit):
 
     if install:
         do_install(ctx, verbose, fake)
+        ctx.exit()
     elif uninstall:
         do_uninstall(ctx, verbose, fake)
+        ctx.exit()
     elif edit:
-        do_edit_settings()
+        do_edit_settings(fake)
+        ctx.exit()
     else:
         if ctx.invoked_subcommand is None:
-                # Display help to user, if no commands were passed.
-                click.echo(ctx.obj.format_help(ctx.get_help()))
+            # Display help to user if no commands were passed.
+            click.echo(ctx.obj.format_help(ctx.get_help()))
 
 
 @cli.command(short_help='Switches to specified branch.')
@@ -222,15 +225,16 @@ def unpublish(scm, published_branch, verbose, fake):
 @cli.command()
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
+@click.option('--hard', is_flag=True, help='Discard local changes.')
 @pass_scm
-def undo(scm, verbose, fake):
+def undo(scm, verbose, fake, hard):
     """Removes the last commit from history."""
     scm.verbose = verbose
     scm.fake = fake
 
     scm.repo_check()
 
-    scm.status_log(scm.undo, 'Last commit removed from history.')
+    scm.status_log(scm.undo, 'Last commit removed from history.', hard)
 
 
 @cli.command()
@@ -289,7 +293,7 @@ def output_aliases(aliases):
         click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
-def do_edit_settings():
+def do_edit_settings(fake):
     """Opens legit settings in editor."""
 
     path = resources.user.open('config.ini').name
@@ -300,7 +304,10 @@ def do_edit_settings():
         click.echo(columns([crayons.yellow(option), 25], [description, None]))
     click.echo("")  # separate settings info from os output
 
-    click.edit(path)
+    if fake:
+        click.echo(crayons.red('Faked! >>> edit {}'.format(path)))
+    else:
+        click.edit(path)
 
 # -------
 # Helpers

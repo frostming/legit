@@ -26,22 +26,6 @@ LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
-class Aborted(object):
-
-    def __init__(self):
-        self.message = None
-        self.log = None
-
-
-def abort(message, log=None, type=None):
-
-    a = Aborted()
-    a.message = message
-    a.log = log
-
-    legit_settings.abort_handler(a, type=type)
-
-
 class SCMRepo(object):
     git = None
     repo = None
@@ -91,7 +75,6 @@ class SCMRepo(object):
         # TODO: You're in a merge state.
 
     def stash_it(self, sync=False):
-        self.repo_check()
         msg = 'syncing branch' if sync else 'switching branches'
 
         return self.git_exec(
@@ -99,8 +82,6 @@ class SCMRepo(object):
 
     def unstash_index(self, sync=False, branch=None):
         """Returns an unstash index if one is available."""
-
-        self.repo_check()
 
         stash_list = self.git_exec(['stash', 'list'], no_verbose=True)
 
@@ -126,8 +107,6 @@ class SCMRepo(object):
     def unstash_it(self, sync=False, branch=None):
         """Unstashes changes from current branch for branch sync."""
 
-        self.repo_check()
-
         stash_index = self.unstash_index(sync=sync, branch=branch)
 
         if stash_index is not None:
@@ -138,9 +117,6 @@ class SCMRepo(object):
         """
         'git log --merges origin/master..master'
         """
-
-        self.repo_check(require_remote=True)
-
         branch = self.get_current_branch_name()
 
         self.git_exec(['fetch', self.remote.name])
@@ -156,8 +132,6 @@ class SCMRepo(object):
             return True
 
     def smart_merge(self, branch, allow_rebase=True):
-
-        self.repo_check()
 
         from_branch = self.get_current_branch_name()
 
@@ -201,8 +175,6 @@ class SCMRepo(object):
 
     def push(self, branch=None):
 
-        self.repo_check(require_remote=True)
-
         if branch is None:
             return self.git_exec(['push'])
         else:
@@ -211,8 +183,6 @@ class SCMRepo(object):
     def checkout_branch(self, branch):
         """Checks out given branch."""
 
-        self.repo_check()
-
         _, stdout, stderr = self.git_exec(
             ['checkout', branch],
             with_extended_output=True)
@@ -220,8 +190,6 @@ class SCMRepo(object):
 
     def unpublish_branch(self, branch):
         """Unpublishes given branch."""
-
-        self.repo_check(require_remote=True)
 
         try:
             return self.git_exec(
@@ -235,17 +203,17 @@ class SCMRepo(object):
     def publish_branch(self, branch):
         """Publishes given branch."""
 
-        self.repo_check(require_remote=True)
-
         return self.git_exec(
             ['push', '-u', self.remote.name, branch])
 
-    def undo(self):
+    def undo(self, hard=False):
         """Makes last commit not exist"""
+
         if not self.fake:
-            return self.repo.git.reset('HEAD^')
+            return self.repo.git.reset('HEAD^', working_tree=hard)
         else:
-            click.echo(crayons.red('Faked! >>> git reset HEAD^'))
+            click.echo(crayons.red('Faked! >>> git reset {}{}'
+                                   .format('--hard ' if hard else '', 'HEAD^')))
             return 0
 
     def get_remote(self):
@@ -287,8 +255,6 @@ class SCMRepo(object):
     def get_current_branch_name(self):
         """Returns current branch name"""
 
-        self.repo_check()
-
         return self.repo.head.ref.name
 
     def fuzzy_match_branch(self, branch):
@@ -311,8 +277,6 @@ class SCMRepo(object):
 
     def get_branches(self, local=True, remote_branches=True):
         """Returns a list of local and remote branches."""
-
-        self.repo_check()
 
         if not self.repo.remotes:
             remote_branches = False
@@ -343,8 +307,6 @@ class SCMRepo(object):
         return sorted(branches, key=attrgetter('name'))
 
     def get_branch_names(self, local=True, remote_branches=True):
-
-        self.repo_check()
 
         branches = self.get_branches(local=local, remote_branches=remote_branches)
 
@@ -460,3 +422,19 @@ def black(s):
         return crayons.black(s)
     else:
         return s.encode('utf-8')
+
+
+class Aborted(object):
+
+    def __init__(self):
+        self.message = None
+        self.log = None
+
+
+def abort(message, log=None, type=None):
+
+    a = Aborted()
+    a.message = message
+    a.log = log
+
+    legit_settings.abort_handler(a, type=type)
