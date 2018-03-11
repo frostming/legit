@@ -58,7 +58,7 @@ class SCMRepo(object):
         except InvalidGitRepositoryError:
             self.repo = None
 
-    def exec(self, command, **kwargs):
+    def git_exec(self, command, **kwargs):
         """Execute git commands"""
 
         command.insert(0, self.git)
@@ -94,7 +94,7 @@ class SCMRepo(object):
         self.repo_check()
         msg = 'syncing branch' if sync else 'switching branches'
 
-        return self.exec(
+        return self.git_exec(
             ['stash', 'save', '--include-untracked', LEGIT_TEMPLATE.format(msg)])
 
     def unstash_index(self, sync=False, branch=None):
@@ -102,7 +102,7 @@ class SCMRepo(object):
 
         self.repo_check()
 
-        stash_list = self.exec(['stash', 'list'], no_verbose=True)
+        stash_list = self.git_exec(['stash', 'list'], no_verbose=True)
 
         if branch is None:
             branch = self.get_current_branch_name()
@@ -131,7 +131,7 @@ class SCMRepo(object):
         stash_index = self.unstash_index(sync=sync, branch=branch)
 
         if stash_index is not None:
-            return self.exec(
+            return self.git_exec(
                 ['stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
 
     def smart_pull(self):
@@ -143,7 +143,7 @@ class SCMRepo(object):
 
         branch = self.get_current_branch_name()
 
-        self.exec(['fetch', self.remote.name])
+        self.git_exec(['fetch', self.remote.name])
 
         return self.smart_merge('{0}/{1}'.format(self.remote.name, branch),
                                 self.smart_merge_enabled())
@@ -161,7 +161,7 @@ class SCMRepo(object):
 
         from_branch = self.get_current_branch_name()
 
-        merges = self.exec(
+        merges = self.git_exec(
             ['log', '--merges', '{0}..{1}'.format(branch, from_branch)])
 
         if allow_rebase:
@@ -173,12 +173,12 @@ class SCMRepo(object):
                 verb = 'merge'
 
         if self.pull_ff_only():
-            return self.exec([verb, '--ff-only', branch])
+            return self.git_exec([verb, '--ff-only', branch])
         else:
             try:
-                return self.exec([verb, branch])
+                return self.git_exec([verb, branch])
             except GitCommandError as why:
-                log = self.exec([verb, '--abort'])
+                log = self.git_exec([verb, '--abort'])
                 abort('Merge failed. Reverting.',
                       log='{0}\n{1}'.format(why, log), type='merge')
 
@@ -204,16 +204,16 @@ class SCMRepo(object):
         self.repo_check(require_remote=True)
 
         if branch is None:
-            return self.exec(['push'])
+            return self.git_exec(['push'])
         else:
-            return self.exec(['push', self.remote.name, branch])
+            return self.git_exec(['push', self.remote.name, branch])
 
     def checkout_branch(self, branch):
         """Checks out given branch."""
 
         self.repo_check()
 
-        _, stdout, stderr = self.exec(
+        _, stdout, stderr = self.git_exec(
             ['checkout', branch],
             with_extended_output=True)
         return '\n'.join([stderr, stdout])
@@ -224,10 +224,10 @@ class SCMRepo(object):
         self.repo_check(require_remote=True)
 
         try:
-            return self.exec(
+            return self.git_exec(
                 ['push', self.remote.name, ':{0}'.format(branch)])
         except GitCommandError:
-            _, _, log = self.exec(
+            _, _, log = self.git_exec(
                 ['fetch', self.remote.name, '--prune'],
                 with_extended_output=True)
             abort('Unpublish failed. Fetching.', log=log, type='unpublish')
@@ -237,7 +237,7 @@ class SCMRepo(object):
 
         self.repo_check(require_remote=True)
 
-        return self.exec(
+        return self.git_exec(
             ['push', '-u', self.remote.name, branch])
 
     def undo(self):
