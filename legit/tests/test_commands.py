@@ -4,6 +4,7 @@ import pytest
 from legit.cli import cli
 from legit.core import __version__
 
+
 class TestLegit(object):
 
     @pytest.mark.cli
