@@ -33,13 +33,13 @@ if sys.argv[-1] == 'build_manpage':
 
 # Build Helper.
 if sys.argv[-1] == 'build':
-    import py2exe
+    import py2exe  # noqa
     sys.argv.append('py2exe')
 
     settings.update(
         console=[{'script': APP_SCRIPT}],
-        zipfile = None,
-        options = {
+        zipfile=None,
+        options={
             'py2exe': {
                 'compressed': 1,
                 'optimize': 0,
@@ -53,22 +53,21 @@ settings.update(
     author='Kenneth Reitz',
     author_email='me@kennethreitz.com',
     url='https://github.com/kennethreitz/legit',
-    packages= ['legit',],
+    packages=['legit'],
     install_requires=required,
     license='BSD',
     classifiers=[
-        # 'Development Status :: 5 - Production/Stable',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     entry_points={
         'console_scripts': [
@@ -76,7 +75,6 @@ settings.update(
         ],
     }
 )
-
 
 
 setup(**settings)
