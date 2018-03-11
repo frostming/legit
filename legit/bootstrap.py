@@ -9,6 +9,7 @@ This module boostraps the Legit runtime.
 
 
 from clint import resources
+from clint.textui import colored
 import crayons
 from six.moves import configparser
 
@@ -64,3 +65,4 @@ if modified:
 
 if legit_settings.disable_colors:
     crayons.disable()
+    colored.DISABLE_COLOR = True
