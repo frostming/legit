@@ -241,15 +241,6 @@ def branches(scm):
 def install(ctx, verbose, fake):
     """Installs legit git aliases."""
 
-    # aliases = [
-    #     'branches',
-    #     'publish',
-    #     'unpublish',
-    #     'switch',
-    #     'sync',
-    #     'undo'
-    # ]
-
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
     aliases.remove('install')  # not to be used with git
@@ -271,6 +262,31 @@ def install(ctx, verbose, fake):
             click.echo("\nAliases installed.")
     else:
         click.echo("\nAliases will not be installed.")
+
+
+@cli.command()
+@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
+@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
+@click.pass_context
+def uninstall(ctx, verbose, fake):
+    """Uninstalls legit git aliases."""
+
+    aliases = cli.list_commands(ctx)
+    aliases.remove('install')  # not to be used with git
+
+    for alias in aliases:
+        system_command = 'git config --global --unset-all alias.{0}'.format(alias)
+        if fake:
+            click.echo(crayons.red('Faked! >>> {}'.format(system_command)))
+        else:
+            if verbose:
+                click.echo(crayons.green('>>> {}'.format(system_command)))
+            os.system(system_command)
+    if not fake:
+        click.echo('\nThe following git aliases are uninstalled:\n')
+        for alias in aliases:
+            cmd = '!legit ' + alias
+            click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
 @cli.command(name="settings")
