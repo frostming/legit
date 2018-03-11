@@ -348,6 +348,7 @@ def order_manually(sub_commands):
         "undo",
         "branches",
         "install",
+        "uninstall",
         "settings",
     ]
     ordered = []

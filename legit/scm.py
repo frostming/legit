@@ -404,6 +404,7 @@ class SCMRepo(object):
 
         help = help.replace('  branches', str(crayons.yellow('  branches', bold=True)))
         help = help.replace('  install', str(crayons.magenta('  install', bold=True)))
+        help = help.replace('  uninstall', str(crayons.magenta('  uninstall', bold=True)))
         help = help.replace('  publish', str(crayons.green('  publish', bold=True)))
         help = help.replace('  unpublish', str(crayons.green('  unpublish', bold=True)))
         help = help.replace('  settings', str(crayons.red('  settings', bold=True)))
