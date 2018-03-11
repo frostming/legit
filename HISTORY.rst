@@ -1,12 +1,19 @@
 History
 -------
 
-0.6.0
+1.0.0
 +++++
 
 * Refactor CLI using `click`
 * Add --verbose option
 * Add --fake option
+* Move "install" command to --install option
+* Move "settings" command to --settings option
+* Add --uninstall option which unsets legit git aliases
+* Improve help output
+* Add tests!
+* Update CI configuration
+* Update README
 
 0.5.0
 +++++
