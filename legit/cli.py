@@ -133,18 +133,14 @@ def sync(ctx, scm, to_branch, verbose, fake):
         is_external = False
 
     if branch in scm.get_branch_names(local=False):
-
         if is_external:
-            ctx.invoke(switch, to_branch=branch)
-
+            ctx.invoke(switch, to_branch=branch, verbose=verbose, fake=fake)
         scm.stash_log(sync=True)
         scm.status_log(scm.smart_pull, 'Pulling commits from the server.')
         scm.status_log(scm.push, 'Pushing commits to the server.', branch)
         scm.unstash_log(sync=True)
-
         if is_external:
-            ctx.invoke(switch, to_branch=original_branch)
-
+            ctx.invoke(switch, to_branch=original_branch, verbose=verbose, fake=fake)
     else:
         click.echo('Branch {0} is not published. Publish before syncing.'
                    .format(crayons.yellow(branch)))

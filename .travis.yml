@@ -12,12 +12,6 @@ install:
   # generate some reflog for tests
   - ./init-tests-after-clone.sh
 
-  # as commits are performed with the default user, it needs to be set for travis too
-  - git config --local user.email "travis@ci.com"
-  - git config --local user.name "Travis Runner"
-  - git config --local github.user "jingweno"
-  - git config --local github.token "123"
-
 script:
   - tox
 
