@@ -94,14 +94,10 @@ def switch(scm, to_branch, verbose, fake):
         scm.display_available_branches()
         raise click.Abort
 
-    if scm.repo.is_dirty():
-        scm.status_log(scm.stash_it, 'Saving local changes.')
-
+    scm.stash_log()
     scm.status_log(scm.checkout_branch, 'Switching to {0}.'.format(
         crayons.yellow(to_branch)), to_branch)
-
-    if scm.unstash_index():
-        scm.status_log(scm.unstash_it, 'Restoring local changes.')
+    scm.unstash_log()
 
 
 @cli.command(short_help='Synchronizes the given branch with remote.')
@@ -141,14 +137,10 @@ def sync(ctx, scm, to_branch, verbose, fake):
         if is_external:
             ctx.invoke(switch, to_branch=branch)
 
-        if scm.repo.is_dirty():
-            scm.status_log(scm.stash_it, 'Saving local changes.', sync=True)
-
+        scm.stash_log(sync=True)
         scm.status_log(scm.smart_pull, 'Pulling commits from the server.')
         scm.status_log(scm.push, 'Pushing commits to the server.', branch)
-
-        if scm.unstash_index(sync=True):
-            scm.status_log(scm.unstash_it, 'Restoring local changes.', sync=True)
+        scm.unstash_log(sync=True)
 
         if is_external:
             ctx.invoke(switch, to_branch=original_branch)

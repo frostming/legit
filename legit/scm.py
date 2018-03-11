@@ -32,6 +32,7 @@ class SCMRepo(object):
     remote = None
     verbose = False
     fake = False
+    stash_index = None
 
     def __init__(self):
         self.git = os.environ.get('GIT_PYTHON_GIT_EXECUTABLE', 'git')
@@ -74,11 +75,14 @@ class SCMRepo(object):
 
         # TODO: You're in a merge state.
 
-    def stash_it(self, sync=False):
-        msg = 'syncing branch' if sync else 'switching branches'
+    def stash_log(self, sync=False):
+        if self.repo.is_dirty():
+            self.status_log(self.stash_it, 'Saving local changes.', sync=sync)
 
-        return self.git_exec(
-            ['stash', 'save', '--include-untracked', LEGIT_TEMPLATE.format(msg)])
+    def unstash_log(self, sync=False):
+        self.stash_index = self.unstash_index(sync=sync)
+        if self.stash_index:
+            self.status_log(self.unstash_it, 'Restoring local changes.', sync=sync)
 
     def unstash_index(self, sync=False, branch=None):
         """Returns an unstash index if one is available."""
@@ -104,14 +108,20 @@ class SCMRepo(object):
             ):
                 return stash[7]
 
-    def unstash_it(self, sync=False, branch=None):
-        """Unstashes changes from current branch for branch sync."""
+    def stash_it(self, sync=False):
+        msg = 'syncing branch' if sync else 'switching branches'
 
-        stash_index = self.unstash_index(sync=sync, branch=branch)
+        return self.git_exec(
+            ['stash', 'save', '--include-untracked', LEGIT_TEMPLATE.format(msg)])
 
-        if stash_index is not None:
+    def unstash_it(self, sync=False):
+        """
+        Unstashes changes from current branch for branch sync.
+        Requires prior code setting self.stash_index.
+        """
+        if self.stash_index is not None:
             return self.git_exec(
-                ['stash', 'pop', 'stash@{{{0}}}'.format(stash_index)])
+                ['stash', 'pop', 'stash@{{{0}}}'.format(self.stash_index)])
 
     def smart_pull(self):
         """
