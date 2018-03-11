@@ -15,6 +15,15 @@ class TestLegit(object):
         assert __version__ in result.output
 
     @pytest.mark.cli
+    def test_help(self):
+        runner = CliRunner()
+        result = runner.invoke(cli, [])
+        assert result.exit_code == 0
+        assert 'Options' in result.output
+        assert 'Usage Examples' in result.output
+        assert 'Commands' in result.output
+
+    @pytest.mark.cli
     def test_switch(self):
         runner = CliRunner()
         result = runner.invoke(cli, ['switch', 'kenneth', '--fake'])
