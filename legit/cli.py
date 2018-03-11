@@ -7,7 +7,6 @@ legit.cli
 This module provides the CLI interface to legit.
 """
 import os
-from time import sleep
 
 import click
 from clint import resources
@@ -15,7 +14,6 @@ from clint.textui import colored, columns
 import crayons
 
 from .core import __version__
-from .helpers import is_lin, is_osx, is_win
 from .scm import SCMRepo
 from .settings import legit_settings
 
@@ -249,9 +247,7 @@ def do_install(ctx, verbose, fake):
 
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
-    for alias in aliases:
-        cmd = '!legit ' + alias
-        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
+    output_aliases(aliases)
 
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else '')):
         for alias in aliases:
@@ -283,9 +279,14 @@ def do_uninstall(ctx, verbose, fake):
             os.system(system_command)
     if not fake:
         click.echo('\nThe following git aliases are uninstalled:\n')
-        for alias in aliases:
-            cmd = '!legit ' + alias
-            click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
+        output_aliases(aliases)
+
+
+def output_aliases(aliases):
+    """Display git aliases"""
+    for alias in aliases:
+        cmd = '!legit ' + alias
+        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
 def do_settings():
@@ -299,18 +300,7 @@ def do_settings():
         click.echo(columns([crayons.yellow(option), 25], [description, None]))
     click.echo("")  # separate settings info from os output
 
-    sleep(0.35)
-
-    if is_osx:
-        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'open'
-        os.system("{0} '{1}'".format(editor, path))
-    elif is_lin:
-        editor = os.environ.get('EDITOR') or os.environ.get('VISUAL') or 'pico'
-        os.system("{0} '{1}'".format(editor, path))
-    elif is_win:
-        os.system("\"{0}\"".format(path))
-    else:
-        click.echo("Edit '{0}' to manage Legit settings.\n".format(path))
+    click.edit(path)
 
 # -------
 # Helpers
