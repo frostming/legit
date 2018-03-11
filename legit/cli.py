@@ -241,7 +241,7 @@ def do_install(ctx, verbose, fake):
     aliases = cli.list_commands(ctx)
     output_aliases(aliases)
 
-    if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else '')):
+    if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else ''), default=fake):
         for alias in aliases:
             cmd = '!legit ' + alias
             system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
