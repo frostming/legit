@@ -17,7 +17,7 @@ import crayons
 from .core import __version__
 from .helpers import is_lin, is_osx, is_win
 from .scm import SCMRepo
-from .settings import settings
+from .settings import legit_settings
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -51,8 +51,11 @@ class LegitGroup(click.Group):
 @click.version_option(prog_name=crayons.black('legit', bold=True), version=__version__)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
+@click.option('--install', is_flag=True, help='Install legit git aliases.')
+@click.option('--uninstall', is_flag=True, help='Uninstall legit git aliases.')
+@click.option('--settings', is_flag=True, help='Edit legit settings.')
 @click.pass_context
-def cli(ctx, verbose, fake):
+def cli(ctx, verbose, fake, install, uninstall, settings):
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
@@ -60,9 +63,16 @@ def cli(ctx, verbose, fake):
     ctx.obj.verbose = verbose
     ctx.obj.fake = fake
 
-    if ctx.invoked_subcommand is None:
-            # Display help to user, if no commands were passed.
-            click.echo(ctx.obj.format_help(ctx.get_help()))
+    if install:
+        do_install(ctx, verbose, fake)
+    elif uninstall:
+        do_uninstall(ctx, verbose, fake)
+    elif settings:
+        do_settings()
+    else:
+        if ctx.invoked_subcommand is None:
+                # Display help to user, if no commands were passed.
+                click.echo(ctx.obj.format_help(ctx.get_help()))
 
 
 @cli.command(short_help='Switches to specified branch.')
@@ -234,16 +244,11 @@ def branches(scm):
     scm.display_available_branches()
 
 
-@cli.command()
-@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
-@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
-@click.pass_context
-def install(ctx, verbose, fake):
+def do_install(ctx, verbose, fake):
     """Installs legit git aliases."""
 
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
-    aliases.remove('install')  # not to be used with git
     for alias in aliases:
         cmd = '!legit ' + alias
         click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
@@ -264,16 +269,10 @@ def install(ctx, verbose, fake):
         click.echo("\nAliases will not be installed.")
 
 
-@cli.command()
-@click.option('--verbose', is_flag=True, help='Enables verbose mode.')
-@click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
-@click.pass_context
-def uninstall(ctx, verbose, fake):
+def do_uninstall(ctx, verbose, fake):
     """Uninstalls legit git aliases."""
 
     aliases = cli.list_commands(ctx)
-    aliases.remove('install')  # not to be used with git
-
     for alias in aliases:
         system_command = 'git config --global --unset-all alias.{0}'.format(alias)
         if fake:
@@ -289,15 +288,14 @@ def uninstall(ctx, verbose, fake):
             click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
-@cli.command(name="settings")
-def cmd_settings():  # command function name is not `settings` to avoid conflict
+def do_settings():
     """Opens legit settings in editor."""
 
     path = resources.user.open('config.ini').name
 
     click.echo('Legit Settings:\n')
 
-    for (option, _, description) in settings.config_defaults:
+    for (option, _, description) in legit_settings.config_defaults:
         click.echo(columns([crayons.yellow(option), 25], [description, None]))
     click.echo("")  # separate settings info from os output
 
@@ -335,7 +333,7 @@ def handle_abort(aborted, type=None):
     raise click.Abort
 
 
-settings.abort_handler = handle_abort
+legit_settings.abort_handler = handle_abort
 
 
 def order_manually(sub_commands):
@@ -347,15 +345,13 @@ def order_manually(sub_commands):
         "unpublish",
         "undo",
         "branches",
-        "install",
-        "uninstall",
-        "settings",
     ]
     ordered = []
     commands = dict(zip([cmd for cmd in sub_commands], sub_commands))
     for k in order:
-        ordered.append(commands[k])
-        del commands[k]
+        ordered.append(commands.get(k, ""))
+        if k in commands:
+            del commands[k]
 
     # Add commands not present in `order` above
     for k in commands:

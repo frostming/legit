@@ -18,7 +18,7 @@ import crayons
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 
-from .settings import settings
+from .settings import legit_settings
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
@@ -39,7 +39,7 @@ def abort(message, log=None, type=None):
     a.message = message
     a.log = log
 
-    settings.abort_handler(a, type=type)
+    legit_settings.abort_handler(a, type=type)
 
 
 class SCMRepo(object):
@@ -326,7 +326,7 @@ class SCMRepo(object):
                 for b in self.remote.refs:
                     name = '/'.join(b.name.split('/')[1:])
 
-                    if name not in settings.forbidden_branches:
+                    if name not in legit_settings.forbidden_branches:
                         branches.append(Branch(name, is_published=True))
             except (IndexError, AssertionError):
                 pass
@@ -337,7 +337,7 @@ class SCMRepo(object):
             for b in [h.name for h in self.repo.heads]:
 
                 if (not remote_branches) or (b not in [br.name for br in branches]):
-                    if b not in settings.forbidden_branches:
+                    if b not in legit_settings.forbidden_branches:
                         branches.append(Branch(b, is_published=False))
 
         return sorted(branches, key=attrgetter('name'))
@@ -456,7 +456,7 @@ def fallback_enabled(reader):
 
 
 def black(s):
-    if settings.allow_black_foreground:
+    if legit_settings.allow_black_foreground:
         return crayons.black(s)
     else:
         return s.encode('utf-8')

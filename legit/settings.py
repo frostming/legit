@@ -51,9 +51,9 @@ class Settings(object):
         return object.__getattribute__(self, key)
 
 
-settings = Settings()
+legit_settings = Settings()
 
-settings.config_defaults = (
+legit_settings.config_defaults = (
     ('allow_black_foreground', 'True',
         'Is the epic black foreground color allowed? Defaults to True.'),
 
@@ -62,5 +62,5 @@ settings.config_defaults = (
 )
 
 
-settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
-settings.forbidden_branches = ['HEAD']
+legit_settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
+legit_settings.forbidden_branches = ['HEAD']

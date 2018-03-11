@@ -12,7 +12,7 @@ from clint import resources
 import crayons
 from six.moves import configparser
 
-from .settings import settings
+from .settings import legit_settings
 
 resources.init('kennethreitz', 'legit')
 
@@ -41,11 +41,11 @@ modified = False
 
 # Set defaults if they are missing.
 # Add everything to settings object.
-for (k, v, _) in settings.config_defaults:
+for (k, v, _) in legit_settings.config_defaults:
     if not config.has_option('legit', k):
         modified = True
         config.set('legit', k, v)
-        setattr(settings, k, v)
+        setattr(legit_settings, k, v)
     else:
         val = config.get('legit', k)
 
@@ -55,12 +55,12 @@ for (k, v, _) in settings.config_defaults:
         elif val.lower() in ('false', '0', 'nope', 'nadda', 'nah'):
             val = False
 
-        setattr(settings, k, val)
+        setattr(legit_settings, k, val)
 
 if modified:
     config_file = resources.user.open('config.ini', 'w')
     config.write(config_file)
 
 
-if settings.disable_colors:
+if legit_settings.disable_colors:
     crayons.disable()
