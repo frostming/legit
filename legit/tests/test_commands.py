@@ -90,3 +90,24 @@ class TestLegit(object):
         result = runner.invoke(cli, ['un', '--fake'])
         assert result.exit_code == 0
         assert 'Last commit removed from history.' in result.output
+
+    @pytest.mark.cli
+    def test_install(self):
+        """Test undo alias un"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['--install', '--fake'])
+        assert result.exit_code == 0
+
+    @pytest.mark.cli
+    def test_uninstall(self):
+        """Test undo alias un"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['--uninstall', '--fake'])
+        assert result.exit_code == 0
+
+    @pytest.mark.cli
+    def test_branches(self):
+        """Test undo alias un"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['branches'])
+        assert result.exit_code == 0
