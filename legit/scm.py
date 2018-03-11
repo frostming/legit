@@ -412,34 +412,34 @@ class SCMRepo(object):
         help = help.replace('  sync', str(crayons.green('  sync', bold=True)))
         help = help.replace('  undo', str(crayons.green('  undo', bold=True)))
 
-        additional_help = """
-    Usage Examples:
-       Switch to specific branch:
-       $ {0}
+        additional_help = \
+            """Usage Examples:
+   Switch to specific branch:
+   $ {0}
 
-       Sync current branch with remote:
-       $ {1}
+   Sync current branch with remote:
+   $ {1}
 
-       Sync current code with a specific remote branch:
-       $ {2}
+   Sync current code with a specific remote branch:
+   $ {2}
 
-       Publish current branch to remote:
-       $ {3}
+   Publish current branch to remote:
+   $ {3}
 
-       Publish to a specific branch to remote:
-       $ {4}
+   Publish to a specific branch to remote:
+   $ {4}
 
-       Unpublish a specific branch from remote:
-       $ {5}
+   Unpublish a specific branch from remote:
+   $ {5}
 
-    Commands:""".format(
-            crayons.red('legit switch <branch>'),
-            crayons.red('legit sync'),
-            crayons.red('legit sync <branch>'),
-            crayons.red('legit publish'),
-            crayons.red('legit publish <branch>'),
-            crayons.red('legit unpublish <branch>'),
-        )
+Commands:""".format(
+                crayons.red('legit switch <branch>'),
+                crayons.red('legit sync'),
+                crayons.red('legit sync <branch>'),
+                crayons.red('legit publish'),
+                crayons.red('legit publish <branch>'),
+                crayons.red('legit unpublish <branch>'),
+            )
 
         help = help.replace('Commands:', additional_help)
 
