@@ -11,9 +11,13 @@ dist/
 build/
 
 .pytest_cache/
+.coverage
+htmlcov/
 
 .sublime-text-git-autocommit
 /.vscode/
 .idea
+
+Pipfile
 
 .DS_Store
