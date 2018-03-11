@@ -15,6 +15,7 @@ install:
   # as commits are performed with the default user, it needs to be set for travis too
   - git config --local user.email "travis@ci.com"
   - git config --local user.name "Travis Runner"
+  - git config --local github.user "travis-ci"
 
 script:
   - tox
