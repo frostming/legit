@@ -6,7 +6,7 @@ python:
   - 3.6
 
 install:
-  - pip install coveralls, tox-travis
+  - pip install coveralls tox-travis
 script:
   - tox
 
