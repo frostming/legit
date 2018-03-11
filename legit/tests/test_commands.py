@@ -16,6 +16,7 @@ class TestLegit(object):
 
     @pytest.mark.cli
     def test_help(self):
+        """Test help output expected from no-command invocation"""
         runner = CliRunner()
         result = runner.invoke(cli, [])
         assert result.exit_code == 0
@@ -25,10 +26,12 @@ class TestLegit(object):
 
     @pytest.mark.cli
     def test_switch(self):
+        """Test switch command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['switch', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Switching to kenneth' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_sw(self):
@@ -37,14 +40,17 @@ class TestLegit(object):
         result = runner.invoke(cli, ['sw', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Switching to kenneth' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_sync(self):
+        """Test sync command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['sync', 'develop', '--fake'])
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_sy(self):
@@ -54,13 +60,16 @@ class TestLegit(object):
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_publish(self):
+        """Test publish command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['publish', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Publishing kenneth' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_pub(self):
@@ -69,12 +78,15 @@ class TestLegit(object):
         result = runner.invoke(cli, ['pub', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Publishing kenneth' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_unpublish(self):
+        """Test unpublish command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['unpublish', 'develop', '--fake'])
         assert result.exit_code == 0
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_unp(self):
@@ -82,6 +94,7 @@ class TestLegit(object):
         runner = CliRunner()
         result = runner.invoke(cli, ['unp', 'develop', '--fake'])
         assert result.exit_code == 0
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_unpublish_unknown_branch(self):
@@ -93,10 +106,12 @@ class TestLegit(object):
 
     @pytest.mark.cli
     def test_undo(self):
+        """Test undo command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['undo', '--fake'])
         assert result.exit_code == 0
         assert 'Last commit removed from history.' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_un(self):
@@ -105,20 +120,31 @@ class TestLegit(object):
         result = runner.invoke(cli, ['un', '--fake'])
         assert result.exit_code == 0
         assert 'Last commit removed from history.' in result.output
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_install(self):
-        """Test undo alias un"""
+        """Test --install option"""
         runner = CliRunner()
         result = runner.invoke(cli, ['--install', '--fake'])
         assert result.exit_code == 0
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_uninstall(self):
-        """Test undo alias un"""
+        """Test --uninstall option"""
         runner = CliRunner()
         result = runner.invoke(cli, ['--uninstall', '--fake'])
         assert result.exit_code == 0
+        assert 'Faked!' in result.output
+
+    @pytest.mark.cli
+    def test_edit(self):
+        """Test --edit option"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['--edit', '--fake'])
+        assert result.exit_code == 0
+        assert 'Faked!' in result.output
 
     @pytest.mark.cli
     def test_branches(self):
