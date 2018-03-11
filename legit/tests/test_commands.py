@@ -41,7 +41,7 @@ class TestLegit(object):
     @pytest.mark.cli
     def test_sync(self):
         runner = CliRunner()
-        result = runner.invoke(cli, ['sync', '--fake'])
+        result = runner.invoke(cli, ['sync', 'develop', '--fake'])
         # assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
@@ -50,7 +50,7 @@ class TestLegit(object):
     def test_sy(self):
         """Test sync alias sy"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['sy', '--fake'])
+        result = runner.invoke(cli, ['sy', 'develop', '--fake'])
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
@@ -73,13 +73,19 @@ class TestLegit(object):
     @pytest.mark.cli
     def test_unpublish(self):
         runner = CliRunner()
-        result = runner.invoke(cli, ['unpublish', 'kenneth', '--fake'])
-        assert result.exit_code == 1
-        assert "Branch kenneth isn't published." in result.output
+        result = runner.invoke(cli, ['unpublish', 'develop', '--fake'])
+        assert result.exit_code == 0
 
     @pytest.mark.cli
     def test_unp(self):
         """Test unpublish alias unp"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['unp', 'develop', '--fake'])
+        assert result.exit_code == 0
+
+    @pytest.mark.cli
+    def test_unpublish_unknown_branch(self):
+        """Test unpublish with unknown branch"""
         runner = CliRunner()
         result = runner.invoke(cli, ['unp', 'kenneth', '--fake'])
         assert result.exit_code == 1
