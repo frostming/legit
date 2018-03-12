@@ -56,6 +56,7 @@ class TestLegit(object):
         """Test sync command"""
         runner = CliRunner()
         result = runner.invoke(cli, ['sync', '--fake'])
+        assert 'Faked!' in result.output
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
