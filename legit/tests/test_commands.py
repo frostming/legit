@@ -52,27 +52,6 @@ class TestLegit(object):
         assert 'Faked!' not in result.output
 
     @pytest.mark.cli
-    def test_sync(self):
-        """Test sync command"""
-        runner = CliRunner()
-        result = runner.invoke(cli, ['sync', '--fake'])
-        assert 'Faked!' in result.output
-        assert result.exit_code == 0
-        assert 'Pulling commits from the server.' in result.output
-        assert 'Pushing commits to the server.' in result.output
-        assert 'Faked!' in result.output
-
-    @pytest.mark.cli
-    def test_sy(self):
-        """Test sync alias sy"""
-        runner = CliRunner()
-        result = runner.invoke(cli, ['sy', '--fake'])
-        assert result.exit_code == 0
-        assert 'Pulling commits from the server.' in result.output
-        assert 'Pushing commits to the server.' in result.output
-        assert 'Faked!' in result.output
-
-    @pytest.mark.cli
     def test_sync_known_branch(self):
         """Test sync command"""
         runner = CliRunner()
@@ -83,7 +62,17 @@ class TestLegit(object):
         assert 'Faked!' in result.output
 
     @pytest.mark.cli
-    def test_sync_bad_branch(self):
+    def test_sy_known_branch(self):
+        """Test sync alias sy"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['sy', 'develop', '--fake'])
+        assert result.exit_code == 0
+        assert 'Pulling commits from the server.' in result.output
+        assert 'Pushing commits to the server.' in result.output
+        assert 'Faked!' in result.output
+
+    @pytest.mark.cli
+    def test_sync_unknown_branch(self):
         """Test sync command with bad branch"""
         runner = CliRunner()
         result = runner.invoke(cli, ['sync', 'kenneth', '--fake'])
