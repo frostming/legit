@@ -7,9 +7,11 @@ if [[ -z "$TRAVIS" ]]; then
   fi
 fi
 
+git checkout -b __test_branch__
 git tag __testing_point__
 git checkout master || git checkout -b master
 git reset --hard HEAD~1
 git reset --hard HEAD~1
 git reset --hard HEAD~1
 git reset --hard __testing_point__
+git checkout __test_branch__
