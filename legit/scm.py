@@ -45,14 +45,14 @@ class SCMRepo(object):
 
     def git_exec(self, command, **kwargs):
         """Execute git commands"""
+        from .cli import verbose_echo
 
         command.insert(0, self.git)
-        no_verbose = kwargs.pop('no_verbose', False)
-        if (self.verbose or self.fake) and not no_verbose:
-            if self.fake:
-                click.echo(crayons.red('Faked! >>> {}'.format(' '.join(command))))
-            else:
-                click.echo(crayons.green('>>> {}'.format(' '.join(command))))
+        if kwargs.pop('no_verbose', False):  # used when git output isn't helpful to user
+            verbose = False
+        else:
+            verbose = self.verbose
+        verbose_echo(' '.join(command), verbose, self.fake)
 
         if not self.fake:
             result = self.repo.git.execute(command, **kwargs)

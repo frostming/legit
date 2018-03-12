@@ -43,10 +43,19 @@ class TestLegit(object):
         assert 'Faked!' in result.output
 
     @pytest.mark.cli
+    def test_switch_no_branch(self):
+        """Test switch command with no branch"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['switch', '--fake'])
+        assert result.exit_code == 2
+        assert 'Please specify a branch to switch' in result.output
+        assert 'Faked!' not in result.output
+
+    @pytest.mark.cli
     def test_sync(self):
         """Test sync command"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['sync', 'develop', '--fake'])
+        result = runner.invoke(cli, ['sync', '--fake'])
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
@@ -56,11 +65,30 @@ class TestLegit(object):
     def test_sy(self):
         """Test sync alias sy"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['sy', 'develop', '--fake'])
+        result = runner.invoke(cli, ['sy', '--fake'])
         assert result.exit_code == 0
         assert 'Pulling commits from the server.' in result.output
         assert 'Pushing commits to the server.' in result.output
         assert 'Faked!' in result.output
+
+    @pytest.mark.cli
+    def test_sync_known_branch(self):
+        """Test sync command"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['sync', 'develop', '--fake'])
+        assert result.exit_code == 0
+        assert 'Pulling commits from the server.' in result.output
+        assert 'Pushing commits to the server.' in result.output
+        assert 'Faked!' in result.output
+
+    @pytest.mark.cli
+    def test_sync_bad_branch(self):
+        """Test sync command with bad branch"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['sync', 'kenneth', '--fake'])
+        assert result.exit_code == 2
+        assert "Branch kenneth is not published." in result.output
+        assert 'Faked!' not in result.output
 
     @pytest.mark.cli
     def test_publish(self):
@@ -79,6 +107,15 @@ class TestLegit(object):
         assert result.exit_code == 0
         assert 'Publishing kenneth' in result.output
         assert 'Faked!' in result.output
+
+    @pytest.mark.cli
+    def test_publish_published_branch(self):
+        """Test publish command with published branch"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['publish', 'develop', '--fake'])
+        assert result.exit_code == 2
+        assert "Branch develop is already published." in result.output
+        assert 'Faked!' not in result.output
 
     @pytest.mark.cli
     def test_unpublish(self):
@@ -101,8 +138,18 @@ class TestLegit(object):
         """Test unpublish with unknown branch"""
         runner = CliRunner()
         result = runner.invoke(cli, ['unp', 'kenneth', '--fake'])
-        assert result.exit_code == 1
-        assert "Branch kenneth isn't published." in result.output
+        assert result.exit_code == 2
+        assert "Branch kenneth is not published." in result.output
+        assert 'Faked!' not in result.output
+
+    @pytest.mark.cli
+    def test_unpublish_no_branch(self):
+        """Test unpublish command with no branch"""
+        runner = CliRunner()
+        result = runner.invoke(cli, ['unpublish', '--fake'])
+        assert result.exit_code == 2
+        assert 'Please specify a branch to unpublish' in result.output
+        assert 'Faked!' not in result.output
 
     @pytest.mark.cli
     def test_undo(self):

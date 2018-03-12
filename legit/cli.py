@@ -58,8 +58,8 @@ def cli(ctx, verbose, fake, install, uninstall, edit):
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
     ctx.obj = SCMRepo()
-    ctx.obj.verbose = verbose
     ctx.obj.fake = fake
+    ctx.obj.verbose = fake or verbose
 
     if install:
         do_install(ctx, verbose, fake)
@@ -84,15 +84,14 @@ def cli(ctx, verbose, fake, install, uninstall, edit):
 def switch(scm, to_branch, verbose, fake):
     """Switches from one branch to another, safely stashing and restoring local changes.
     """
-    scm.verbose = verbose
     scm.fake = fake
+    scm.verbose = fake or verbose
 
     scm.repo_check()
 
     if to_branch is None:
-        click.echo('Please specify a branch to switch:')
         scm.display_available_branches()
-        raise click.Abort
+        raise click.BadArgumentUsage('Please specify a branch to switch to')
 
     scm.stash_log()
     scm.status_log(scm.checkout_branch, 'Switching to {0}.'.format(
@@ -112,8 +111,8 @@ def sync(ctx, scm, to_branch, verbose, fake):
 
     Defaults to current branch.
     """
-    scm.verbose = verbose
     scm.fake = fake
+    scm.verbose = fake or verbose
 
     scm.repo_check(require_remote=True)
 
@@ -124,9 +123,9 @@ def sync(ctx, scm, to_branch, verbose, fake):
             is_external = True
             original_branch = scm.get_current_branch_name()
         else:
-            click.echo("Branch {0} doesn't exist. Use a branch that does."
-                       .format(crayons.yellow(branch)))
-            raise click.Abort
+            raise click.BadArgumentUsage(
+                "Branch {0} does not exist. Use an existing branch."
+                .format(crayons.yellow(branch)))
     else:
         # Sync current branch.
         branch = scm.get_current_branch_name()
@@ -142,9 +141,9 @@ def sync(ctx, scm, to_branch, verbose, fake):
         if is_external:
             ctx.invoke(switch, to_branch=original_branch, verbose=verbose, fake=fake)
     else:
-        click.echo('Branch {0} is not published. Publish before syncing.'
-                   .format(crayons.yellow(branch)))
-        raise click.Abort
+        raise click.BadArgumentUsage(
+            "Branch {0} is not published. Publish before syncing."
+            .format(crayons.yellow(branch)))
 
 
 @cli.command(short_help='Publishes specified branch to the remote.')
@@ -154,8 +153,8 @@ def sync(ctx, scm, to_branch, verbose, fake):
 @pass_scm
 def publish(scm, to_branch, verbose, fake):
     """Pushes an unpublished branch to a remote repository."""
-    scm.verbose = verbose
     scm.fake = fake
+    scm.verbose = fake or verbose
 
     scm.repo_check(require_remote=True)
     branch = scm.fuzzy_match_branch(to_branch)
@@ -173,38 +172,37 @@ def publish(scm, to_branch, verbose, fake):
     branch_names = scm.get_branch_names(local=False)
 
     if branch in branch_names:
-        click.echo("Branch {0} is already published. Use a branch that is not published.".format(
-            crayons.yellow(branch)))
-        raise click.Abort
+        raise click.BadArgumentUsage(
+            "Branch {0} is already published. Use a branch that is not published."
+            .format(crayons.yellow(branch)))
 
     scm.status_log(scm.publish_branch, 'Publishing {0}.'.format(
         crayons.yellow(branch)), branch)
 
 
 @cli.command(short_help='Removes specified branch from the remote.')
-@click.argument('published_branch')
+@click.argument('published_branch', required=False)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
 def unpublish(scm, published_branch, verbose, fake):
     """Removes a published branch from the remote repository."""
-    scm.verbose = verbose
     scm.fake = fake
+    scm.verbose = fake or verbose
 
     scm.repo_check(require_remote=True)
     branch = scm.fuzzy_match_branch(published_branch)
 
     if not branch:
-        click.echo('Please specify a branch to unpublish:')
         scm.display_available_branches()
-        raise click.Abort
+        raise click.BadArgumentUsage('Please specify a branch to unpublish')
 
     branch_names = scm.get_branch_names(local=False)
 
     if branch not in branch_names:
-        click.echo("Branch {0} isn't published. Use a branch that is published.".format(
-            crayons.yellow(branch)))
-        raise click.Abort
+        raise click.BadArgumentUsage(
+            "Branch {0} is not published. Use a branch that is published."
+            .format(crayons.yellow(branch)))
 
     scm.status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
         crayons.yellow(branch)), branch)
@@ -217,8 +215,8 @@ def unpublish(scm, published_branch, verbose, fake):
 @pass_scm
 def undo(scm, verbose, fake, hard):
     """Removes the last commit from history."""
-    scm.verbose = verbose
     scm.fake = fake
+    scm.verbose = fake or verbose
 
     scm.repo_check()
 
@@ -236,7 +234,6 @@ def branches(scm):
 
 def do_install(ctx, verbose, fake):
     """Installs legit git aliases."""
-
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
     output_aliases(aliases)
@@ -245,11 +242,8 @@ def do_install(ctx, verbose, fake):
         for alias in aliases:
             cmd = '!legit ' + alias
             system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
-            if fake:
-                click.echo(crayons.red('Faked! >>> {}'.format(system_command)))
-            else:
-                if verbose:
-                    click.echo(crayons.green('>>> {}'.format(system_command)))
+            verbose_echo(system_command, verbose, fake)
+            if not fake:
                 os.system(system_command)
         if not fake:
             click.echo("\nAliases installed.")
@@ -259,26 +253,15 @@ def do_install(ctx, verbose, fake):
 
 def do_uninstall(ctx, verbose, fake):
     """Uninstalls legit git aliases."""
-
     aliases = cli.list_commands(ctx)
     for alias in aliases:
         system_command = 'git config --global --unset-all alias.{0}'.format(alias)
-        if fake:
-            click.echo(crayons.red('Faked! >>> {}'.format(system_command)))
-        else:
-            if verbose:
-                click.echo(crayons.green('>>> {}'.format(system_command)))
+        verbose_echo(system_command, verbose, fake)
+        if not fake:
             os.system(system_command)
     if not fake:
         click.echo('\nThe following git aliases are uninstalled:\n')
         output_aliases(aliases)
-
-
-def output_aliases(aliases):
-    """Display git aliases"""
-    for alias in aliases:
-        cmd = '!legit ' + alias
-        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
 
 
 def do_edit_settings(fake):
@@ -296,6 +279,28 @@ def do_edit_settings(fake):
         click.echo(crayons.red('Faked! >>> edit {}'.format(path)))
     else:
         click.edit(path)
+
+
+def output_aliases(aliases):
+    """Display git aliases"""
+    for alias in aliases:
+        cmd = '!legit ' + alias
+        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
+
+
+def verbose_echo(str, verbose=False, fake=False):
+    """
+    Selectively output ``str``, with special formatting if ``fake`` is True
+    """
+    verbose = fake or verbose
+
+    if verbose:
+        color = crayons.green
+        prefix = ''
+        if fake:
+            color = crayons.red
+            prefix = 'Faked!'
+        click.echo(color('{} >>> {}'.format(prefix, str)))
 
 # -------
 # Helpers
