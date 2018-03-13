@@ -255,7 +255,7 @@ def do_uninstall(ctx, verbose, fake):
     """Uninstalls legit git aliases."""
     aliases = cli.list_commands(ctx)
     # Add deprecated aliases
-    aliases.append(['graft', 'harvest', 'sprout', 'resync', 'settings', 'install', 'uninstall'])
+    aliases.extend(['graft', 'harvest', 'sprout', 'resync', 'settings', 'install', 'uninstall'])
     for alias in aliases:
         system_command = 'git config --global --unset-all alias.{0}'.format(alias)
         verbose_echo(system_command, verbose, fake)
