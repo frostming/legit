@@ -15,10 +15,4 @@ build/
 .coverage
 htmlcov/
 
-.sublime-text-git-autocommit
-/.vscode/
-.idea
-
 Pipfile
-
-.DS_Store
