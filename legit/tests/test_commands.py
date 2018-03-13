@@ -176,10 +176,10 @@ class TestLegit(object):
         assert 'Faked!' in result.output
 
     @pytest.mark.cli
-    def test_edit(self):
-        """Test --edit option"""
+    def test_config(self):
+        """Test --config option"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['--edit', '--fake'])
+        result = runner.invoke(cli, ['--config', '--fake'])
         assert result.exit_code == 0
         assert 'Faked!' in result.output
 

@@ -51,9 +51,9 @@ class LegitGroup(click.Group):
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.option('--install', is_flag=True, help='Install legit git aliases.')
 @click.option('--uninstall', is_flag=True, help='Uninstall legit git aliases.')
-@click.option('--edit', is_flag=True, help='Edit legit settings.')
+@click.option('--config', is_flag=True, help='Edit legit configuration file.')
 @click.pass_context
-def cli(ctx, verbose, fake, install, uninstall, edit):
+def cli(ctx, verbose, fake, install, uninstall, config):
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
@@ -67,7 +67,7 @@ def cli(ctx, verbose, fake, install, uninstall, edit):
     elif uninstall:
         do_uninstall(ctx, verbose, fake)
         ctx.exit()
-    elif edit:
+    elif config:
         do_edit_settings(fake)
         ctx.exit()
     else:
@@ -254,6 +254,8 @@ def do_install(ctx, verbose, fake):
 def do_uninstall(ctx, verbose, fake):
     """Uninstalls legit git aliases."""
     aliases = cli.list_commands(ctx)
+    # Add deprecated aliases
+    aliases.append(['graft', 'harvest', 'sprout', 'resync', 'settings', 'install', 'uninstall'])
     for alias in aliases:
         system_command = 'git config --global --unset-all alias.{0}'.format(alias)
         verbose_echo(system_command, verbose, fake)
@@ -315,8 +317,8 @@ def handle_abort(aborted, type=None):
                    ' It has to be merged manually.')
     elif type == 'unpublish':
         click.echo(
-            '''It seems that the remote branch has been already deleted.
-            If `legit branches` still list it as published,
+            '''It seems that the remote branch is deleted.
+            If `legit branches` still shows it as published,
             then probably the branch has been deleted at the remote by someone else.
             You can run `git fetch --prune` to update remote information.
             ''')

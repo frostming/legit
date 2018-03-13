@@ -9,7 +9,7 @@ History
 * Add --fake option
 * Move "install" command to --install option
 * Add --uninstall option which unsets legit git aliases
-* Move "settings" command to --settings option
+* Move "settings" command to --config option
 * Improve help output
 * Add tests!
 * Update CI configuration
