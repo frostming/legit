@@ -76,6 +76,10 @@ prepend `sudo` before the `pip` or `python setup.py` command.
 You'll then have the wonderful ``legit`` command available. Run it within
 a repository.
 
+To view usage and examples, run ``legit`` with no commands or options::
+
+    legit
+
 To install the git aliases, run the following command::
 
     legit --install
