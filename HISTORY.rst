@@ -1,6 +1,21 @@
 History
 -------
 
+1.0.0
++++++
+
+* Refactor CLI using `click`
+* Add --verbose option
+* Add --fake option
+* Move "install" command to --install option
+* Add --uninstall option which unsets legit git aliases
+* Move "settings" command to --config option
+* Improve help output
+* Add tests!
+* Update CI configuration
+* Update README
+* Remove support for deprecated Python versions 2.6, 3.2, 3.3
+
 0.5.0
 +++++
 

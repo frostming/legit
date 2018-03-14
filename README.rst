@@ -22,18 +22,15 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``branches``
-    Get a nice pretty list of available branches.
+``switch <branch>``
+    Switches to specified branch.
+    Defaults to current branch.
+    Automatically stashes and unstashes any changes. (alias: ``sw``)
 
 ``sync [<branch>]``
     Synchronizes the given branch. Defaults to current branch.
     Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash.
     You can only sync published branches. (alias: ``sy``)
-
-``switch <branch>``
-    Switches to specified branch.
-    Defaults to current branch.
-    Automatically stashes and unstashes any changes. (alias: ``sw``)
 
 ``publish [<branch>]``
     Publishes specified branch to the remote. (alias: ``pub``)
@@ -42,13 +39,10 @@ The Interface
     Removes specified branch from the remote. (alias: ``unp``)
 
 ``undo``
-    Un-does the last commit in git history.
+    Un-does the last commit in git history.  (alias: ``un``)
 
-``install``
-    Installs legit git aliases.
-
-``help``
-    Displays help for legit command. (alias: ``h``)
+``branches``
+    Display a list of available branches.
 
 
 The Installation
@@ -56,6 +50,13 @@ The Installation
 
 .. image:: https://img.shields.io/pypi/v/legit.svg
     :target: https://pypi.python.org/pypi/legit/
+
+.. image:: https://img.shields.io/travis/kennethreitz/legit.svg
+    :target: https://travis-ci.org/kennethreitz/legit/
+
+.. image:: https://img.shields.io/coveralls/github/kennethreitz/legit.svg
+    :target: https://coveralls.io/r/kennethreitz/legit/
+
 
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
@@ -77,7 +78,25 @@ a repository.
 
 To install the git aliases, run the following command::
 
-    legit install
+    legit --install
+
+To uninstall the git aliases, run the following command::
+
+    legit --uninstall
+
+
+Command Options
+---------------
+
+All legit commands support ``--verbose`` and ``--fake`` options.
+
+In order to view the git commands invoked by legit, use the ``--verbose`` option:
+
+    legit sync --verbose
+
+If you want to see the git commands used by legit but don't want them invoked, use the ``--fake`` option:
+
+    legit publish --fake
 
 
 Caveats

@@ -1,0 +1,6 @@
+-r reqs.txt
+
+coverage
+flake8
+pytest
+pytest-cov

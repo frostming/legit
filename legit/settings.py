@@ -20,7 +20,6 @@ class Settings(object):
 
         self.__dict__ = self._singleton
 
-
     def __call__(self, *args, **kwargs):
         # new instance of class to call
         r = self.__class__()
@@ -34,17 +33,14 @@ class Settings(object):
 
         return r
 
-
     def __enter__(self):
         pass
-
 
     def __exit__(self, *args):
 
         # restore cached copy
         self.__dict__.update(self.__cache.copy())
         del self.__cache
-
 
     def __getattribute__(self, key):
         if key in object.__getattribute__(self, '__attrs__'):
@@ -54,24 +50,17 @@ class Settings(object):
                 return None
         return object.__getattribute__(self, key)
 
-settings = Settings()
 
-settings.config_defaults = (
-    ('check_for_updates', 'True',
-        'Are update checks allowed? Defaults to True.'),
+legit_settings = Settings()
 
+legit_settings.config_defaults = (
     ('allow_black_foreground', 'True',
         'Is the epic black foreground color allowed? Defaults to True.'),
 
-    ('git_transparency', 'False',
-        'Send unknown commands to Git? Defaults to False.'),
-
     ('disable_colors', 'False',
         'Y U NO FUN? Defaults to False.'),
-
-    ('last_update_check', '',
-        'Date of the last update check.'))
+)
 
 
-settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
-settings.forbidden_branches = ['HEAD',]
+legit_settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
+legit_settings.forbidden_branches = ['HEAD']

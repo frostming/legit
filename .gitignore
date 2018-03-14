@@ -1,7 +1,18 @@
 *.pyc
 *.egg-info
+/.venv
+__pycache__/
+.cache
+pipenv.egg-info/
 
 builders/pyinstaller-1.5.1
 builders/artifacts/*
 dist/
 build/
+
+.tox/
+.pytest_cache/
+.coverage
+htmlcov/
+
+Pipfile

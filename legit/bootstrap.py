@@ -8,11 +8,12 @@ This module boostraps the Legit runtime.
 """
 
 
-import clint.textui.colored
 from clint import resources
+from clint.textui import colored
+import crayons
 from six.moves import configparser
 
-from .settings import settings
+from .settings import legit_settings
 
 resources.init('kennethreitz', 'legit')
 
@@ -25,8 +26,11 @@ except IOError:
 
 # Load existing configuration.
 config = configparser.ConfigParser()
-config.readfp(config_file)
-
+try:
+    # `read_file()` added in Python 3.2
+    config.read_file(config_file)
+except AttributeError:
+    config.readfp(config_file)
 
 
 # Populate if needed.
@@ -38,11 +42,11 @@ modified = False
 
 # Set defaults if they are missing.
 # Add everything to settings object.
-for (k, v, _) in settings.config_defaults:
+for (k, v, _) in legit_settings.config_defaults:
     if not config.has_option('legit', k):
         modified = True
         config.set('legit', k, v)
-        setattr(settings, k, v)
+        setattr(legit_settings, k, v)
     else:
         val = config.get('legit', k)
 
@@ -52,12 +56,13 @@ for (k, v, _) in settings.config_defaults:
         elif val.lower() in ('false', '0', 'nope', 'nadda', 'nah'):
             val = False
 
-        setattr(settings, k, val)
+        setattr(legit_settings, k, val)
 
 if modified:
     config_file = resources.user.open('config.ini', 'w')
     config.write(config_file)
 
 
-if settings.disable_colors:
-    clint.textui.colored.DISABLE_COLOR = True
+if legit_settings.disable_colors:
+    crayons.disable()
+    colored.DISABLE_COLOR = True
