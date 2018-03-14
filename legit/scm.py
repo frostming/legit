@@ -19,6 +19,7 @@ from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError
 
 from .settings import legit_settings
+from .utils import black, status_log
 
 LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 
@@ -77,12 +78,12 @@ class SCMRepo(object):
 
     def stash_log(self, sync=False):
         if self.repo.is_dirty():
-            self.status_log(self.stash_it, 'Saving local changes.', sync=sync)
+            status_log(self.stash_it, 'Saving local changes.', sync=sync)
 
     def unstash_log(self, sync=False):
         self.stash_index = self.unstash_index(sync=sync)
         if self.stash_index:
-            self.status_log(self.unstash_it, 'Restoring local changes.', sync=sync)
+            status_log(self.unstash_it, 'Restoring local changes.', sync=sync)
 
     def unstash_index(self, sync=False, branch=None):
         """Returns an unstash index if one is available."""
@@ -354,66 +355,6 @@ class SCMRepo(object):
                 [black(pub), 14]
             ))
 
-    def status_log(self, func, message, *args, **kwargs):
-        """Executes a callable with a header message."""
-
-        click.echo(message)
-        log = func(*args, **kwargs)
-
-        if log:
-            out = []
-
-            for line in log.split('\n'):
-                if not line.startswith('#'):
-                    out.append(line)
-            click.echo(black('\n'.join(out)))
-
-    def format_help(self, help):
-        """Formats the help string."""
-        help = help.replace('Options:', str(crayons.black('Options:', bold=True)))
-
-        help = help.replace('Usage: legit', str('Usage: {0}'.format(crayons.black('legit', bold=True))))
-
-        help = help.replace('  switch', str(crayons.green('  switch', bold=True)))
-        help = help.replace('  sync', str(crayons.green('  sync', bold=True)))
-        help = help.replace('  publish', str(crayons.green('  publish', bold=True)))
-        help = help.replace('  unpublish', str(crayons.green('  unpublish', bold=True)))
-        help = help.replace('  undo', str(crayons.green('  undo', bold=True)))
-        help = help.replace('  branches', str(crayons.yellow('  branches', bold=True)))
-
-        additional_help = \
-            """Usage Examples:
-   Switch to specific branch:
-   $ {0}
-
-   Sync current branch with remote:
-   $ {1}
-
-   Sync current code with a specific remote branch:
-   $ {2}
-
-   Publish current branch to remote:
-   $ {3}
-
-   Publish to a specific branch to remote:
-   $ {4}
-
-   Unpublish a specific branch from remote:
-   $ {5}
-
-Commands:""".format(
-                crayons.red('legit switch <branch>'),
-                crayons.red('legit sync'),
-                crayons.red('legit sync <branch>'),
-                crayons.red('legit publish'),
-                crayons.red('legit publish <branch>'),
-                crayons.red('legit unpublish <branch>'),
-            )
-
-        help = help.replace('Commands:', additional_help)
-
-        return help
-
 
 # Instead of getboolean('legit', 'remoteFallback', fallback=False)
 # since getboolean in Python 2 does not have fallback argument.
@@ -422,13 +363,6 @@ def fallback_enabled(reader):
         return reader.getboolean('legit', 'remoteFallback')
     else:
         return False
-
-
-def black(s):
-    if legit_settings.allow_black_foreground:
-        return crayons.black(s)
-    else:
-        return s.encode('utf-8')
 
 
 class Aborted(object):

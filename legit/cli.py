@@ -10,12 +10,13 @@ import os
 
 import click
 from clint import resources
-from clint.textui import colored, columns
+from clint.textui import columns
 import crayons
 
 from .core import __version__
 from .scm import SCMRepo
 from .settings import legit_settings
+from .utils import black, format_help, order_manually, output_aliases, status_log, verbose_echo
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -34,19 +35,44 @@ class LegitGroup(click.Group):
     }
 
     def list_commands(self, ctx):
+        """Override for showing commands in particular order"""
         commands = super(LegitGroup, self).list_commands(ctx)
         return [cmd for cmd in order_manually(commands)]
 
     def get_command(self, ctx, cmd_name):
+        """Override to handle command aliases"""
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
         cmd_name = self.command_aliases.get(cmd_name, "")
         return click.Group.get_command(self, ctx, cmd_name)
 
+    def get_help_option(self, ctx):
+        """Override for showing formatted main help via --help and -h options"""
+        help_options = self.get_help_option_names(ctx)
+        if not help_options or not self.add_help_option:
+            return
+
+        def show_help(ctx, param, value):
+            if value and not ctx.resilient_parsing:
+                if not ctx.obj:
+                    # legit main help
+                    click.echo(format_help(ctx.get_help()))
+                else:
+                    # legit sub-command help
+                    click.echo(ctx.get_help(), color=ctx.color)
+                ctx.exit()
+        return click.Option(
+            help_options,
+            is_flag=True,
+            is_eager=True,
+            expose_value=False,
+            callback=show_help,
+            help='Show this message and exit.')
+
 
 @click.group(cls=LegitGroup, invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
-@click.version_option(prog_name=crayons.black('legit', bold=True), version=__version__)
+@click.version_option(prog_name=black('legit', bold=True), version=__version__)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @click.option('--install', is_flag=True, help='Install legit git aliases.')
@@ -54,6 +80,7 @@ class LegitGroup(click.Group):
 @click.option('--config', is_flag=True, help='Edit legit configuration file.')
 @click.pass_context
 def cli(ctx, verbose, fake, install, uninstall, config):
+    """legit command line interface"""
     # Create a repo object and remember it as as the context object.  From
     # this point onwards other commands can refer to it by using the
     # @pass_scm decorator.
@@ -73,7 +100,7 @@ def cli(ctx, verbose, fake, install, uninstall, config):
     else:
         if ctx.invoked_subcommand is None:
             # Display help to user if no commands were passed.
-            click.echo(ctx.obj.format_help(ctx.get_help()))
+            click.echo(format_help(ctx.get_help()))
 
 
 @cli.command(short_help='Switches to specified branch.')
@@ -94,7 +121,7 @@ def switch(scm, to_branch, verbose, fake):
         raise click.BadArgumentUsage('Please specify a branch to switch to')
 
     scm.stash_log()
-    scm.status_log(scm.checkout_branch, 'Switching to {0}.'.format(
+    status_log(scm.checkout_branch, 'Switching to {0}.'.format(
         crayons.yellow(to_branch)), to_branch)
     scm.unstash_log()
 
@@ -135,8 +162,8 @@ def sync(ctx, scm, to_branch, verbose, fake):
         if is_external:
             ctx.invoke(switch, to_branch=branch, verbose=verbose, fake=fake)
         scm.stash_log(sync=True)
-        scm.status_log(scm.smart_pull, 'Pulling commits from the server.')
-        scm.status_log(scm.push, 'Pushing commits to the server.', branch)
+        status_log(scm.smart_pull, 'Pulling commits from the server.')
+        status_log(scm.push, 'Pushing commits to the server.', branch)
         scm.unstash_log(sync=True)
         if is_external:
             ctx.invoke(switch, to_branch=original_branch, verbose=verbose, fake=fake)
@@ -176,7 +203,7 @@ def publish(scm, to_branch, verbose, fake):
             "Branch {0} is already published. Use a branch that is not published."
             .format(crayons.yellow(branch)))
 
-    scm.status_log(scm.publish_branch, 'Publishing {0}.'.format(
+    status_log(scm.publish_branch, 'Publishing {0}.'.format(
         crayons.yellow(branch)), branch)
 
 
@@ -204,7 +231,7 @@ def unpublish(scm, published_branch, verbose, fake):
             "Branch {0} is not published. Use a branch that is published."
             .format(crayons.yellow(branch)))
 
-    scm.status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
+    status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
         crayons.yellow(branch)), branch)
 
 
@@ -220,7 +247,7 @@ def undo(scm, verbose, fake, hard):
 
     scm.repo_check()
 
-    scm.status_log(scm.undo, 'Last commit removed from history.', hard)
+    status_log(scm.undo, 'Last commit removed from history.', hard)
 
 
 @cli.command()
@@ -252,7 +279,7 @@ def do_install(ctx, verbose, fake):
 
 
 def do_uninstall(ctx, verbose, fake):
-    """Uninstalls legit git aliases."""
+    """Uninstalls legit git aliases, including deprecated legit sub-commands."""
     aliases = cli.list_commands(ctx)
     # Add deprecated aliases
     aliases.extend(['graft', 'harvest', 'sprout', 'resync', 'settings', 'install', 'uninstall'])
@@ -283,32 +310,6 @@ def do_edit_settings(fake):
         click.edit(path)
 
 
-def output_aliases(aliases):
-    """Display git aliases"""
-    for alias in aliases:
-        cmd = '!legit ' + alias
-        click.echo(columns([colored.yellow('git ' + alias), 20], [cmd, None]))
-
-
-def verbose_echo(str, verbose=False, fake=False):
-    """
-    Selectively output ``str``, with special formatting if ``fake`` is True
-    """
-    verbose = fake or verbose
-
-    if verbose:
-        color = crayons.green
-        prefix = ''
-        if fake:
-            color = crayons.red
-            prefix = 'Faked!'
-        click.echo(color('{} >>> {}'.format(prefix, str)))
-
-# -------
-# Helpers
-# -------
-
-
 def handle_abort(aborted, type=None):
     click.echo('{0} {1}'.format(crayons.red('Error:'), aborted.message))
     click.echo(str(aborted.log))
@@ -326,27 +327,3 @@ def handle_abort(aborted, type=None):
 
 
 legit_settings.abort_handler = handle_abort
-
-
-def order_manually(sub_commands):
-    """Order sub-commands for display"""
-    order = [
-        "switch",
-        "sync",
-        "publish",
-        "unpublish",
-        "undo",
-        "branches",
-    ]
-    ordered = []
-    commands = dict(zip([cmd for cmd in sub_commands], sub_commands))
-    for k in order:
-        ordered.append(commands.get(k, ""))
-        if k in commands:
-            del commands[k]
-
-    # Add commands not present in `order` above
-    for k in commands:
-        ordered.append(commands[k])
-
-    return ordered
