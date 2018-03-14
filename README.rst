@@ -90,11 +90,11 @@ Command Options
 
 All legit commands support ``--verbose`` and ``--fake`` options.
 
-In order to view the git commands invoked by legit, use the ``--verbose`` option:
+In order to view the git commands invoked by legit, use the ``--verbose`` option::
 
     legit sync --verbose
 
-If you want to see the git commands used by legit but don't want them invoked, use the ``--fake`` option:
+If you want to see the git commands used by legit but don't want them invoked, use the ``--fake`` option::
 
     legit publish --fake
 
