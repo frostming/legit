@@ -1,6 +1,12 @@
 History
 -------
 
+1.0.1
++++++
+
+* Fix obtaining repo remote
+* Update requirements
+
 1.0.0
 +++++
 
