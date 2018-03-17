@@ -253,7 +253,7 @@ class SCMRepo(object):
                         click.echo('\n`legit.RemoteFallback` changed to true for current repo.')
                         return self.get_default_remote()
             else:
-                return self.remote(remote_name)
+                return self.repo.remote(remote_name)
         else:
             return self.get_default_remote()
 
