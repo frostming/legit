@@ -1,3 +1,0 @@
-- smart_pull => smart_merge
-- git-legit.org
-- documentation
