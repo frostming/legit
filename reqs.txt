@@ -1,11 +1,11 @@
-appdirs==1.4.0
+appdirs==1.4.3
 args==0.1.0
 click==6.7
 clint==0.5.1
 crayons==0.1.2
-gitdb2==2.0.0
+gitdb2==2.0.3
 GitPython==2.1.8
-packaging==16.8
-pyparsing==2.1.10
-six==1.10.0
-smmap2==2.0.1
+packaging==17.1
+pyparsing==2.2.0
+six==1.11.0
+smmap2==2.0.3
