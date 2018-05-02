@@ -211,11 +211,11 @@ class SCMRepo(object):
                 with_extended_output=True)
             abort('Unpublish failed. Fetching.', log=log, type='unpublish')
 
-    def publish_branch(self, branch):
+    def publish_branch(self, remote, branch):
         """Publishes given branch."""
 
         return self.git_exec(
-            ['push', '-u', self.remote.name, branch])
+            ['push', '-u', remote, branch])
 
     def undo(self, hard=False):
         """Makes last commit not exist"""
