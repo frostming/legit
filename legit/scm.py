@@ -157,7 +157,7 @@ class SCMRepo(object):
             else:
                 verb = 'merge'
 
-        if self.pull_ff_only():
+        if verb != 'rebase' and self.pull_ff_only():
             return self.git_exec([verb, '--ff-only', branch])
         else:
             try:
@@ -177,7 +177,7 @@ class SCMRepo(object):
     def pull_ff_only(self):
         reader = self.repo.config_reader()
         if reader.has_option('pull', 'ff'):
-            if reader.getboolean('pull', 'ff') == 'only':
+            if reader.get('pull', 'ff') == 'only':
                 return True
             else:
                 return False
