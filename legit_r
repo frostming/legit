@@ -4,4 +4,4 @@
 import legit.cli
 
 if __name__ == '__main__':
-    legit.cli.main()
+    legit.cli.cli()
