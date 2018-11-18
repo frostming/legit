@@ -33,17 +33,7 @@ if sys.argv[-1] == 'build_manpage':
 
 # Build Helper.
 if sys.argv[-1] == 'build':
-    import py2exe  # noqa
-    sys.argv.append('py2exe')
-
-    settings.update(
-        console=[{'script': APP_SCRIPT}],
-        zipfile=None,
-        options={
-            'py2exe': {
-                'compressed': 1,
-                'optimize': 0,
-                'bundle_files': 1}})
+    os.system('pyinstaller --onefile legit_r')
 
 settings.update(
     name=APP_NAME,
