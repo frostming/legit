@@ -307,7 +307,7 @@ def do_edit_settings(fake):
     if fake:
         click.echo(crayons.red('Faked! >>> edit {}'.format(path)))
     else:
-        click.edit(path)
+        click.edit(filename=path)
 
 
 def handle_abort(aborted, type=None):
