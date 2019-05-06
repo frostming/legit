@@ -5,10 +5,6 @@ Legit: Git for Humans
 
 Inspired by GitHub for Mac.
 
--------------
-
-If you're interested in financially supporting Kenneth Reitz open source, consider `visiting this link <https://cash.me/$KennethReitz>`_. Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.
-
 
 The Concept
 -----------
