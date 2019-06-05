@@ -84,7 +84,7 @@ class TestLegit(object):
     def test_publish(self):
         """Test publish command"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['publish', 'kenneth', '--fake'])
+        result = runner.invoke(cli, ['publish', 'origin', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Publishing kenneth' in result.output
         assert 'Faked!' in result.output
@@ -93,7 +93,7 @@ class TestLegit(object):
     def test_pub(self):
         """Test publish alias pub"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['pub', 'kenneth', '--fake'])
+        result = runner.invoke(cli, ['pub', 'origin', 'kenneth', '--fake'])
         assert result.exit_code == 0
         assert 'Publishing kenneth' in result.output
         assert 'Faked!' in result.output
@@ -102,7 +102,7 @@ class TestLegit(object):
     def test_publish_published_branch(self):
         """Test publish command with published branch"""
         runner = CliRunner()
-        result = runner.invoke(cli, ['publish', 'develop', '--fake'])
+        result = runner.invoke(cli, ['publish', 'origin', 'develop', '--fake'])
         assert result.exit_code == 2
         assert "Branch develop is already published." in result.output
         assert 'Faked!' not in result.output

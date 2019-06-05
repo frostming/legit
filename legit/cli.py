@@ -174,15 +174,17 @@ def sync(ctx, scm, to_branch, verbose, fake):
 
 
 @cli.command(short_help='Publishes specified branch to the remote.')
+@click.argument('remote', required=False)
 @click.argument('to_branch', required=False)
 @click.option('--verbose', is_flag=True, help='Enables verbose mode.')
 @click.option('--fake', is_flag=True, help='Show but do not invoke git commands.')
 @pass_scm
-def publish(scm, to_branch, verbose, fake):
+def publish(scm, remote, to_branch, verbose, fake):
     """Pushes an unpublished branch to a remote repository."""
     scm.fake = fake
     scm.verbose = fake or verbose
 
+    remote = remote or scm.remote.name
     scm.repo_check(require_remote=True)
     branch = scm.fuzzy_match_branch(to_branch)
 
@@ -204,7 +206,7 @@ def publish(scm, to_branch, verbose, fake):
             .format(crayons.yellow(branch)))
 
     status_log(scm.publish_branch, 'Publishing {0}.'.format(
-        crayons.yellow(branch)), branch)
+        crayons.yellow(branch)), remote, branch)
 
 
 @cli.command(short_help='Removes specified branch from the remote.')
