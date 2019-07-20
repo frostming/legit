@@ -57,7 +57,7 @@ def test_switch_no_branch(runner):
 @pytest.mark.cli
 def test_sync_known_branch(runner):
     """Test sync command"""
-    result = runner.invoke(cli, ["sync", "develop", "--fake"])
+    result = runner.invoke(cli, ["sync", "master", "--fake"])
     assert result.exit_code == 0
     assert "Pulling commits from the server." in result.output
     assert "Pushing commits to the server." in result.output
@@ -67,7 +67,7 @@ def test_sync_known_branch(runner):
 @pytest.mark.cli
 def test_sy_known_branch(runner):
     """Test sync alias sy"""
-    result = runner.invoke(cli, ["sy", "develop", "--fake"])
+    result = runner.invoke(cli, ["sy", "master", "--fake"])
     assert result.exit_code == 0
     assert "Pulling commits from the server." in result.output
     assert "Pushing commits to the server." in result.output
