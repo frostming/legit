@@ -15,4 +15,4 @@ build/
 .coverage
 htmlcov/
 
-Pipfile
+.vscode/
