@@ -15,4 +15,4 @@ git reset --hard HEAD~1
 git reset --hard HEAD~1
 git reset --hard __testing_point__
 git checkout __test_branch__
-git fetch develop
+git fetch origin
