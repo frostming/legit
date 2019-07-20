@@ -58,8 +58,8 @@ def test_switch_no_branch(runner):
 def test_sync_known_branch(runner):
     """Test sync command"""
     result = runner.invoke(cli, ["sync", "master", "--fake"])
-    assert result.exit_code == 0
     assert "Pulling commits from the server." in result.output
+    assert result.exit_code == 0
     assert "Pushing commits to the server." in result.output
     assert "Faked!" in result.output
 
