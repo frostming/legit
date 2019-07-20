@@ -51,7 +51,7 @@ The Installation
 .. image:: https://img.shields.io/pypi/v/legit.svg
     :target: https://pypi.python.org/pypi/legit/
 
-.. image:: https://img.shields.io/travis/frostming/legit.svg
+.. image:: https://img.shields.io/travis/frostming/legit/develop.svg
     :target: https://travis-ci.org/frostming/legit/
 
 .. image:: https://img.shields.io/coveralls/github/frostming/legit.svg
