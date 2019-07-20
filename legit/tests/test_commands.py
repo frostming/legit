@@ -1,5 +1,6 @@
-from click.testing import CliRunner
+import os
 import pytest
+from click.testing import CliRunner
 
 from legit.cli import cli
 from legit.core import __version__
@@ -7,7 +8,10 @@ from legit.core import __version__
 
 @pytest.fixture
 def runner():
-    return CliRunner()
+    pwd = os.getcwd()
+    os.chdir("test_repo")
+    yield CliRunner()
+    os.chdir(pwd)
 
 
 @pytest.mark.cli
@@ -104,16 +108,16 @@ def test_pub(runner):
 @pytest.mark.cli
 def test_publish_published_branch(runner):
     """Test publish command with published branch"""
-    result = runner.invoke(cli, ["publish", "develop", "--fake"])
+    result = runner.invoke(cli, ["publish", "master", "--fake"])
     assert result.exit_code == 2
-    assert "Branch develop is already published." in result.output
+    assert "Branch master is already published." in result.output
     assert "Faked!" not in result.output
 
 
 @pytest.mark.cli
 def test_unpublish(runner):
     """Test unpublish command"""
-    result = runner.invoke(cli, ["unpublish", "develop", "--fake"])
+    result = runner.invoke(cli, ["unpublish", "master", "--fake"])
     assert result.exit_code == 0
     assert "Faked!" in result.output
 
@@ -121,7 +125,7 @@ def test_unpublish(runner):
 @pytest.mark.cli
 def test_unp(runner):
     """Test unpublish alias unp"""
-    result = runner.invoke(cli, ["unp", "develop", "--fake"])
+    result = runner.invoke(cli, ["unp", "master", "--fake"])
     assert result.exit_code == 0
     assert "Faked!" in result.output
 
