@@ -91,7 +91,7 @@ $ {2}
 Publish current branch to remote:
 $ {3}
 
-Publish to a specific branch to remote:
+Publish a specific branch to remote:
 $ {4}
 
 Unpublish a specific branch from remote:

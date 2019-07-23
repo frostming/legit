@@ -42,7 +42,7 @@ settings.update(
     long_description=open("README.rst").read(),
     author="Kenneth Reitz",
     author_email="me@kennethreitz.com",
-    url="https://github.com/kennethreitz/legit",
+    url="https://github.com/frostming/legit",
     packages=["legit"],
     install_requires=required,
     license="BSD",
