@@ -1,6 +1,8 @@
 import click
 from clint.textui import colored, columns
 import crayons
+import os
+import sys
 
 from .settings import legit_settings
 
@@ -124,3 +126,9 @@ def git_version():
 
     g = Git()
     return g.version_info
+
+
+def program_path():
+    result = os.path.abspath(sys.argv[0])
+    result = result.replace(os.sep, '/').replace(' ', '\\ ')
+    return result

@@ -18,7 +18,7 @@ from .scm import SCMRepo
 from .settings import legit_settings
 from .utils import (
     black, format_help, git_version, order_manually, output_aliases,
-    status_log, verbose_echo
+    status_log, verbose_echo, program_path
 )
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -265,18 +265,18 @@ def do_install(ctx, verbose, fake):
     """Installs legit git aliases."""
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
+    if git_version() >= (2, 23, 0):
+        click.echo(
+            'As git 2.23.0 introduces a new command "git switch", alias "switch"'
+            ' will be skipped.\nUse "legit switch" instead.'
+        )
+        aliases.remove('switch')
     output_aliases(aliases)
-    git_v = git_version()
 
+    program = program_path()
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else ''), default=fake):
         for alias in aliases:
-            if alias == 'switch' and git_v >= (2, 23, 0):
-                click.echo(
-                    'As git 2.23.0 introduces a new command "git switch", alias "switch"'
-                    ' will be skipped.\nUse shortname "git sw" or "legit switch" instead.'
-                )
-                continue
-            cmd = '!legit ' + alias
+            cmd = '!{} {}'.format(program, alias)
             system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
             verbose_echo(system_command, verbose, fake)
             if not fake:
