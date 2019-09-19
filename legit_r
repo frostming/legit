@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import legit.cli
+
+if __name__ == '__main__':
+    legit.cli.cli()
+
+# Packaging legit on Windows
+#
+# - Install git and Python 2.7
+# - Append python to PATH, e.g. `C:\Python27` and `C:\Python27\Scripts`
+# - Install pyinstaller via pip
+# - run `python setup.py build`
+# - Rename dist/legit_r.exe to dist/legit.exe
+# - Test it with `legit branches`
+# - Upload legit.exe to GitHub releases
