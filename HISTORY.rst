@@ -1,6 +1,13 @@
 History
 -------
 
+1.0.2
++++++
+
+* Update requirements
+* Fix Windows executable release
+* Improve tests
+
 1.0.1
 +++++
 
@@ -40,7 +47,7 @@ History
 0.3.1
 +++++
 
-* Added the new 'undo' command. 
+* Added the new 'undo' command.
 * Refine some exit code.
 * Run `legit` without args prints help message.
 
@@ -100,5 +107,3 @@ History
 +++++++++
 
 * Initial Release
-
-

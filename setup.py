@@ -8,8 +8,7 @@ from codecs import open  # To use a consistent encoding
 from setuptools import setup  # Always prefer setuptools over distutils
 
 APP_NAME = "legit"
-APP_SCRIPT = "./legit_r"
-VERSION = "1.0.1"
+VERSION = "1.0.1-dev"
 
 
 # Grab requirements.

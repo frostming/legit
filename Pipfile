@@ -9,5 +9,7 @@ coverage = "*"
 flake8 = "*"
 pytest = "*"
 pytest-cov = "*"
+pyinstaller = "*"
+pypiwin32 = {version="*", sys_platform="=='win32'"}
 
 [packages]
