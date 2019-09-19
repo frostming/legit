@@ -1,4 +1,5 @@
 import os
+
 import pytest
 from click.testing import CliRunner
 
@@ -172,6 +173,8 @@ def test_install(runner):
     result = runner.invoke(cli, ["--install", "--fake"])
     assert result.exit_code == 0
     assert "Faked!" in result.output
+    ret = os.system('git branches')
+    assert ret == 0
 
 
 @pytest.mark.cli
@@ -180,6 +183,8 @@ def test_uninstall(runner):
     result = runner.invoke(cli, ["--uninstall", "--fake"])
     assert result.exit_code == 0
     assert "Faked!" in result.output
+    ret = os.system('git branches')
+    assert ret == 1
 
 
 @pytest.mark.cli
