@@ -3,12 +3,15 @@
 
 import os
 import sys
+import re
 from codecs import open  # To use a consistent encoding
 
 from setuptools import setup  # Always prefer setuptools over distutils
 
 APP_NAME = "legit"
-VERSION = "1.0.1-dev"
+
+with open("legit/core.py") as f:
+    VERSION = re.findall(r'^__version__ *= *[\'"](.+?)[\'"]', f.read(), flags=re.M)[0]
 
 
 # Grab requirements.
