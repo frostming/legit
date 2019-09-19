@@ -4,6 +4,7 @@ History
 1.0.2
 +++++
 
+* Don't install ``switch`` on git>=2.23.0.
 * Update requirements
 * Fix Windows executable release
 * Improve tests

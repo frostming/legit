@@ -116,3 +116,11 @@ def black(s, **kwargs):
         return crayons.black(s, **kwargs)
     else:
         return s.encode('utf-8')
+
+
+def git_version():
+    """Return the git version tuple (major, minor, patch)"""
+    from git import Git
+
+    g = Git()
+    return g.version_info

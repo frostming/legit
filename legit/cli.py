@@ -9,15 +9,17 @@ This module provides the CLI interface to legit.
 import os
 
 import click
+import crayons
 from clint import resources
 from clint.textui import columns
-import crayons
 
 from .core import __version__
 from .scm import SCMRepo
 from .settings import legit_settings
-from .utils import black, format_help, order_manually, output_aliases, status_log, verbose_echo
-
+from .utils import (
+    black, format_help, git_version, order_manually, output_aliases,
+    status_log, verbose_echo
+)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 pass_scm = click.make_pass_decorator(SCMRepo)
@@ -264,9 +266,16 @@ def do_install(ctx, verbose, fake):
     click.echo('The following git aliases will be installed:\n')
     aliases = cli.list_commands(ctx)
     output_aliases(aliases)
+    git_v = git_version()
 
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else ''), default=fake):
         for alias in aliases:
+            if alias == 'switch' and git_v >= (2, 23, 0):
+                click.echo(
+                    'As git 2.23.0 introduces a new command "git switch", alias "switch"'
+                    ' will be skipped.\nUse shortname "git sw" or "legit switch" instead.'
+                )
+                continue
             cmd = '!legit ' + alias
             system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
             verbose_echo(system_command, verbose, fake)
