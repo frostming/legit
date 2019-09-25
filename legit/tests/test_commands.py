@@ -193,6 +193,13 @@ def test_config(runner):
 
 @pytest.mark.cli
 def test_branches(runner):
-    """Test undo alias un"""
+    """Test branches command"""
     result = runner.invoke(cli, ["branches"])
+    assert result.exit_code == 0
+
+
+@pytest.mark.cli
+def test_branches_with_wildcard(runner):
+    """Test branches command with wildcard filename pattern"""
+    result = runner.invoke(cli, ["branches", "ma*"])
     assert result.exit_code == 0

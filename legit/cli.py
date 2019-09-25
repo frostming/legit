@@ -253,12 +253,16 @@ def undo(scm, verbose, fake, hard):
 
 
 @cli.command()
+@click.argument('wildcard_pattern', required=False)
 @pass_scm
-def branches(scm):
+def branches(scm, wildcard_pattern):
     """Displays a list of branches."""
     scm.repo_check()
 
-    scm.display_available_branches()
+    if wildcard_pattern:
+        scm.display_available_branches(wildcard_pattern)
+    else:
+        scm.display_available_branches()
 
 
 def do_install(ctx, verbose, fake):

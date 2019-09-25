@@ -99,6 +99,9 @@ $ {4}
 Unpublish a specific branch from remote:
 $ {5}
 
+List branches matching wildcard pattern:
+$ {6}
+
 Commands:""".format(
             crayons.red('legit switch <branch>'),
             crayons.red('legit sync'),
@@ -106,6 +109,7 @@ Commands:""".format(
             crayons.red('legit publish'),
             crayons.red('legit publish <branch>'),
             crayons.red('legit unpublish <branch>'),
+            crayons.red('legit branches [<wildcard pattern>]'),
         )
 
     help = help.replace('Commands:', additional_help)

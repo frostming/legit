@@ -41,8 +41,9 @@ The Interface
 ``undo``
     Un-does the last commit in git history.  (alias: ``un``)
 
-``branches``
+``branches [<wildcard pattern>]``
     Display a list of available branches.
+    Allows wildcard pattern matching of branch name.
 
 
 The Installation
