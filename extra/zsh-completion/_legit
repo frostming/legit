@@ -26,7 +26,7 @@ _legit ()
         local -a subcommands
         subcommands=(
                 'settings: Display and edit the current Legit settings.'
-                'branches: Get a nice pretty list of available branches.'
+                'branches: Get a nice pretty list of available branches. Allows wildcard branch name matching.'
                 'sync: Synchronizes the given branch. Defaults to current branch. Stash, Fetch, Auto-Merge/Rebase, Push, and Unstash. You can only sync published branches.'
                 'switch: Switches to specified branch. Defaults to current branch. Automatically stashes and unstashes any changes.'
                 'publish: Publishes specified branch to the remote.'
