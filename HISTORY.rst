@@ -1,6 +1,12 @@
 History
 -------
 
+1.1.0
++++++
+
+* Support a second parameter for ``branches`` command to restrict the results to matching branches.
+* ``legit --instal`` can install aliases from a venv-boxed legit.
+
 1.0.2
 +++++
 
