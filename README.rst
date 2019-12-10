@@ -58,6 +58,9 @@ The Installation
 .. image:: https://img.shields.io/coveralls/github/frostming/legit.svg
     :target: https://coveralls.io/r/frostming/legit/
 
+.. image:: https://repl.it/badge/github/frostming/legit
+    :target: https://repl.it/github/frostming/legit
+
 
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
