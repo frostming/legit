@@ -1,0 +1,95 @@
+<!doctype html>
+
+
+<title>Welcome | Legit (Git Workflow for Humans)</title>
+<meta charset=utf-8>
+<link rel=stylesheet type=text/css href="style.css">
+<style type=text/css> h1 { margin: 0 0 30px 0; background: url(logo.png) no-repeat center; height: 165px; } h1 span,
+  p.tagline { display: none; } </style> <script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="client.js"></script>
+<script>
+  $(document).ready(function() {
+    if ($.client.os == 'Mac') {
+      $('.' + $.client.os).css('display', 'block');
+      $('.default').css('display', 'none');
+    };
+  });
+  // $('#os').html("<b>" + $.client.os + "</b>");
+  // $('#browser').html("<b>" + $.client.browser + "</b>");
+ </script>
+<div class=box>
+
+
+    <h1><span>Welcome</span></h1>
+
+
+
+  <p class=nav>
+    <a href="/">overview</a> //
+    <a href="https://github.com/frostming/legit">github</a> //
+    <a href="http://pypi.python.org/pypi/legit/">pypi</a> //
+    <a href="https://github.com/frostming/legit/issues">issue tracker</a>
+
+
+  <blockquote>
+    Legit is a complementary command-line interface for Git, optimized for
+    workflow simplicity.
+    It is heavily inspired by GitHub for Mac.
+  </blockquote>
+  <p class=latestver>
+    <iframe src="http://ghbtns.com/github-btn.html?user=frostming&amp;repo=legit&amp;type=watch&amp;count=true&amp;size=large" allowtransparency="true" frameborder="0" scrolling="0" width="160px" height="35px" style="float: right"></iframe></iframe>
+
+  <h2>Git Workflow for Humans</h2>
+  <p>Feature branch workflows are dead simple.</p>
+  <pre>
+<span class=ig>$ </span>git switch &lt;branch&gt;
+<span class=ig># Switches to branch. Stashes and restores unstaged changes.</span>
+
+<span class=ig>$ </span>git sync
+<span class=ig># Synchronizes current branch. Auto-merge/rebase, un/stash.</span>
+
+<span class=ig>$ </span>git publish &lt;branch&gt;
+<span class=ig># Publishes branch to remote server.</span>
+
+<span class=ig>$ </span>git unpublish &lt;branch&gt;
+<span class=ig># Removes branch from remote server.</span>
+
+<span class=ig>$ </span>git branches [wildcard pattern]
+<span class=ig># Nice &amp; pretty list of branches + publication status.</span>
+
+<span class=ig>$ </span>git undo [--hard]
+<span class=ig># Removes the last commit from history.</span></pre>
+
+<h2>Installing Legit</h2>
+
+<p>If you are using Homebrew:</p>
+<pre><span class=ig>$ </span>brew install legit</pre>
+<p>Or install <code>legit</code> via <code>pip</code>:</p>
+<pre><span class=ig>$ </span>pip install legit</pre>
+
+<p>To enable the <code>git</code> aliases:</p>
+<pre><span class=ig>$ </span>legit --install</pre>
+
+
+<p>Nice and simple — the way it should be.</p>
+
+<a href="http://github.com/frostming/legit"><img style="position: fixed; top: 0; right: 0; border: 0;"
+  src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+
+  <p class=footer>
+    &copy; Copyright 2017. A <a href='https://www.kennethreitz.org/projects'>Kenneth Reitz</a> Project.
+</div>
+<script type="text/javascript">
+  var _gauges = _gauges || [];
+  (function() {
+    var t   = document.createElement('script');
+    t.type  = 'text/javascript';
+    t.async = true;
+    t.id    = 'gauges-tracker';
+    t.setAttribute('data-site-id', '4f6e9e76f5a1f56fae0001c2');
+    t.src = '//secure.gaug.es/track.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(t, s);
+  })();
+</script>

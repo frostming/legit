@@ -7,6 +7,7 @@ legit.scm
 This module provides the main interface to Git.
 """
 
+import fnmatch
 import os
 import sys
 from collections import namedtuple
@@ -286,8 +287,8 @@ class SCMRepo(object):
 
         return branch
 
-    def get_branches(self, local=True, remote_branches=True):
-        """Returns a list of local and remote branches."""
+    def get_branches(self, local=True, remote_branches=True, wildcard_pattern='*'):
+        """Returns a list of local and remote branches matching wildcard_pattern."""
 
         if not self.repo.remotes:
             remote_branches = False
@@ -315,6 +316,11 @@ class SCMRepo(object):
                     if b not in legit_settings.forbidden_branches:
                         branches.append(Branch(b, is_published=False))
 
+        matching_branch_names = fnmatch.filter(
+            [branch.name for branch in branches], wildcard_pattern
+        )
+        branches = [branch for branch in branches if branch.name in matching_branch_names]
+
         return sorted(branches, key=attrgetter('name'))
 
     def get_branch_names(self, local=True, remote_branches=True):
@@ -323,15 +329,17 @@ class SCMRepo(object):
 
         return [b.name for b in branches]
 
-    def display_available_branches(self):
+    def display_available_branches(self, wildcard_pattern='*'):
         """Displays available branches."""
 
         if not self.repo.remotes:
             remote_branches = False
         else:
             remote_branches = True
-        branches = self.get_branches(local=True, remote_branches=remote_branches)
 
+        branches = self.get_branches(
+            local=True, remote_branches=remote_branches, wildcard_pattern=wildcard_pattern
+        )
         if not branches:
             click.echo(crayons.red('No branches available'))
             return

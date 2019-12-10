@@ -1,6 +1,24 @@
 History
 -------
 
+1.2.0
++++++
+* Officially drop support for Python 3.4
+
+1.1.0
++++++
+
+* Support a second parameter for ``branches`` command to restrict the results to matching branches.
+* ``legit --instal`` can install aliases from a venv-boxed legit.
+
+1.0.2
++++++
+
+* Don't install ``switch`` on git>=2.23.0.
+* Update requirements
+* Fix Windows executable release
+* Improve tests
+
 1.0.1
 +++++
 
@@ -40,7 +58,7 @@ History
 0.3.1
 +++++
 
-* Added the new 'undo' command. 
+* Added the new 'undo' command.
 * Refine some exit code.
 * Run `legit` without args prints help message.
 
@@ -100,5 +118,3 @@ History
 +++++++++
 
 * Initial Release
-
-

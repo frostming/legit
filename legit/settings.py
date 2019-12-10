@@ -62,5 +62,5 @@ legit_settings.config_defaults = (
 )
 
 
-legit_settings.update_url = 'https://api.github.com/repos/kennethreitz/legit/tags'
+legit_settings.update_url = 'https://api.github.com/repos/frostming/legit/tags'
 legit_settings.forbidden_branches = ['HEAD']

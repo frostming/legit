@@ -5,10 +5,6 @@ Legit: Git for Humans
 
 Inspired by GitHub for Mac.
 
--------------
-
-If you're interested in financially supporting Kenneth Reitz open source, consider `visiting this link <https://cash.me/$KennethReitz>`_. Your support helps tremendously with sustainability of motivation, as Open Source is no longer part of my day job.
-
 
 The Concept
 -----------
@@ -45,8 +41,9 @@ The Interface
 ``undo``
     Un-does the last commit in git history.  (alias: ``un``)
 
-``branches``
+``branches [<wildcard pattern>]``
     Display a list of available branches.
+    Allows wildcard pattern matching of branch name.
 
 
 The Installation
@@ -55,22 +52,25 @@ The Installation
 .. image:: https://img.shields.io/pypi/v/legit.svg
     :target: https://pypi.python.org/pypi/legit/
 
-.. image:: https://img.shields.io/travis/kennethreitz/legit.svg
-    :target: https://travis-ci.org/kennethreitz/legit/
+.. image:: https://img.shields.io/travis/frostming/legit/master.svg
+    :target: https://travis-ci.org/frostming/legit/
 
-.. image:: https://img.shields.io/coveralls/github/kennethreitz/legit.svg
-    :target: https://coveralls.io/r/kennethreitz/legit/
+.. image:: https://img.shields.io/coveralls/github/frostming/legit.svg
+    :target: https://coveralls.io/r/frostming/legit/
+
+.. image:: https://repl.it/badge/github/frostming/legit
+    :target: https://repl.it/github/frostming/legit
 
 
 From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manager::
 
     pip install legit
 
-Or download a standalone Windows executable from `GitHub Releases <https://github.com/kennethreitz/legit/releases>`_.
+Or download a standalone Windows executable from `GitHub Releases <https://github.com/frostming/legit/releases>`_.
 
 To install the cutting edge version from the git repository::
 
-    git clone https://github.com/kennethreitz/legit.git
+    git clone https://github.com/frostming/legit.git
     cd legit
     python setup.py install
 

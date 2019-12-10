@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+legit = {editable = true,path = "."}
+coverage = "*"
+flake8 = "*"
+pytest = "*"
+pytest-cov = "*"
+pyinstaller = "*"
+pypiwin32 = {version="*", sys_platform="=='win32'"}
+
+[packages]

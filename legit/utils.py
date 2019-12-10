@@ -1,6 +1,8 @@
 import click
 from clint.textui import colored, columns
 import crayons
+import os
+import sys
 
 from .settings import legit_settings
 
@@ -91,11 +93,14 @@ $ {2}
 Publish current branch to remote:
 $ {3}
 
-Publish to a specific branch to remote:
+Publish a specific branch to remote:
 $ {4}
 
 Unpublish a specific branch from remote:
 $ {5}
+
+List branches matching wildcard pattern:
+$ {6}
 
 Commands:""".format(
             crayons.red('legit switch <branch>'),
@@ -104,6 +109,7 @@ Commands:""".format(
             crayons.red('legit publish'),
             crayons.red('legit publish <branch>'),
             crayons.red('legit unpublish <branch>'),
+            crayons.red('legit branches [<wildcard pattern>]'),
         )
 
     help = help.replace('Commands:', additional_help)
@@ -116,3 +122,17 @@ def black(s, **kwargs):
         return crayons.black(s, **kwargs)
     else:
         return s
+
+
+def git_version():
+    """Return the git version tuple (major, minor, patch)"""
+    from git import Git
+
+    g = Git()
+    return g.version_info
+
+
+def program_path():
+    result = os.path.abspath(sys.argv[0])
+    result = result.replace(os.sep, '/').replace(' ', '\\ ')
+    return result
