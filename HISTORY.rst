@@ -1,6 +1,10 @@
 History
 -------
 
+1.2.0
++++++
+* Officially drop support for Python 3.4
+
 1.1.0
 +++++
 

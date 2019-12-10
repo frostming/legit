@@ -121,7 +121,7 @@ def black(s, **kwargs):
     if legit_settings.allow_black_foreground:
         return crayons.black(s, **kwargs)
     else:
-        return s.encode('utf-8')
+        return s
 
 
 def git_version():
