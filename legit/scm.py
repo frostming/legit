@@ -100,11 +100,11 @@ class SCMRepo(object):
 
             if (
                 (('Legit' in stash) and
-                 ('On {0}:'.format(branch) in stash) and
+                 ('On {}:'.format(branch) in stash) and
                  (verb in stash)
                  ) or
                 (('GitHub' in stash) and
-                 ('On {0}:'.format(branch) in stash) and
+                 ('On {}:'.format(branch) in stash) and
                  (verb in stash)
                  )
             ):
@@ -133,7 +133,7 @@ class SCMRepo(object):
 
         self.git_exec(['fetch', self.remote.name])
 
-        return self.smart_merge('{0}/{1}'.format(self.remote.name, branch),
+        return self.smart_merge('{}/{}'.format(self.remote.name, branch),
                                 self.smart_merge_enabled())
 
     def smart_merge_enabled(self):
@@ -148,7 +148,7 @@ class SCMRepo(object):
         from_branch = self.get_current_branch_name()
 
         merges = self.git_exec(
-            ['log', '--merges', '{0}..{1}'.format(branch, from_branch)])
+            ['log', '--merges', '{}..{}'.format(branch, from_branch)])
 
         if allow_rebase:
             verb = 'merge' if merges.count('commit') else 'rebase'
@@ -166,7 +166,7 @@ class SCMRepo(object):
             except GitCommandError as why:
                 log = self.git_exec([verb, '--abort'])
                 abort('Merge failed. Reverting.',
-                      log='{0}\n{1}'.format(why, log), type='merge')
+                      log='{}\n{}'.format(why, log), type='merge')
 
     def pull_rebase(self):
         reader = self.repo.config_reader()
@@ -205,7 +205,7 @@ class SCMRepo(object):
 
         try:
             return self.git_exec(
-                ['push', self.remote.name, ':{0}'.format(branch)])
+                ['push', self.remote.name, ':{}'.format(branch)])
         except GitCommandError:
             _, _, log = self.git_exec(
                 ['fetch', self.remote.name, '--prune'],
@@ -241,7 +241,7 @@ class SCMRepo(object):
                 if fallback_enabled(reader):
                     return self.get_default_remote()
                 else:
-                    click.echo('Remote "{0}" does not exist!'.format(remote_name))
+                    click.echo('Remote "{}" does not exist!'.format(remote_name))
                     will_aborted = click.confirm(
                         '\nPress `Y` to abort now,\n' +
                         '`n` to use default remote and turn fallback on for this repo:')

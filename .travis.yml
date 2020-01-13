@@ -1,10 +1,12 @@
 language: python
 dist: xenial
+cache: pip
 python:
   - 2.7
   - 3.5
   - 3.6
   - 3.7
+  - 3.8
 
 install:
   - git fetch --tags

@@ -70,7 +70,7 @@ def format_help(help):
     """Format the help string."""
     help = help.replace('Options:', str(black('Options:', bold=True)))
 
-    help = help.replace('Usage: legit', str('Usage: {0}'.format(black('legit', bold=True))))
+    help = help.replace('Usage: legit', str('Usage: {}'.format(black('legit', bold=True))))
 
     help = help.replace('  switch', str(crayons.green('  switch', bold=True)))
     help = help.replace('  sync', str(crayons.green('  sync', bold=True)))
@@ -82,25 +82,25 @@ def format_help(help):
     additional_help = \
         """Usage Examples:
 Switch to specific branch:
-$ {0}
+$ {}
 
 Sync current branch with remote:
-$ {1}
+$ {}
 
 Sync current code with a specific remote branch:
-$ {2}
+$ {}
 
 Publish current branch to remote:
-$ {3}
+$ {}
 
 Publish a specific branch to remote:
-$ {4}
+$ {}
 
 Unpublish a specific branch from remote:
-$ {5}
+$ {}
 
 List branches matching wildcard pattern:
-$ {6}
+$ {}
 
 Commands:""".format(
             crayons.red('legit switch <branch>'),
