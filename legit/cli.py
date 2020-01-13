@@ -123,7 +123,7 @@ def switch(scm, to_branch, verbose, fake):
         raise click.BadArgumentUsage('Please specify a branch to switch to')
 
     scm.stash_log()
-    status_log(scm.checkout_branch, 'Switching to {0}.'.format(
+    status_log(scm.checkout_branch, 'Switching to {}.'.format(
         crayons.yellow(to_branch)), to_branch)
     scm.unstash_log()
 
@@ -153,7 +153,7 @@ def sync(ctx, scm, to_branch, verbose, fake):
             original_branch = scm.get_current_branch_name()
         else:
             raise click.BadArgumentUsage(
-                "Branch {0} does not exist. Use an existing branch."
+                "Branch {} does not exist. Use an existing branch."
                 .format(crayons.yellow(branch)))
     else:
         # Sync current branch.
@@ -171,7 +171,7 @@ def sync(ctx, scm, to_branch, verbose, fake):
             ctx.invoke(switch, to_branch=original_branch, verbose=verbose, fake=fake)
     else:
         raise click.BadArgumentUsage(
-            "Branch {0} is not published. Publish before syncing."
+            "Branch {} is not published. Publish before syncing."
             .format(crayons.yellow(branch)))
 
 
@@ -192,20 +192,20 @@ def publish(scm, to_branch, verbose, fake):
         branch = scm.get_current_branch_name()
         scm.display_available_branches()
         if to_branch is None:
-            click.echo("Using current branch {0}".format(crayons.yellow(branch)))
+            click.echo("Using current branch {}".format(crayons.yellow(branch)))
         else:
             click.echo(
-                "Branch {0} not found, using current branch {1}"
+                "Branch {} not found, using current branch {}"
                 .format(crayons.red(to_branch), crayons.yellow(branch)))
 
     branch_names = scm.get_branch_names(local=False)
 
     if branch in branch_names:
         raise click.BadArgumentUsage(
-            "Branch {0} is already published. Use a branch that is not published."
+            "Branch {} is already published. Use a branch that is not published."
             .format(crayons.yellow(branch)))
 
-    status_log(scm.publish_branch, 'Publishing {0}.'.format(
+    status_log(scm.publish_branch, 'Publishing {}.'.format(
         crayons.yellow(branch)), branch)
 
 
@@ -230,10 +230,10 @@ def unpublish(scm, published_branch, verbose, fake):
 
     if branch not in branch_names:
         raise click.BadArgumentUsage(
-            "Branch {0} is not published. Use a branch that is published."
+            "Branch {} is not published. Use a branch that is published."
             .format(crayons.yellow(branch)))
 
-    status_log(scm.unpublish_branch, 'Unpublishing {0}.'.format(
+    status_log(scm.unpublish_branch, 'Unpublishing {}.'.format(
         crayons.yellow(branch)), branch)
 
 
@@ -281,7 +281,7 @@ def do_install(ctx, verbose, fake):
     if click.confirm('\n{}Install aliases above?'.format('FAKE ' if fake else ''), default=fake):
         for alias in aliases:
             cmd = '!{} {}'.format(program, alias)
-            system_command = 'git config --global --replace-all alias.{0} "{1}"'.format(alias, cmd)
+            system_command = 'git config --global --replace-all alias.{} "{}"'.format(alias, cmd)
             verbose_echo(system_command, verbose, fake)
             if not fake:
                 os.system(system_command)
@@ -297,7 +297,7 @@ def do_uninstall(ctx, verbose, fake):
     # Add deprecated aliases
     aliases.extend(['graft', 'harvest', 'sprout', 'resync', 'settings', 'install', 'uninstall'])
     for alias in aliases:
-        system_command = 'git config --global --unset-all alias.{0}'.format(alias)
+        system_command = 'git config --global --unset-all alias.{}'.format(alias)
         verbose_echo(system_command, verbose, fake)
         if not fake:
             os.system(system_command)
@@ -324,7 +324,7 @@ def do_edit_settings(fake):
 
 
 def handle_abort(aborted, type=None):
-    click.echo('{0} {1}'.format(crayons.red('Error:'), aborted.message))
+    click.echo('{} {}'.format(crayons.red('Error:'), aborted.message))
     click.echo(str(aborted.log))
     if type == 'merge':
         click.echo('Unfortunately, there was a merge conflict.'
