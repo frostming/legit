@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 legit.bootstrap
 ~~~~~~~~~~~~~~~
@@ -19,7 +17,7 @@ resources.init('kennethreitz', 'legit')
 
 try:
     config_file = resources.user.open('config.ini', 'r')
-except IOError:
+except OSError:
     resources.user.write('config.ini', '')
     config_file = resources.user.open('config.ini', 'r')
 

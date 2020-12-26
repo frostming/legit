@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 legit.scm
 ~~~~~~~~~
@@ -28,7 +26,7 @@ LEGIT_TEMPLATE = 'Legit: stashing before {0}.'
 Branch = namedtuple('Branch', ['name', 'is_published'])
 
 
-class SCMRepo(object):
+class SCMRepo:
     git = None
     repo = None
     remote = None
@@ -373,7 +371,7 @@ def fallback_enabled(reader):
         return False
 
 
-class Aborted(object):
+class Aborted:
 
     def __init__(self):
         self.message = None

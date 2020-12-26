@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 legit.cli
 ~~~~~~~~~
@@ -38,7 +36,7 @@ class LegitGroup(click.Group):
 
     def list_commands(self, ctx):
         """Override for showing commands in particular order"""
-        commands = super(LegitGroup, self).list_commands(ctx)
+        commands = super().list_commands(ctx)
         return [cmd for cmd in order_manually(commands)]
 
     def get_command(self, ctx, cmd_name):
