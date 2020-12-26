@@ -76,7 +76,6 @@ settings.update(
         'clint',
         'crayons',
         'GitPython',
-        'six'
     ],
     license="BSD",
     python_requires=">=3.5",
