@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 legit.bootstrap
 ~~~~~~~~~~~~~~~
@@ -11,7 +9,7 @@ This module boostraps the Legit runtime.
 from clint import resources
 from clint.textui import colored
 import crayons
-from six.moves import configparser
+import configparser
 
 from .settings import legit_settings
 
@@ -19,18 +17,14 @@ resources.init('kennethreitz', 'legit')
 
 try:
     config_file = resources.user.open('config.ini', 'r')
-except IOError:
+except OSError:
     resources.user.write('config.ini', '')
     config_file = resources.user.open('config.ini', 'r')
 
 
 # Load existing configuration.
 config = configparser.ConfigParser()
-try:
-    # `read_file()` added in Python 3.2
-    config.read_file(config_file)
-except AttributeError:
-    config.readfp(config_file)
+config.read_file(config_file)
 
 
 # Populate if needed.

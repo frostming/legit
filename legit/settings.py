@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 legit.config
 ~~~~~~~~~~~~~~~~~~
@@ -9,14 +7,14 @@ This module provides the Legit settings feature set.
 """
 
 
-class Settings(object):
+class Settings:
     _singleton = {}
 
     # attributes with defaults
     __attrs__ = tuple()
 
     def __init__(self, **kwargs):
-        super(Settings, self).__init__()
+        super().__init__()
 
         self.__dict__ = self._singleton
 
