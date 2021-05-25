@@ -15,7 +15,7 @@ import click
 from clint.textui import colored, columns
 import crayons
 from git import Repo
-from git.exc import GitCommandError, InvalidGitRepositoryError
+from git.exc import BadName, GitCommandError, InvalidGitRepositoryError
 
 from .settings import legit_settings
 from .utils import black, status_log
@@ -63,10 +63,21 @@ class SCMRepo:
                 result = ''
         return result
 
-    def repo_check(self, require_remote=False):
+    def repo_check(self, require_remote=False, require_refs=False):
         if self.repo is None:
             click.echo('Not a git repository.')
             sys.exit(128)
+
+        if self.repo.heads == []:
+            click.echo('Repo is empty.')
+            sys.exit(128)
+
+        if require_refs:
+            try:
+                self.repo.commit('HEAD^')
+            except BadName:
+                click.echo('Repo only contains root commit.')
+                sys.exit(128)
 
         # TODO: no remote fail
         if not self.repo.remotes and require_remote:
