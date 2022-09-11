@@ -106,6 +106,18 @@ If you want to see the git commands used by legit but don't want them invoked, u
 
     legit publish --fake
 
+Legit Options
+-------------
+
+By default, ``legit sync`` avoids a true merge.
+If the merge is not fast-forward, legit will rebase.
+
+In gitconfig, if ``legit.smartMerge`` is set to false,
+and ``pull.rebase`` is set to false or unset,
+then legit will not rebase but merge.
+
+If ``legit.smartMerge`` is set to false, and ``pull.ff`` is set to ``only``,
+then if the merge is not fast-forward, legit will abort.
 
 Caveats
 -------
