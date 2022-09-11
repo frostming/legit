@@ -22,10 +22,10 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``switch <branch>``
+``sw <branch>``
     Switches to specified branch.
     Defaults to current branch.
-    Automatically stashes and unstashes any changes. (alias: ``sw``)
+    Automatically stashes and unstashes any changes. (alias: ``switch`` for git < 2.23)
 
 ``sync [<branch>]``
     Synchronizes the given branch. Defaults to current branch.

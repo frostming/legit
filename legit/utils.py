@@ -103,7 +103,7 @@ List branches matching wildcard pattern:
 $ {}
 
 Commands:""".format(
-            crayons.red('legit switch <branch>'),
+            crayons.red('legit sw <branch>'),
             crayons.red('legit sync'),
             crayons.red('legit sync <branch>'),
             crayons.red('legit publish'),
