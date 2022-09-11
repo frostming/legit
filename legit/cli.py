@@ -245,7 +245,7 @@ def undo(scm, verbose, fake, hard):
     scm.fake = fake
     scm.verbose = fake or verbose
 
-    scm.repo_check()
+    scm.repo_check(require_refs=True)
 
     status_log(scm.undo, 'Last commit removed from history.', hard)
 
