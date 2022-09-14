@@ -22,10 +22,10 @@ Why not bring this innovation back to the command line?
 The Interface
 -------------
 
-``switch <branch>``
+``sw <branch>``
     Switches to specified branch.
     Defaults to current branch.
-    Automatically stashes and unstashes any changes. (alias: ``sw``)
+    Automatically stashes and unstashes any changes. (alias: ``switch`` for git < 2.23)
 
 ``sync [<branch>]``
     Synchronizes the given branch. Defaults to current branch.
@@ -106,6 +106,18 @@ If you want to see the git commands used by legit but don't want them invoked, u
 
     legit publish --fake
 
+Legit Options
+-------------
+
+By default, ``legit sync`` avoids a true merge.
+If the merge is not fast-forward, legit will rebase.
+
+In gitconfig, if ``legit.smartMerge`` is set to false,
+and ``pull.rebase`` is set to false or unset,
+then legit will not rebase but merge.
+
+If ``legit.smartMerge`` is set to false, and ``pull.ff`` is set to ``only``,
+then if the merge is not fast-forward, legit will abort.
 
 Caveats
 -------
