@@ -68,6 +68,13 @@ From `PyPI <https://pypi.python.org/pypi/legit/>`_ with the Python package manag
 
 Or download a standalone Windows executable from `GitHub Releases <https://github.com/frostming/legit/releases>`_.
 
+Alternatively, legit can be installed via Homebrew under macOS and Linux:
+
+    brew install legit
+
+Several system package distributions also include legit.
+Available legit version information can be found at the end of this README.
+
 To install the cutting edge version from the git repository::
 
     git clone https://github.com/frostming/legit.git
@@ -124,3 +131,10 @@ Caveats
 
 - All remote operations are carried out by the remote identified in ``$ git config legit.remote remotename``
 - If a ``stash pop`` merge fails, Legit stops. I'd like to add checking for a failed merge, and undo the command with friendly error reporting.
+
+Packaging Status
+----------------
+
+.. image:: https://repology.org/badge/vertical-allrepos/legit-git-cli.svg
+    :alt: packaing status
+    :target: https://repology.org/project/legit-git-cli/versions
