@@ -60,6 +60,18 @@ def test_switch_no_branch(runner):
 
 
 @pytest.mark.cli
+def test_switch_unknown_branch(runner):
+    """Switching to a branch that does not exist must give a friendly
+    error instead of letting the underlying GitCommandError propagate
+    uncaught (real git call, so no --fake here: --fake never reaches git
+    and so never hits this path)."""
+    result = runner.invoke(cli, ["switch", "this-branch-does-not-exist"])
+    assert result.exit_code != 0
+    assert isinstance(result.exception, SystemExit)
+    assert "this-branch-does-not-exist does not exist" in result.output
+
+
+@pytest.mark.cli
 def test_sync_known_branch(runner):
     """Test sync command"""
     result = runner.invoke(cli, ["sync", "master", "--fake"])
