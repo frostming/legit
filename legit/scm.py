@@ -204,9 +204,16 @@ class SCMRepo:
     def checkout_branch(self, branch):
         """Checks out given branch."""
 
-        _, stdout, stderr = self.git_exec(
-            ['checkout', branch],
-            with_extended_output=True)
+        try:
+            _, stdout, stderr = self.git_exec(
+                ['checkout', branch],
+                with_extended_output=True)
+        except GitCommandError as why:
+            # Checkout also fails for an existing branch, e.g. on an index lock.
+            if branch not in self.get_branch_names():
+                abort('Branch {} does not exist. Use an existing branch.'
+                      .format(branch), log=why.stderr)
+            abort('Switching to {} failed.'.format(branch), log=why.stderr)
         return '\n'.join([stderr, stdout])
 
     def unpublish_branch(self, branch):
