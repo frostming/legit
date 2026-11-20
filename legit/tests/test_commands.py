@@ -215,3 +215,27 @@ def test_branches_with_wildcard(runner):
     """Test branches command with wildcard filename pattern"""
     result = runner.invoke(cli, ["branches", "ma*"])
     assert result.exit_code == 0
+
+
+def test_checkout_failure_for_existing_branch(monkeypatch):
+    """A checkout that fails for a branch that exists (e.g. an index lock)
+    must not be reported as a missing branch."""
+    from git.exc import GitCommandError
+
+    from legit import scm as scm_module
+
+    repo = scm_module.SCMRepo.__new__(scm_module.SCMRepo)
+
+    def failing_checkout(*args, **kwargs):
+        raise GitCommandError(['git', 'checkout', 'main'], 128, stderr='index.lock exists')
+
+    def raise_abort(aborted, type=None):
+        raise SystemExit(aborted.message)
+
+    monkeypatch.setattr(repo, 'git_exec', failing_checkout)
+    monkeypatch.setattr(repo, 'get_branch_names', lambda: ['main'])
+    monkeypatch.setattr(scm_module.legit_settings, 'abort_handler', raise_abort)
+
+    with pytest.raises(SystemExit) as excinfo:
+        repo.checkout_branch('main')
+    assert str(excinfo.value) == 'Switching to main failed.'
